@@ -7,7 +7,7 @@
 bool is_number(char *str){
     size_t len = strlen(str);
     int start = 0;
-    if (str[0] == '-'){
+    if (str[0] == '-' && strlen(str) > 1){
         start = 1;
     }
     for (int i = start; i < len; i++){
@@ -15,6 +15,7 @@ bool is_number(char *str){
             return false;
         }
     }
+    
     return true;
 }
 
