@@ -1,21 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-int main(int argc, char *argv[])
-{
-    int count = 0;
-    for (int i = atoi(argv[2]); i <= atoi(argv[1])*atoi(argv[2]); i += atoi(argv[2]))
-    {
-        for (int k = 1; k <= i; k++)
-        {
-            printf("*");
-            count++;
+
+int main(int argc, char *argv[]){
+    int a = atoi(argv[1]);
+    int b = atoi(argv[2]);
+
+    while (a != b){
+        if(a>b){
+            a+= -b;
         }
-        
-        printf("\n");
+        else if(a<b){
+            b += -a;
+        }
     }
-    
-    printf("Totalt: %d\n", count);
+
+    printf("gcd(%s, %s) = %d\n", argv[1], argv[2], a);
 
     return 0;
 }

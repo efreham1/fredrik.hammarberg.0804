@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-int main(int argc, char *argv[])
+int main(void)
 {
-  for (int i = 0; i < argc; ++i)
-  {
-    puts(argv[i]);
-  }
+  printf("%d\n", strlen("Hej"));
+
   return 0;
 }
