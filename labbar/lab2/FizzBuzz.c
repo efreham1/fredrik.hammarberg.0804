@@ -6,35 +6,21 @@
 
 int main(void){
 
-    int numbers[] = {
-        3,
-        5
-    };
-
-    char *words[] = {
-        "Fizz",
-        "Buzz"
-    };
-
-    const int size = 2;
 
     for (int i = 1; i <= 20; i++){
-        char *output = "";
-        bool flag = true;
-        for (int k = 0; k < size; k++){
-            if(i%numbers[k]==0){
-                char *tmp = strcat(output, words[k]);
-                output = tmp;
-                printf("%s\n", output);
-                flag = false;
-            }
+        bool tag = true;
+        if (i%3==0){
+            printf("Fizz");
+            tag = false;
         }
-        if (flag){
-            printf("%d\n", i);
+        if (i%5==0){
+            printf("Buzz");
+            tag = false;
         }
-        else{
-            printf("%s\n", output);
+        if (tag){
+            printf("%d", i);
         }
+        printf(", ");
 
     }
     
