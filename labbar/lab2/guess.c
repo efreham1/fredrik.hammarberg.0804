@@ -2,12 +2,31 @@
 #include <stdlib.h>
 
 int main(void){
-    int number = random()%1024;
-    char buf[255];
+    int number = rand()%1024;
     int buf_siz = 255;
-    char *name = ask_question_string("Skriv in ditt namn", buf, buf_siz);
-    snprintf(buf, buf_siz, "Du %s, jag tänker på ett tal ... kan du gissa vilket?", name);
-    int guess = ask_question_int(buf);
+    char buf[buf_siz];
+    char buf2[buf_siz];
+    char *name = ask_question_string("Skriv in ditt namn\n", buf, buf_siz);
+    snprintf(buf2, buf_siz, "Du %s, jag tänker på ett tal ... kan du gissa vilket?", name);
+    int guess = ask_question_int(buf2);
+    int i = 0;
+    while (guess != number && i < 15){
+        if (guess < number){
+            printf("För litet!\n");
+        }
+        else{
+            printf("För stort!\n");
+        }
+        guess = ask_question_int("");
+        i++;
+    }
+    if (guess == number){
+        printf("Bingo!\nDet tog %s %d gissningar att komma fram till %d\n", name, i, number);
+    }
+    else{
+        printf("Nu har du slut på gissningar! Jag tänkte på %d!\n", number);
+    }
+    
 
 
 
