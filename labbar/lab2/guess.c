@@ -1,7 +1,9 @@
 #include "utils.h"
 #include <stdlib.h>
+#include <time.h>
 
 int main(void){
+    srand(time(NULL));
     int number = rand()%1024;
     int buf_siz = 255;
     char buf[buf_siz];
