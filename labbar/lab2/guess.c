@@ -26,7 +26,7 @@ int main(void){
         printf("Bingo!\nDet tog %s %d gissningar att komma fram till %d\n", name, i, number);
     }
     else{
-        printf("Nu har du slut på gissningar! Jag tänkte på %d!\n", number);
+        printf("Nu har du slut på gissningar %s! Jag tänkte på %d!\n", name, number);
     }
     
 
