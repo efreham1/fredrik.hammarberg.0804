@@ -1,3 +1,5 @@
+extern char *strdup(const char *);
+
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
@@ -6,25 +8,14 @@
 #include "utils.h"
 
 
-int ask_question_int(char *question){
+typedef union { 
+  int   int_value;
+  float float_value;
+  char *string_value;
+} answer_t;
+typedef bool(*check_func)(char *);
+typedef answer_t(*convert_func)(char *);
 
-  int result = 0;
-  int conversions = 0;
-  do
-    {
-      printf("%s\n", question);
-      conversions = scanf("%d", &result);
-      int c;
-      do
-        {
-          c = getchar();
-        }
-      while (c != '\n' && c != EOF);
-      putchar('\n');
-    }
-  while (conversions < 1);
-  return result;
-}
 
 int read_string(char *buf, int buf_siz){
   int i = 0;
@@ -48,17 +39,6 @@ int read_string(char *buf, int buf_siz){
   }
 
   return i+1;
-}
-
-char *ask_question_string(char *question, char *buf, int buf_siz){
-  char *result = "";
-  do{
-    printf("%s", question);
-    read_string(buf, buf_siz);
-    result = buf;
-  }
-  while(result == "");
-  return result;
 }
 
 bool is_number(char *str){
@@ -89,4 +69,32 @@ void println(char string[]){
         putchar(string[i]);
     }
     putchar('\n');
+}
+
+bool not_empty(char *str)
+{
+  return strlen(str) > 0;
+}
+
+answer_t ask_question(char *question, check_func check, convert_func convert){
+    int buf_size = 255;
+    char buf[buf_size];
+    bool cond = false;
+    while(!cond){
+        print(question);
+        read_string(buf, buf_size);
+        cond = check(buf);
+    }
+    return convert(buf);
+}
+
+int ask_question_int(char *question)
+{
+  answer_t answer = ask_question(question, is_number, (convert_func) atoi);
+  return answer.int_value;
+}
+
+char *ask_question_string(char *question)
+{
+  return ask_question(question, not_empty, (convert_func) strdup).string_value;
 }
