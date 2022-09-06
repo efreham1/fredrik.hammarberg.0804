@@ -8,7 +8,7 @@ int main(void){
     int buf_siz = 255;
     char buf[buf_siz];
     char *name = ask_question_string("Skriv in ditt namn\n");
-    snprintf(buf, buf_siz, "Du %s, jag tänker på ett tal ... kan du gissa vilket?", name);
+    snprintf(buf, buf_siz, "Du %s, jag tänker på ett tal ... kan du gissa vilket?\n", name);
     int guess = ask_question_int(buf);
     int i = 0;
     while (guess != number && i < 15){

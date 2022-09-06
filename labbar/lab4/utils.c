@@ -100,8 +100,14 @@ char *ask_question_string(char *question)
 }
 
 bool is_shelf(char *str){
-  if (strlen(str) == 0) return false;
-  char C_letters[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Å', 'Ä', 'Ö'};
+  if (!not_empty(str)) return false;
+  char shelf_letters[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+  int len_shelf_letters = 23;
+  for (int i = 0; i <= len_shelf_letters; i++){
+    if (i == len_shelf_letters) return false;
+    if (shelf_letters[i] == str[0]) break;
+  }
+  return is_number(str+1);
   
 }
 

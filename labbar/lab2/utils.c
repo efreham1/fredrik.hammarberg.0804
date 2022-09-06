@@ -55,7 +55,7 @@ char *ask_question_string(char *question, char *buf, int buf_siz){
   do{
     printf("%s", question);
     read_string(buf, buf_siz);
-    result = buf;
+    result = strdup(buf);
   }
   while(result == "");
   return result;
