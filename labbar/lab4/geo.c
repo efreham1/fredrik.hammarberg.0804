@@ -67,13 +67,47 @@ bool intersects_rect(rectangle_t *r1, rectangle_t *r2){
     int dy1 = abs(r1->l.y-r1->r.y);
     int dx2 = abs(r2->l.x-r2->r.x);
     int dy2 = abs(r2->l.y-r2->r.y);
-    return ;
+    return  (   (  (r2->l.x-r1->l.x)>0 && (r2->l.x-r1->l.x)<dx1    ) || (   (r2->l.x-r1->l.x)<0 && (r1->l.x-r2->l.x)<dx2    )   ) 
+            &&
+            (   (  (r2->r.y-r1->r.y)>0 && (r2->r.y-r1->r.y)<dy1    ) || (   (r2->r.y-r1->r.y)<0 && (r1->r.y-r2->r.y)<dy2    )   );
+}
+
+rectangle_t intersection_rect(rectangle_t *r1, rectangle_t *r2){
+    int xs[] = {r1->r.x, r1->l.x, r2->r.x, r2->l.x};
+    int ys[] = {r1->r.y, r1->l.y, r2->r.y, r2->l.y};
+    int small_x = xs[0];
+    int large_x = xs[0];
+    int small_y = ys[0];
+    int large_y = ys[0];
+    for (int i = 1; i < 4; i++){
+        if (xs[i]<small_x){
+            small_x = xs[i];
+        }
+        else if (xs[i]>large_x){
+            large_x = xs[i];
+        }
+
+        if (ys[i]<small_y){
+            small_y = ys[i];
+        }
+        else if (ys[i]>large_y){
+            large_y = ys[i];
+        }
+    }
+    rectangle_t new_rect = make_rectangle(small_x, large_x, small_y, large_y);
+    return new_rect;
 }
 
 int main(void){
 
-    rectangle_t r = make_rectangle(1, 6, 1, 2);
-    print_rectangle(&r);
-    printf("area=%d\n", area_rect(&r));
+    rectangle_t r1 = make_rectangle(1, 6, 1, 2);
+    print_rectangle(&r1);
+    printf("area=%d\n", area_rect(&r1));
+    rectangle_t r2 = make_rectangle(0, 2, 0, 10);
+    if (intersects_rect(&r1, &r2)){
+        printf("Banan, melon...");
+    }
+    rectangle_t r3 = intersection_rect(&r1, &r2);
+    print_rectangle(&r3);
     return 0;
 }
