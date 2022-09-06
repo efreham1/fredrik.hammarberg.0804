@@ -86,6 +86,16 @@ void edit_db(item_t *items, int no_items){
     items[item_no-1] = input_item();
 }
 
+void print_menu(void){
+    fprintf(stdout,
+    "[L]ägga till en vara\n"
+    "[T]a bort en vara\n"
+    "[R]edigera en vara\n"
+    "Ån[g]ra senaste ändringen\n"
+    "Lista [h]ela varukatalogen\n"
+    "[A]vsluta\n");
+}
+
 int main(int argc, char *argv[])
 {
     srand(time(NULL));
@@ -124,17 +134,13 @@ int main(int argc, char *argv[])
             {
             char *name = magick(array1, array2, array3, 4); // TODO: Lägg till storlek
             char *desc = magick(array1, array2, array3, 4); // TODO: Lägg till storlek
-            int price = rand() % 200000 ;
-            char shelf1 = rand() % ('Z'-'A') + 'A';
-            char shelf2 = rand() % 10 + '0';
-            char shelf3 = rand() % 10 + '0';
-            char shelf[] = { shelf1, shelf2, shelf3, '\0'};
-            item_t item = make_item(name, desc, price, shelf);
-            // free(name);
-            // name = NULL;
-            // free(desc);
-            // desc = NULL;
-            db[db_siz] = item;
+            int price = rand() % 200000;
+            char shelf[] = { random() % ('Z'-'A') + 'A',
+                         random() % 10 + '0',
+                         random() % 10 + '0',
+                         '\0' };
+            item_t item = make_item(name, desc, price, strdup(shelf));
+            db[db_siz] = item;  
             ++db_siz;
             }
 
