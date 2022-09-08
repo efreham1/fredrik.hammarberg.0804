@@ -12,7 +12,7 @@ typedef union {
   int   int_value;
   float float_value;
   char *string_value;
-  char char_value
+  char char_value;
 } answer_t;
 typedef bool(*check_func)(char *);
 typedef answer_t(*convert_func)(char *);
@@ -123,10 +123,12 @@ bool is_choice(char *str){
   return false;
 }
 
-answer_t str_to_char(char *string){
-  return toupper(string[0]);
+answer_t make_choice(char *string){
+  answer_t result;
+  result.char_value = toupper(*string);
+  return result; 
 }
 
 char ask_question_menu(char *question){
-  return ask_question(question, is_choice, (convert_func) toupper).char_value;
+  return ask_question(question, is_choice, make_choice).char_value;
 }

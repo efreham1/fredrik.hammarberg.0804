@@ -64,19 +64,20 @@ char *magick(char *arr1[], char *arr2[], char *arr3[], int num_ele){
 
 }
 
-void list_db(item_t *items, int no_items){
+bool list_db(item_t *items, int no_items){
     for(int i = 0; i<no_items; i++){
         //printf("%d. %s\n", i+1, items[i].name);
         printf("%d.\n", i+1);
         print_item(items+i);
     }
+    return true;
 }
 
-void edit_db(item_t *items, int no_items){
+bool edit_db(item_t *items, int db_siz){
     int item_no = 0;
     while (true){
         item_no = ask_question_int("Vilket föremål vill du ändra?\n");
-        if (item_no > no_items || item_no < 0){
+        if (item_no > db_siz || item_no < 0){
             printf("Det föremålet finns inte");
         }
         else{
@@ -84,16 +85,66 @@ void edit_db(item_t *items, int no_items){
         }
     }
     items[item_no-1] = input_item();
+    return true;
 }
 
-void print_menu(void){
-    fprintf(stdout,
-    "[L]ägga till en vara\n"
+char ask_menu(void){
+    return ask_question_menu(
+    "\n[L]ägga till en vara\n"
     "[T]a bort en vara\n"
     "[R]edigera en vara\n"
     "Ån[g]ra senaste ändringen\n"
     "Lista [h]ela varukatalogen\n"
     "[A]vsluta\n");
+}
+
+bool add_item_to_db(item_t *db, int *db_siz){
+    db[*db_siz] = input_item();
+    *db_siz+= 1;
+    return true;
+}
+
+bool remove_item_from_db(item_t *db, int *db_siz){
+    int item_no = ask_question_int("Vilken vara vill du ta bort?");
+    for(int i = item_no; i<*db_siz; i++){
+        db[i-1] = db[i];
+    }
+    *db_siz -= 1;
+    return true;
+}
+
+int event_loop(item_t *db, int *db_siz, int db_buf){
+    while(true){
+        char choice = ask_menu();
+        switch (choice)
+        {
+        case ('L'):
+            if(!add_item_to_db(db, db_siz)) return 1;
+            break;
+        
+        case ('T'):
+            if(!remove_item_from_db(db, db_siz)) return 1;
+            break;
+        
+        case ('R'):
+            if(!edit_db(db, *db_siz)) return 1;
+            break;
+        
+        case ('G'):
+            print("Not yet implemented!\n");
+            break;
+        
+        case ('H'):
+            if(!list_db(db, *db_siz)) return 1;
+            break;
+        
+        case ('A'):
+            return 0;
+        
+        default:
+            break;
+        }
+    }
 }
 
 int main(int argc, char *argv[])
@@ -109,7 +160,7 @@ int main(int argc, char *argv[])
     }
     else
     {
-        item_t db[16]; // Array med plats för 16 varor
+        item_t db[32]; // Array med plats för 16 varor
         int db_siz = 0; // Antalet varor i arrayen just nu
 
         int items = atoi(argv[1]); // Antalet varor som skall skapas
@@ -146,8 +197,7 @@ int main(int argc, char *argv[])
 
             // Skriv ut innehållet
         list_db(db, db_siz);
-        edit_db(db, db_siz);
-        list_db(db, db_siz);
+        if(event_loop(db, &db_siz, 32)==1) return 1;
 
     }
     return 0;

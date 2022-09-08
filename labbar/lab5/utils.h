@@ -13,6 +13,7 @@ int ask_question_int(char *question);
 char *ask_question_string(char *question);
 bool is_shelf(char *str);
 char *ask_question_shelf(char *question);
+char ask_question_menu(char *question);
 
 #ifndef __UTILS_H__
 #define __UTILS_H__
