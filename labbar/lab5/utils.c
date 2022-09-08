@@ -12,6 +12,7 @@ typedef union {
   int   int_value;
   float float_value;
   char *string_value;
+  char char_value
 } answer_t;
 typedef bool(*check_func)(char *);
 typedef answer_t(*convert_func)(char *);
@@ -103,10 +104,10 @@ bool is_shelf(char *str){
   if (!not_empty(str)) return false;
   char shelf_letters[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
   int len_shelf_letters = 23;
-  for (int i = 0; i <= len_shelf_letters; i++){
-    if (i == len_shelf_letters) return false;
+  for (int i = 0; i < len_shelf_letters; i++){
     if (shelf_letters[i] == str[0]) return is_number(str+1);
   }
+  return false;
 }
 
 char *ask_question_shelf(char *question){
@@ -116,12 +117,16 @@ char *ask_question_shelf(char *question){
 bool is_choice(char *str){
   char choices[] = {'l', 'L', 't', 'T', 'r', 'R', 'g', 'G', 'h', 'H', 'a', 'A'};
   int len_choices = 12;
-  for (int i = 0; i <= len_choices; i++){
-    if (i == len_choices) return false;
-    if (choices[i] == str[0]) return str[1]=='\n';;
+  for (int i = 0; i < len_choices; i++){
+    if (choices[i] == str[0]) return str[1]=='\0';;
   }
+  return false;
 }
 
-char ask_question_menu(char* *question){
-  return ask_question(question, is_choice, (convert_func) strdup).string_value[0];
+answer_t str_to_char(char *string){
+  return toupper(string[0]);
+}
+
+char ask_question_menu(char *question){
+  return ask_question(question, is_choice, (convert_func) toupper).char_value;
 }
