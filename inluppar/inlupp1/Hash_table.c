@@ -1,20 +1,34 @@
 #include "Hash_table.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 typedef struct hash_table ioopm_hash_table_t;
 
-struct hash_table{
-    int number; //TODO funkar inte alls
+typedef struct entry entry_t;
+
+struct entry
+{
+    int key;       // holds the key
+    char *value;   // holds the value
+    entry_t *next; // points to the next entry (possibly NULL)
+};
+
+struct hash_table
+{
+    entry_t *buckets[17];
 };
 
 //Create a new hash table
 ioopm_hash_table_t *ioopm_hash_table_create(void){
-    ioopm_hash_table_t result = {.number=1}; //TODO funkar inte alls
-    return &result;
+    /// Allocate space for a ioopm_hash_table_t = 17 pointers to
+    /// entry_t's, which will be set to NULL
+    ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
+    return result;
 }
 
 //Delete a hash table and free its memory
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht){
-    //TODO funkar inte alls
+    free(ht);
 }
 
 //add key => value entry in hash table ht
