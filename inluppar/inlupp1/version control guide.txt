@@ -1,0 +1,8 @@
+Vid start av nytt steg
+1. Skapa en development branch utifrån nuvarande master branch
+2. Skriv testcases. När det är klart, comitta till dev branch
+3. Skriv kod som klarar test cases. När det är klar, comitta till dev branch
+4. När allt är klart, merga dev med master och namge efter avklarat steg.
+5. Återupprepa igen
+
+Om man vill arbeta enskilt och också ha version control på det kan man göra en egen branch
