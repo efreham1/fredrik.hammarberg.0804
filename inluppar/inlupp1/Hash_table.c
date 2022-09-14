@@ -79,7 +79,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
     /// Calculate the bucket for this entry
     int bucket = key % 17;
     /// Search for an existing entry for a key
-    entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+    entry_t *entry = find_previous_entry_for_key(&ht->buckets[abs(bucket)], key);
     entry_t *next = entry->next;
 
     /// Check if the next entry should be updated or not
@@ -97,7 +97,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
     int bucket = key % 17;
-    entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+    entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[abs(bucket)], key);
 
     if (prev_entry->next != NULL)
     {

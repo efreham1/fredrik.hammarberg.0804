@@ -38,7 +38,7 @@ void test_insert_multiple()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   char *v = "BRUH";
-  for (int i = 0; i<40; i++)
+  for (int i = -40; i<40; i++)
   {
     ioopm_hash_table_insert(ht, i, v);
     CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, i),v)
