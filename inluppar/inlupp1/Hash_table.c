@@ -26,14 +26,26 @@ static entry_t *entry_create(int key, char *value, entry_t *next)
     return entry_p;
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *first, int key)
+static entry_t *find_previous_entry_for_key(entry_t *sentinal, int key)
 {
-    entry_t *previous_entry = first;
+    if (sentinal->next == NULL)
+    {
+        return sentinal; //bucket is empty
+    }
+    //else
+    entry_t *previous_entry = sentinal->next;
     while(previous_entry->next != NULL && previous_entry->next->key < key)
     {
         previous_entry = previous_entry->next;
     }
     return previous_entry;
+}
+
+static entry_t *destroy_entry(entry_t *entry)
+{
+    entry_t *next = entry->next;
+    free(entry);
+    return next;
 }
 //Create a new hash table
 ioopm_hash_table_t *ioopm_hash_table_create(void)
@@ -47,6 +59,17 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
 //Delete a hash table and free its memory
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
+    for (int i = 16; i>=0; i--)
+    {
+        entry_t *sentinal = &ht->buckets[i];
+        entry_t *to_be_destroyed = sentinal->next;
+        while (to_be_destroyed != NULL)
+        {
+            to_be_destroyed = destroy_entry(to_be_destroyed);
+        }
+        
+    }
+    free(&ht->buckets);
     free(ht);
 }
 
@@ -73,7 +96,8 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 //lookup value for key in hash table ht
 char *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
-    return "Tjena"; //TODO funkar inte alls
+    int bucket = key%17;
+
 }
 
 //remove any mapping from key to a value
