@@ -46,17 +46,6 @@ void test_insert_existing_key()
   ioopm_hash_table_destroy(ht);
 }
 
-void test_insert_changing_value()
-{
-  int k = 5;
-  char *v = "BRUH";
-  ioopm_hash_table_t *ht = ioopm_hash_table_create();
-  ioopm_hash_table_insert(ht, k, v);
-  v = "Tjohejsan";
-  CU_ASSERT_STRING_EQUAL(ioopm_hash_table_lookup(ht, k), "BRUH");
-  ioopm_hash_table_destroy(ht);
-}
-
 void test_insert_existing_and_new_key()
 {
   int k = 5;
@@ -108,7 +97,6 @@ int main() {
     (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
     (CU_add_test(my_test_suite, "Test for one insertion", test_insert_once) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insertion to an existing key", test_insert_existing_key) == NULL) ||
-    (CU_add_test(my_test_suite, "Test for changing the value outside of the hash table", test_insert_changing_value) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting a new key then an existing key and then a new key", test_insert_existing_and_new_key) == NULL) ||
     0
   )
