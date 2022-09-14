@@ -96,8 +96,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 //lookup value for key in hash table ht
 char *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
-    int bucket = key%17;
-
+    return "tjo bish"; //TODO funkar inte alls
 }
 
 //remove any mapping from key to a value
