@@ -33,7 +33,7 @@ static entry_t *find_previous_entry_for_key(entry_t *sentinal, int key)
         return sentinal; //bucket is empty
     }
     //else
-    entry_t *previous_entry = sentinal->next;
+    entry_t *previous_entry = sentinal;
     while(previous_entry->next != NULL && previous_entry->next->key < key)
     {
         previous_entry = previous_entry->next;

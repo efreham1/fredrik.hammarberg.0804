@@ -41,7 +41,7 @@ void test_insert_multiple()
   for (int i = 0; i<40; i++)
   {
     ioopm_hash_table_insert(ht, i, v);
-    CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, i),v)
+    CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, i),v)
   }
   ioopm_hash_table_destroy(ht);
 }
@@ -54,7 +54,7 @@ void test_insert_existing_key()
   ioopm_hash_table_insert(ht, k, v);
   char *v2 = "OOPS";
   ioopm_hash_table_insert(ht, k, v2);
-  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k),v2);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, k),v2);
   ioopm_hash_table_destroy(ht);
 }
 
@@ -66,12 +66,12 @@ void test_insert_existing_and_new_key()
   ioopm_hash_table_insert(ht, k, v);
   char *v2 = "OOPS";
   ioopm_hash_table_insert(ht, k, v2);
-  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k),v2);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, k),v2);
   int k2 = 7;
   char *v3 = "hallelujah";
   ioopm_hash_table_insert(ht, k2, v3);
-  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k2),v3);
-  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k),v2);  
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, k2),v3);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, k),v2);  
   ioopm_hash_table_destroy(ht);
 }
 
