@@ -30,7 +30,19 @@ void test_insert_once()
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, k));
   ioopm_hash_table_insert(ht, k, v);
-  CU_ASSERT(*ioopm_hash_table_lookup(ht, k)==v);
+  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k), v);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_insert_multiple()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *v = "BRUH";
+  for (int i = 0; i<40; i++)
+  {
+    ioopm_hash_table_insert(ht, i, v);
+    CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, i),v)
+  }
   ioopm_hash_table_destroy(ht);
 }
 
@@ -42,7 +54,7 @@ void test_insert_existing_key()
   ioopm_hash_table_insert(ht, k, v);
   char *v2 = "OOPS";
   ioopm_hash_table_insert(ht, k, v2);
-  CU_ASSERT(*ioopm_hash_table_lookup(ht, k)==v2);
+  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k),v2);
   ioopm_hash_table_destroy(ht);
 }
 
@@ -54,12 +66,12 @@ void test_insert_existing_and_new_key()
   ioopm_hash_table_insert(ht, k, v);
   char *v2 = "OOPS";
   ioopm_hash_table_insert(ht, k, v2);
-  CU_ASSERT(*ioopm_hash_table_lookup(ht, k)==v2);
+  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k),v2);
   int k2 = 7;
   char *v3 = "hallelujah";
   ioopm_hash_table_insert(ht, k2, v3);
-  CU_ASSERT(*ioopm_hash_table_lookup(ht, k2)==v3);
-  CU_ASSERT(*ioopm_hash_table_lookup(ht, k)==v2);  
+  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k2),v3);
+  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k),v2);  
   ioopm_hash_table_destroy(ht);
 }
 
@@ -68,9 +80,9 @@ void test_lookup_empty()
    ioopm_hash_table_t *ht = ioopm_hash_table_create();
    for (int i = 0; i < 18; ++i) /// 18 is a bit magical
      {
-       CU_ASSERT_PTR_NULL(*ioopm_hash_table_lookup(ht, i));
+       CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, i));
      }
-   CU_ASSERT_PTR_NULL(*ioopm_hash_table_lookup(ht, -1));
+   CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, -1));
    ioopm_hash_table_destroy(ht);
 }
 
@@ -106,6 +118,7 @@ int main() {
   // copy a line below and change the information
   if (
     (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for multiple insertions", test_insert_multiple) == NULL) ||
     (CU_add_test(my_test_suite, "Test for one insertion", test_insert_once) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insertion to an existing key", test_insert_existing_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting a new key then an existing key and then a new key", test_insert_existing_and_new_key) == NULL) ||
