@@ -30,7 +30,7 @@ void test_insert_once()
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, k));
   ioopm_hash_table_insert(ht, k, v);
-  CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k), v);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, k), v);
   ioopm_hash_table_destroy(ht);
 }
 
@@ -118,8 +118,8 @@ int main() {
   // copy a line below and change the information
   if (
     (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
-    (CU_add_test(my_test_suite, "Test for multiple insertions", test_insert_multiple) == NULL) ||
     (CU_add_test(my_test_suite, "Test for one insertion", test_insert_once) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for multiple insertions", test_insert_multiple) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insertion to an existing key", test_insert_existing_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting a new key then an existing key and then a new key", test_insert_existing_and_new_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for looking in an empty hash-table", test_lookup_empty) == NULL) ||
