@@ -26,9 +26,14 @@ static entry_t *entry_create(int key, char *value, entry_t *next)
     return entry_p;
 }
 
-static entry_t *find_previous_entry_for_key(entry_t *entry, int key)
+static entry_t *find_previous_entry_for_key(entry_t *first, int key)
 {
-    
+    entry_t *previous_entry = first;
+    while(previous_entry->next != NULL && previous_entry->next->key < key)
+    {
+        previous_entry = previous_entry->next;
+    }
+    return previous_entry;
 }
 //Create a new hash table
 ioopm_hash_table_t *ioopm_hash_table_create(void)
