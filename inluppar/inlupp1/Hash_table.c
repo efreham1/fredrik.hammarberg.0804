@@ -70,7 +70,7 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
         
     }
     free(&ht->buckets);
-    free(ht);
+    //free(ht);
 }
 
 //add key => value entry in hash table ht
@@ -94,9 +94,16 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
     }
 
 //lookup value for key in hash table ht
-char *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
+char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
-    return "tjo bish"; //TODO funkar inte alls
+    int bucket = key % 17;
+    entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+
+    if (prev_entry->next != NULL)
+    {
+        return &prev_entry->next->value;
+    }
+    return NULL; //TODO funkar inte alls
 }
 
 //remove any mapping from key to a value
