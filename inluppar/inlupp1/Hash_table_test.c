@@ -1,7 +1,8 @@
 #include <CUnit/Basic.h>
-#include "Hash_table.h"
-#define No_Buckets 17
 #include <stdlib.h>
+#include "Hash_table.h"
+
+#define No_Buckets 17
 
 int init_suite(void) {
   // Change this function if you want to do something *before* you

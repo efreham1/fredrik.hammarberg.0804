@@ -1,7 +1,8 @@
-#include "Hash_table.h"
-#define No_Buckets 17
 #include <stdlib.h>
 #include <stdio.h>
+#include "Hash_table.h"
+
+#define No_Buckets 17
 
 typedef struct hash_table ioopm_hash_table_t;
 
@@ -34,11 +35,14 @@ static entry_t *find_previous_entry_for_key(entry_t *sentinal, int key)
         return sentinal; //bucket is empty
     }
     //else
-    entry_t *previous_entry = sentinal;
-    while(previous_entry->next != NULL && previous_entry->next->key < key)
+    entry_t *cursor = sentinal;
+    entry_t *next_entry = cursor->next;
+    while(next_entry != NULL && next_entry->key < key)
     {
-        previous_entry = previous_entry->next;
+        cursor = next_entry;
+        next_entry = cursor->next;
     }
+    entry_t *previous_entry = cursor;
     return previous_entry;
 }
 
@@ -48,39 +52,46 @@ static entry_t *destroy_entry(entry_t *entry)
     free(entry);
     return next;
 }
+
+static entry_t *get_sentinal(ioopm_hash_table_t *ht, int key)
+{
+    /// Calculate the bucket for this entry
+    int bucket = abs(key%No_Buckets);
+    //get correct sentinal from buckets
+    entry_t *sentinal = &ht->buckets[bucket];
+    return sentinal;
+    
+}
 //Create a new hash table
 ioopm_hash_table_t *ioopm_hash_table_create(void)
 {
     /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
     /// entry_t's, which will be set to NULL
-    ioopm_hash_table_t *result = calloc(1, sizeof(ioopm_hash_table_t));
-    return result;
+    ioopm_hash_table_t *hash_table = calloc(1, sizeof(ioopm_hash_table_t));
+    return hash_table;
 }
 
 //Delete a hash table and free its memory
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
-    for (int i = 16; i>=0; i--)
+    for (int i = No_Buckets-1; i>=0; i--)
     {
-        entry_t *sentinal = &ht->buckets[i];
+        entry_t *sentinal = get_sentinal(ht, i);
         entry_t *to_be_destroyed = sentinal->next;
         while (to_be_destroyed != NULL)
         {
-            to_be_destroyed = destroy_entry(to_be_destroyed);
+            to_be_destroyed = destroy_entry(to_be_destroyed); //destory current entry and update to_be_destroyed to next entry
         }
         
     }
     free(&ht->buckets);
-    //free(ht);
 }
 
 //add key => value entry in hash table ht
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
-    /// Calculate the bucket for this entry
-    int bucket = abs(key%No_Buckets);
-    /// Search for an existing entry for a key
-    entry_t *entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+    entry_t *sentinal = get_sentinal(ht, key);
+    entry_t *entry = find_previous_entry_for_key(sentinal, key);
     entry_t *next = entry->next;
 
     /// Check if the next entry should be updated or not
@@ -97,31 +108,34 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 //lookup value for key in hash table ht
 char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
-    int bucket = abs(key%No_Buckets);
-    entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+    entry_t *sentinal = get_sentinal(ht, key);
+    entry_t *prev_entry = find_previous_entry_for_key(sentinal, key);
+    entry_t *curr_entry = prev_entry->next;
 
-    if (prev_entry->next != NULL && prev_entry->next->key == key)
+    if (curr_entry != NULL && curr_entry->key == key)
     {
-        return &prev_entry->next->value;
+        return &curr_entry->value;
     }
+    //else
     return NULL;
 }
 
 //remove any mapping from key to a value
 char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
-    int bucket = abs(key%No_Buckets);
-    entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+    entry_t *sentinal = get_sentinal(ht, key);
+    entry_t *prev_entry = find_previous_entry_for_key(sentinal, key);
+    entry_t *curr_entry = prev_entry->next;
 
-    if (prev_entry->next == NULL && prev_entry->next->key != key) //didn't find key, do nothing and return NULL
+    if (curr_entry != NULL && curr_entry->key == key) //key found
     {
-        return NULL;
+        prev_entry->next = curr_entry->next;
+        char **data_ptr = &curr_entry->value;
+        free(curr_entry);
+        return data_ptr;
+
     }
     //else
-    entry_t *tmp_ptr = prev_entry->next;
-    prev_entry->next = tmp_ptr->next;
-    char **data_ptr = &tmp_ptr->value;
-    free(tmp_ptr);
-    return data_ptr;
+    return NULL; //didn't find key, do nothing and return NULL
     
 }
