@@ -1,5 +1,6 @@
 #include <CUnit/Basic.h>
 #include "Hash_table.h"
+#define No_Buckets 17
 #include <stdlib.h>
 
 int init_suite(void) {
@@ -81,7 +82,13 @@ void test_insert_existing_and_new_key()
 void test_insert_multiple_values_in_same_bucket()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
-  int keys[] = {17, 0, 34, 68, 51, 85};
+  int keys[] = {No_Buckets*1, 
+                No_Buckets*0, 
+                No_Buckets*2, 
+                No_Buckets*4,
+                No_Buckets*3,
+                No_Buckets*5
+               };
   char *value = "Bertil";
   for (int i = 0; i < 5; i++)
   {
@@ -97,22 +104,22 @@ void test_insert_multiple_values_in_same_bucket()
 void test_lookup_nonexisting_key()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
-  int keys[] = {17, 34, 68};
+  int keys[] = {No_Buckets*1, No_Buckets*2, No_Buckets*4};
   char *value = "Bertil";
   for (int i = 0; i < 3; i++)
   {
     ioopm_hash_table_insert(ht, keys[i], value);
   }
-  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, 0));
-  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, 51));
-  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, 85));
+  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, No_Buckets*0));
+  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, No_Buckets*3));
+  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, No_Buckets*5));
   ioopm_hash_table_destroy(ht);
 }
 
 void test_lookup_empty()
 {
    ioopm_hash_table_t *ht = ioopm_hash_table_create();
-   for (int i = 0; i < 18; ++i) /// 18 is a bit magical
+   for (int i = 0; i < No_Buckets + 1; ++i) /// 18 is a bit magical
      {
        CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, i));
      }
@@ -134,7 +141,7 @@ void test_remove_multiple_entries_in_different_buckets()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   char *values[] = {"test1", "test2", "test3"};
-  int keys[] = {23, 13, 53};
+  int keys[] = {No_Buckets + No_Buckets / 2, No_Buckets - No_Buckets /5, No_Buckets + No_Buckets/9};
   for (int i = 0; i < 3; i++)
   {
     ioopm_hash_table_insert(ht, keys[i], values[i]);
@@ -152,7 +159,7 @@ void test_remove_multiple_entries_in_same_bucket()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   char *value = "Bertil";
-  int keys[] = {17, 68, 0, 34, 51};
+  int keys[] = {No_Buckets*1, No_Buckets*6, No_Buckets*0, No_Buckets*2, No_Buckets*4};
   for (int i = 0; i < 4; i++)
   {
     ioopm_hash_table_insert(ht, keys[i], value);
