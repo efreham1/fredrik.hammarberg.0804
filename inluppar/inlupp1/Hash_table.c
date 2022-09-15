@@ -99,7 +99,7 @@ char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
     int bucket = abs(key%17);
     entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
 
-    if (prev_entry->next != NULL)
+    if (prev_entry->next != NULL && prev_entry->next->key == key)
     {
         return &prev_entry->next->value;
     }
@@ -112,7 +112,7 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     int bucket = abs(key%17);
     entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
 
-    if (prev_entry->next == NULL) //didn't find key, do nothing and return NULL
+    if (prev_entry->next == NULL && prev_entry->next->key != key) //didn't find key, do nothing and return NULL
     {
         return NULL;
     }

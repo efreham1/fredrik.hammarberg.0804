@@ -89,7 +89,7 @@ void test_insert_multiple_values_in_same_bucket()
   }
    for (int i = 0; i < 5; i++)
   {
-      CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, keys[i]), value);
+      CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, keys[i]), value);
   }
   ioopm_hash_table_destroy(ht);
 }
