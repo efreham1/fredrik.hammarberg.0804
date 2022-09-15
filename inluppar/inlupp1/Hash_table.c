@@ -129,9 +129,8 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 
     if (curr_entry != NULL && curr_entry->key == key) //key found
     {
-        prev_entry->next = curr_entry->next;
         char **data_ptr = &curr_entry->value;
-        free(curr_entry);
+        prev_entry->next = destroy_entry(curr_entry); //destroy entry returns what comes next
         return data_ptr;
 
     }
