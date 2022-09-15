@@ -32,11 +32,11 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value);
 /// @brief lookup adress of value for key in hash table ht
 /// @param ht hash table operated upon
 /// @param key key to lookup
-/// @return the adress of value for key
+/// @return the adress of the value mapped from the key
 char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
-/// @return the value mapped to by key (FIXME: incomplete)
-char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
+/// @return the adress of the value previously mapped from the key
+char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
