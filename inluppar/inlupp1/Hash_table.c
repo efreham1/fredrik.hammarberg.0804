@@ -109,6 +109,6 @@ char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 //remove any mapping from key to a value
 char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
-    int bucket = abs(key%17);
+    //int bucket = abs(key%17);
     return "tjo bish"; //TODO funkar inte alls
 }

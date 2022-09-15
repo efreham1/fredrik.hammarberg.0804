@@ -75,6 +75,11 @@ void test_insert_existing_and_new_key()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_insert_multiple_values_in_same_bucket()
+{
+  return NULL;
+}
+
 void test_lookup_empty()
 {
    ioopm_hash_table_t *ht = ioopm_hash_table_create();
@@ -86,6 +91,56 @@ void test_lookup_empty()
    ioopm_hash_table_destroy(ht);
 }
 
+void test_remove_single_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_insert(ht, 123, "hello world");
+  ioopm_hash_table_remove(ht, 123);
+  CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, 123));
+  ioopm_hash_table_destroy(ht);
+}
+
+
+void test_remove_multiple_entries_in_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *values[] = {"test1", "test2", "test3"};
+  int keys[] = {23, 13, 53};
+  for (int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    int key = keys[i];
+    ioopm_hash_table_remove(ht, key);
+    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, key));
+  }
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_remove_multiple_entries_in_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *values[] = {"test1", "test2", "test3"};
+  int keys[] = {17, 34, 51};
+  for (int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  int first = keys[0];
+  int last = keys[2];
+  keys[0] = keys[1]; //test removing middle element first
+  keys[1] = last; // test removing last element second
+  keys[2] = first; // test removing first element last
+  for (int i = 0; i < 3; i++)
+  {
+    int key = keys[i];
+    ioopm_hash_table_remove(ht, key);
+    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, key));
+  }
+  ioopm_hash_table_destroy(ht);
+}
 /*
 void test_insert_invalid_key()
 {
@@ -123,6 +178,10 @@ int main() {
     (CU_add_test(my_test_suite, "Test for insertion to an existing key", test_insert_existing_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting a new key then an existing key and then a new key", test_insert_existing_and_new_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for looking in an empty hash-table", test_lookup_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for removing a single entry", test_remove_single_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for removing multiple entries in different buckets", test_remove_multiple_entries_in_different_buckets) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for removing multiple entries in the same bucket", test_remove_multiple_entries_in_same_bucket) == NULL) ||
+
     0
   )
     {
