@@ -99,16 +99,28 @@ char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
     int bucket = abs(key%17);
     entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
 
-    if (prev_entry->next != NULL)
+    if (prev_entry->next != NULL && prev_entry->next->key == key)
     {
         return &prev_entry->next->value;
     }
-    return NULL; //TODO funkar inte alls
+    return NULL;
 }
 
 //remove any mapping from key to a value
-char *ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
+char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
 {
     int bucket = abs(key%17);
-    return "tjo bish"; //TODO funkar inte alls
+    entry_t *prev_entry = find_previous_entry_for_key(&ht->buckets[bucket], key);
+
+    if (prev_entry->next == NULL && prev_entry->next->key != key) //didn't find key, do nothing and return NULL
+    {
+        return NULL;
+    }
+    //else
+    entry_t *tmp_ptr = prev_entry->next;
+    prev_entry->next = tmp_ptr->next;
+    char **data_ptr = &tmp_ptr->value;
+    free(tmp_ptr);
+    return data_ptr;
+    
 }
