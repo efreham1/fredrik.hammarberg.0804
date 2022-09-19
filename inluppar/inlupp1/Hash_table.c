@@ -1,12 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include "Hash_table.h"
 
 #define No_Buckets 17
 
 typedef struct hash_table ioopm_hash_table_t;
-
 typedef struct entry entry_t;
+typedef bool(*ioopm_predicate)(int key, char *value, void *extra);
+typedef void(*ioopm_apply_function)(int key, char **value, void *extra);
+
 
 struct entry
 {
@@ -74,16 +77,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
 //Delete a hash table and free its memory
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
-    for (int i = No_Buckets-1; i>=0; i--)
-    {
-        entry_t *sentinel = get_sentinel(ht, i);
-        entry_t *to_be_destroyed = sentinel->next;
-        while (to_be_destroyed != NULL)
-        {
-            to_be_destroyed = destroy_entry(to_be_destroyed); //destory current entry and update to_be_destroyed to next entry
-        }
-        
-    }
+    ioopm_hash_table_clear(ht);
     free(&ht->buckets);
 }
 
@@ -137,4 +131,84 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     //else
     return NULL; //didn't find key, do nothing and return NULL
     
+}
+
+int ioopm_hash_table_size(ioopm_hash_table_t *ht)
+{
+    int count = 0;
+    for (int i = 0; i < No_Buckets; i++)
+    {
+        entry_t *sentinel = get_sentinel(ht, i);
+        entry_t *next_entry = sentinel->next;
+        while (next_entry != NULL)
+        {
+            count += 1;
+            next_entry = next_entry->next;
+        }
+        
+        
+    }
+    return count;
+}
+
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
+{
+    for (int i = No_Buckets-1; i>=0; i--)
+    {
+        entry_t *sentinel = get_sentinel(ht, i);
+        if (sentinel->next != NULL)
+        {
+            return false;
+        } 
+    }
+    return true;
+}
+
+void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
+{
+    for (int i = No_Buckets-1; i>=0; i--)
+    {
+        entry_t *sentinel = get_sentinel(ht, i);
+        entry_t *to_be_destroyed = sentinel->next;
+        while (to_be_destroyed != NULL)
+        {
+            to_be_destroyed = destroy_entry(to_be_destroyed); //destory current entry and update to_be_destroyed to next entry
+        }
+        sentinel->next = NULL;
+    }
+}
+
+int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+{
+    return;
+}
+
+char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
+{
+    return;
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
+{
+    return true;
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
+{
+    return true;
+}
+
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+{
+    return true;
+}
+
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+{
+    return true;
+}
+
+void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
+{
+    return;
 }

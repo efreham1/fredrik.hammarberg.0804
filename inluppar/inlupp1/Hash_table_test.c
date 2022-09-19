@@ -173,16 +173,128 @@ void test_remove_multiple_entries_in_same_bucket()
   }
   ioopm_hash_table_destroy(ht);
 }
-/*
-void test_insert_invalid_key()
+
+
+void test_size_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create();  
-  int k = 18;
-  char *v = "test";
-  ioopm_hash_table_insert(ht, k, v);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  CU_ASSERT(ioopm_hash_table_size(ht) == 0);
   ioopm_hash_table_destroy(ht);
 }
-*/
+
+void test_size_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  char *values[] = {"test1", "test2", "test3"};
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 3);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_size_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys [] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
+  char *value = "test";
+  for (int i = 0; i<4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], value);
+  }
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 4);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_size_one_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = 42;
+  char *value = "test";
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_EQUAL(ioopm_hash_table_size(ht), 1);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_empty_empty_ht()
+{
+ ioopm_hash_table_t *ht = ioopm_hash_table_create();
+ CU_ASSERT(ioopm_hash_table_is_empty(ht));
+ ioopm_hash_table_destroy(ht); 
+}
+
+void test_empty_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  char *values[] = {"test1", "test2", "test3"};
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+
+  CU_ASSERT(!ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_empty_one_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = 42;
+  char *value = "test";
+  ioopm_hash_table_insert(ht, key, value);
+  CU_ASSERT_FALSE(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_clear_empty_ht()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_clear(ht);
+  CU_ASSERT(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_clear_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  char *values[] = {"test1", "test2", "test3"};
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  ioopm_hash_table_clear(ht);
+  CU_ASSERT(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_clear_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys [] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
+  char *value = "test";
+  for (int i = 0; i<4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], value);
+  }
+  ioopm_hash_table_clear(ht);
+  CU_ASSERT(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_clear_one_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = 42;
+  char *value = "test";
+  ioopm_hash_table_insert(ht, key, value);
+  ioopm_hash_table_clear(ht);
+  CU_ASSERT(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
 
 int main() {
   // First we try to set up CUnit, and exit if we fail
@@ -210,12 +322,27 @@ int main() {
     (CU_add_test(my_test_suite, "Test for insertion to an existing key", test_insert_existing_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting a new key then an existing key and then a new key", test_insert_existing_and_new_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting multiple entries in the same bucket", test_insert_multiple_values_in_same_bucket) == NULL) ||
+    
     (CU_add_test(my_test_suite, "Test for looking up multiple non_exsisting entries in the same bucket", test_lookup_nonexisting_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for looking in an empty hash-table", test_lookup_empty) == NULL) ||
+
     (CU_add_test(my_test_suite, "Test for removing a single entry", test_remove_single_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Test for removing multiple entries in different buckets", test_remove_multiple_entries_in_different_buckets) == NULL) ||
     (CU_add_test(my_test_suite, "Test for removing multiple entries in the same bucket", test_remove_multiple_entries_in_same_bucket) == NULL) ||
-
+    
+    (CU_add_test(my_test_suite, "Test for size of empty hash table", test_size_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for size of hash table with single entry", test_size_one_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for size of hash table with multiple entries in same bucket", test_size_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for size of hash table with multiple entries in different buckets", test_size_different_buckets) == NULL) ||
+    
+    (CU_add_test(my_test_suite, "Test that hash table with no entries is empty", test_empty_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Test that hash table with a single entry isn't empty", test_empty_one_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test that hash table with multiple entries isn't empty", test_empty_different_buckets ) == NULL) ||
+    
+    (CU_add_test(my_test_suite, "Test that clear-function clears an empty hash table", test_clear_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Test that clear-function clears hash table with single entry", test_clear_one_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test that clear-function clears hash table with multiple entries in same bucket", test_clear_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test that clear-function clears hash table with multiple entries in different buckets", test_clear_different_buckets) == NULL) ||
     0
   )
     {
