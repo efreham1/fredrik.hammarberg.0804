@@ -296,6 +296,263 @@ void test_clear_one_entry()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_keys_empty_ht()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int *keys = ioopm_hash_table_keys(ht);
+  CU_ASSERT_PTR_NULL(keys);
+  ioopm_hash_table_destroy(ht);
+  free(keys);
+}
+
+
+void test_keys_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  bool found[3] = {false, false, false}; 
+  char *values[] = {"test1", "test2", "test3"};
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  int *result_keys = ioopm_hash_table_keys(ht);
+
+  for (int i = 0; i < 3; i++)
+  {
+    int key = result_keys[i];
+    int j = 0;
+    while (key != keys[j])
+    {
+      j += 1;
+      if (j == 3)
+      {
+        CU_FAIL("Found a key that was never inserted!");
+      }
+    }
+    found[j] = true;
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    CU_ASSERT(found[i]);
+  }
+  ioopm_hash_table_destroy(ht);
+  free(result_keys);
+}
+
+void test_keys_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys [] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
+  bool found[4] = {false};
+  char *value = "test";
+  for (int i = 0; i<4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], value);
+  }
+  int *result_keys = ioopm_hash_table_keys(ht);
+  for (int i = 0; i<4; i++)
+  {
+    for (int j = 0; j<4; j++)
+    {
+      if (keys[j] == result_keys[i])
+      {
+        found[j] = true;
+        break;
+      }
+      if (j==3)
+      {
+        CU_FAIL("Found a key that was never inserted!");
+      }
+    }
+  }
+  for (int i = 0; i<4; i++)
+  {
+    CU_ASSERT(found[i]);
+  }
+  ioopm_hash_table_destroy(ht);
+  free(result_keys);
+}
+
+void test_keys_one_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = 42;
+  char *value = "test";
+  ioopm_hash_table_insert(ht, key, value);
+  int *keys = ioopm_hash_table_keys(ht);
+  CU_ASSERT_EQUAL(*keys, key);
+  ioopm_hash_table_destroy(ht);
+  free(keys);
+}
+
+
+void test_keys_and_values_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  char *values[3] = {"test1", "test2", "test3"};
+  bool found[3] = {false, false, false}; 
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  int *result_keys = ioopm_hash_table_keys(ht);
+  char **result_values = ioopm_hash_table_values(ht);
+
+  for (int i = 0; i < 3; i++)
+  {
+    int key = result_keys[i];
+    char *value = result_values[i];
+    int j = 0;
+    while (key != keys[j] && value != values[j])
+    {
+      j += 1;
+      if (j == 3)
+      {
+        CU_FAIL("Found an entry that was never inserted or wrong order in keys and value arrays!");
+      }
+    }
+    found[j] = true;
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    CU_ASSERT(found[i]);
+  }
+  ioopm_hash_table_destroy(ht);
+  free(result_values);
+  free(result_keys);
+}
+
+
+void test_keys_and_values_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[3] = {No_Buckets, No_Buckets*2, No_Buckets*3};
+  char *values[3] = {"test1", "test2", "test3"};
+  bool found[3] = {false, false, false}; 
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  int *result_keys = ioopm_hash_table_keys(ht);
+  char **result_values = ioopm_hash_table_values(ht);
+
+  for (int i = 0; i < 3; i++)
+  {
+    int key = result_keys[i];
+    char *value = result_values[i];
+    int j = 0;
+    while (key != keys[j] && value != values[j])
+    {
+      j += 1;
+      if (j == 3)
+      {
+        CU_FAIL("Found an entry that was never inserted or wrong order in keys and value arrays!");
+      }
+    }
+    found[j] = true;
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    CU_ASSERT(found[i]);
+  }
+  free(result_keys);
+  free(result_values);
+  ioopm_hash_table_destroy(ht);
+}
+
+
+void test_values_empty_ht()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char **values = ioopm_hash_table_values(ht);
+  CU_ASSERT_PTR_NULL(values);
+  ioopm_hash_table_destroy(ht);
+  free(values);
+}
+
+
+void test_values_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  bool found[3] = {false, false, false}; 
+  char *values[] = {"test1", "test2", "test3"};
+  for ( int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  char **result_values = ioopm_hash_table_values(ht);
+
+  for (int i = 0; i < 3; i++)
+  {
+    char *value = result_values[i];
+    int j = 0;
+    while (value != values[j])
+    {
+      j += 1;
+      if (j == 3)
+      {
+        CU_FAIL("Found a value that was never inserted!");
+      }
+    }
+    found[j] = true;
+  }
+  for (int i = 0; i < 3; i++)
+  {
+    CU_ASSERT(found[i]);
+  }
+  ioopm_hash_table_destroy(ht);
+  free(result_values);
+}
+
+void test_values_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
+  bool found[4] = {false};
+  char *values[] = {"test1", "test2", "test3", "test4"};
+  for (int i = 0; i<4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  char **result_values = ioopm_hash_table_values(ht);
+  for (int i = 0; i<4; i++)
+  {
+    for (int j = 0; j<4; j++)
+    {
+      if (values[j] == result_values[i])
+      {
+        found[j] = true;
+        break;
+      }
+      if (j==4)
+      {
+        CU_FAIL("Found a value that was never inserted!");
+      }
+    }
+  }
+  for (int i = 0; i<4; i++)
+  {
+    CU_ASSERT(found[i]);
+  }
+  ioopm_hash_table_destroy(ht);
+  free(result_values);
+}
+
+void test_values_one_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = 42;
+  char *value = "test";
+  ioopm_hash_table_insert(ht, key, value);
+  char **values = ioopm_hash_table_values(ht);
+  CU_ASSERT_PTR_EQUAL(*values, value);
+  ioopm_hash_table_destroy(ht);
+  free(values);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -343,6 +600,19 @@ int main() {
     (CU_add_test(my_test_suite, "Test that clear-function clears hash table with single entry", test_clear_one_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Test that clear-function clears hash table with multiple entries in same bucket", test_clear_same_bucket) == NULL) ||
     (CU_add_test(my_test_suite, "Test that clear-function clears hash table with multiple entries in different buckets", test_clear_different_buckets) == NULL) ||
+    
+    (CU_add_test(my_test_suite, "Test finding keys in an empty hash table", test_keys_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding keys in a hash table with single entry", test_keys_one_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding keys in a hash table with multiple entries in same bucket", test_keys_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding keys in a hash table with multiple entries in different buckets", test_keys_different_buckets) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Test finding values in an empty hash table", test_values_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding values in a hash table with single entry", test_values_one_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding values in a hash table with multiple entries in same bucket", test_values_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding values in a hash table with multiple entries in different buckets", test_values_different_buckets) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Test finding keys and values in a hash table with multiple entries in same bucket", test_keys_and_values_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test finding keys and values in a hash table with multiple entries in different buckets", test_keys_and_values_different_buckets) == NULL) ||
     0
   )
     {
