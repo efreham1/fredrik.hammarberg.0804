@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "Hash_table.h"
 
 #define No_Buckets 17
@@ -237,7 +238,7 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
         entry_t *next_entry = sentinel->next;
         while (next_entry != NULL)
         {
-            if (next_entry->value==value)
+            if (strcmp(next_entry->value, value) == 0)
             {
                 return true;
             }

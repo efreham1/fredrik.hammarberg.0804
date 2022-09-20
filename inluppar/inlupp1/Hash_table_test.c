@@ -598,6 +598,99 @@ void test_not_has_key_multiple()
   CU_ASSERT(!ioopm_hash_table_has_key(ht, No_Buckets-3));
   ioopm_hash_table_destroy(ht);
 }
+void test_not_has_value_empty()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *value = "test";
+  CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, value));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_not_has_value_single_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *value = "test";
+  char *fake_value = "test2";
+  ioopm_hash_table_insert(ht, No_Buckets/2, value);
+  CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, fake_value));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_not_has_value_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  char *values[] = {"test1", "test2", "test3"};
+  char *fake_values[] = {"test4", "test5", "test6"};
+  for (int i = 0; i<3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  for (int i = 0; i<3; i++)
+  {
+    CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, fake_values[i]));
+  }
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_not_has_value_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
+  char *values[] = {"test1", "test2", "test3", "test4"};
+  char *fake_values[] = {"test5", "test6", "test7", "test8"};
+  for (int i = 0; i<4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  for (int i = 0; i<4; i++)
+  {
+    CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, fake_values[i]));
+  }
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_has_value_single_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *value = "test";
+  ioopm_hash_table_insert(ht, No_Buckets/2, value);
+  CU_ASSERT(ioopm_hash_table_has_value(ht, value));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_has_value_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
+  char *values[] = {"test1", "test2", "test3"};
+  for (int i = 0; i<3; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  for (int i = 0; i<3; i++)
+  {
+    CU_ASSERT(ioopm_hash_table_has_value(ht, values[i]));
+  }
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_has_value_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
+  char *values[] = {"test1", "test2", "test3", "test4"};
+  for (int i = 0; i<4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  for (int i = 0; i<4; i++)
+  {
+    CU_ASSERT(ioopm_hash_table_has_value(ht, values[i]));
+  }
+  ioopm_hash_table_destroy(ht);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -665,6 +758,11 @@ int main() {
     (CU_add_test(my_test_suite, "Test if hash table with multiple entries has existing key", test_has_key_multiple) == NULL) ||
     (CU_add_test(my_test_suite, "Test if hash table with single entry has non-existing key", test_not_has_key_single) == NULL) ||
     (CU_add_test(my_test_suite, "Test if hash table with multiple entries has non-existing key", test_not_has_key_multiple) == NULL) ||
+    
+    (CU_add_test(my_test_suite, "Test checking that value doesn't exist in an empty hash table", test_not_has_value_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "Test checking that value doesn't exist in a hash table with single entry", test_not_has_value_single_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test checking that value doesn't exist in a hash table with multiple entries in same bucket", test_not_has_value_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test checking that value doesn't exist in a hash table with multiple entries in different buckets", test_not_has_value_different_buckets) == NULL) ||
     0
   )
     {
