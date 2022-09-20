@@ -763,6 +763,10 @@ int main() {
     (CU_add_test(my_test_suite, "Test checking that value doesn't exist in a hash table with single entry", test_not_has_value_single_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Test checking that value doesn't exist in a hash table with multiple entries in same bucket", test_not_has_value_same_bucket) == NULL) ||
     (CU_add_test(my_test_suite, "Test checking that value doesn't exist in a hash table with multiple entries in different buckets", test_not_has_value_different_buckets) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Test checking that value exists in a hash table with single entry", test_has_value_single_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Test checking that value exists in a hash table with multiple entries in same bucket", test_has_value_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Test checking that value exists in a hash table with multiple entries in different buckets", test_has_value_different_buckets) == NULL) ||
     0
   )
     {
