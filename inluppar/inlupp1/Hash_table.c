@@ -226,12 +226,25 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
 
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
 {
-    return true;
+    return ioopm_hash_table_lookup(ht, key) != NULL;
 }
 
 bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
 {
-    return true;
+    for(int i = 0; i<No_Buckets; i++)
+    {
+        entry_t *sentinel = get_sentinel(ht, i);
+        entry_t *next_entry = sentinel->next;
+        while (next_entry != NULL)
+        {
+            if (next_entry->value==value)
+            {
+                return true;
+            }
+            next_entry = next_entry->next;
+        }        
+    }
+    return false;
 }
 
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
