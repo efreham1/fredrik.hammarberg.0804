@@ -56,10 +56,10 @@ void test_insert_two_backwards()
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   char* v1 = "test1";
   char* v2 = "test2";
-  ioopm_hash_table_insert(ht, (No_Buckets+3)*2, v1);
-  ioopm_hash_table_insert(ht, (No_Buckets+3)*1, v2);
-  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, 2),v1);
-  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, 1),v2);
+  ioopm_hash_table_insert(ht, No_Buckets*2+3, v1);
+  ioopm_hash_table_insert(ht, No_Buckets*1+3, v2);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, No_Buckets*2+3),v1);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, No_Buckets*1+3),v2);
   ioopm_hash_table_destroy(ht);
 }
 
@@ -71,7 +71,7 @@ void test_insert_multiple_backwards()
   {
     ioopm_hash_table_insert(ht, i, v);
   }
-  for (int i = -40; i<40; i++)
+  for (int i = -39; i<=40; i++)
   {
     CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, i),v)
   }
