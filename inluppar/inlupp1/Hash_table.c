@@ -86,17 +86,17 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
     entry_t *sentinel = get_sentinel(ht, key);
-    entry_t *entry = find_previous_entry_for_key(sentinel, key);
-    entry_t *next = entry->next;
+    entry_t *prev_entry = find_previous_entry_for_key(sentinel, key);
+    entry_t *curr_entry = prev_entry->next;
 
     /// Check if the next entry should be updated or not
-    if (next != NULL && next->key == key)
+    if (curr_entry != NULL && curr_entry->key == key)
     {
-        next->value = value;
+        curr_entry->value = value;
     }
     else
     {
-        entry->next = entry_create(key, value, next);
+        prev_entry->next = entry_create(key, value, curr_entry);
     }
     }
 
