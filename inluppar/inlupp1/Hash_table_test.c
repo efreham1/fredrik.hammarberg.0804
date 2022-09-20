@@ -51,6 +51,33 @@ void test_insert_multiple()
   ioopm_hash_table_destroy(ht);
 }
 
+void test_insert_two_backwards()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char* v1 = "test1";
+  char* v2 = "test2";
+  ioopm_hash_table_insert(ht, (No_Buckets+3)*2, v1);
+  ioopm_hash_table_insert(ht, (No_Buckets+3)*1, v2);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, 2),v1);
+  CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, 1),v2);
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_insert_multiple_backwards()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  char *v = "BRUH";
+  for (int i = 40; i>-40; i--)
+  {
+    ioopm_hash_table_insert(ht, i, v);
+  }
+  for (int i = -40; i<40; i++)
+  {
+    CU_ASSERT_PTR_EQUAL(*ioopm_hash_table_lookup(ht, i),v)
+  }
+  ioopm_hash_table_destroy(ht);
+}
+
 void test_insert_existing_key()
 {
   int k = 5;
@@ -714,7 +741,9 @@ int main() {
   if (
     (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
     (CU_add_test(my_test_suite, "Test for one insertion", test_insert_once) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for two insertions backwards", test_insert_two_backwards) == NULL) ||
     (CU_add_test(my_test_suite, "Test for multiple insertions", test_insert_multiple) == NULL) ||
+    (CU_add_test(my_test_suite, "Test for multiple insertions opposite order", test_insert_multiple_backwards) == NULL) ||
     (CU_add_test(my_test_suite, "Test for insertion to an existing key", test_insert_existing_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting a new key then an existing key and then a new key", test_insert_existing_and_new_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for inserting multiple entries in the same bucket", test_insert_multiple_values_in_same_bucket) == NULL) ||
