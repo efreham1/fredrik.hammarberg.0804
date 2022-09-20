@@ -553,6 +553,51 @@ void test_values_one_entry()
   free(values);
 }
 
+void test_not_has_key_empty()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  CU_ASSERT(!ioopm_hash_table_has_key(ht, No_Buckets));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_has_key_single()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_insert(ht, No_Buckets, "test");
+  CU_ASSERT(ioopm_hash_table_has_key(ht, No_Buckets));
+  ioopm_hash_table_destroy(ht);
+}
+void test_not_has_key_single()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_insert(ht, No_Buckets, "test");
+  CU_ASSERT(!ioopm_hash_table_has_key(ht, No_Buckets+1));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_has_key_multiple()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_insert(ht, No_Buckets, "test");
+  ioopm_hash_table_insert(ht, No_Buckets+1, "test");
+  ioopm_hash_table_insert(ht, No_Buckets+2, "test");
+  CU_ASSERT(ioopm_hash_table_has_key(ht, No_Buckets));
+  CU_ASSERT(ioopm_hash_table_has_key(ht, No_Buckets+1));
+  CU_ASSERT(ioopm_hash_table_has_key(ht, No_Buckets+2));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_not_has_key_multiple()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_insert(ht, No_Buckets, "test");
+  ioopm_hash_table_insert(ht, No_Buckets+1, "test");
+  ioopm_hash_table_insert(ht, No_Buckets+2, "test");
+  CU_ASSERT(!ioopm_hash_table_has_key(ht, No_Buckets-1));
+  CU_ASSERT(!ioopm_hash_table_has_key(ht, No_Buckets-2));
+  CU_ASSERT(!ioopm_hash_table_has_key(ht, No_Buckets-3));
+  ioopm_hash_table_destroy(ht);
+}
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -572,6 +617,7 @@ int main() {
   // name or description of the test, and the function that runs
   // the test in question. If you want to add another test, just
   // copy a line below and change the information
+
   if (
     (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
     (CU_add_test(my_test_suite, "Test for one insertion", test_insert_once) == NULL) ||
@@ -613,6 +659,12 @@ int main() {
 
     (CU_add_test(my_test_suite, "Test finding keys and values in a hash table with multiple entries in same bucket", test_keys_and_values_same_bucket) == NULL) ||
     (CU_add_test(my_test_suite, "Test finding keys and values in a hash table with multiple entries in different buckets", test_keys_and_values_different_buckets) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Test if empty hash table has non-existing key", test_not_has_key_empty) == NULL) ||
+    (CU_add_test(my_test_suite, "Test if hash table with single entry has existing key", test_has_key_single) == NULL) ||
+    (CU_add_test(my_test_suite, "Test if hash table with multiple entries has existing key", test_has_key_multiple) == NULL) ||
+    (CU_add_test(my_test_suite, "Test if hash table with single entry has non-existing key", test_not_has_key_single) == NULL) ||
+    (CU_add_test(my_test_suite, "Test if hash table with multiple entries has non-existing key", test_not_has_key_multiple) == NULL) ||
     0
   )
     {
