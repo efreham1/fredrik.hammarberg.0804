@@ -225,40 +225,91 @@ char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
     return result;
 }
 
-bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
-{
-    return ioopm_hash_table_lookup(ht, key) != NULL;
-}
 
-bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
-    for(int i = 0; i<No_Buckets; i++)
+    if (ioopm_hash_table_is_empty(ht))
+    {
+        return false;
+    }
+    for (int i = 0; i < No_Buckets; i++)
     {
         entry_t *sentinel = get_sentinel(ht, i);
         entry_t *next_entry = sentinel->next;
         while (next_entry != NULL)
         {
-            if (strcmp(next_entry->value, value) == 0)
+            int current_key = next_entry->key;
+            char *current_value = next_entry->value;
+            if (!pred(current_key, current_value, arg))
             {
-                return true;
+                return false;
             }
             next_entry = next_entry->next;
-        }        
+        }
     }
-    return false;
-}
-
-bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
-{
     return true;
 }
 
 bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
-    return true;
+    if (ioopm_hash_table_is_empty(ht))
+    {
+        return false;
+    }
+    for (int i = 0; i < No_Buckets; i++)
+    {
+        entry_t *sentinel = get_sentinel(ht, i);
+        entry_t *next_entry = sentinel->next;
+        while (next_entry != NULL)
+        {
+            int current_key = next_entry->key;
+            char *current_value = next_entry->value;
+            if (pred(current_key, current_value, arg))
+            {
+                return true;
+            }
+            next_entry = next_entry->next;
+        }
+    }
+    return false;
 }
+
 
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function apply_fun, void *arg)
 {
-    return;
+    for (int i = 0; i < No_Buckets; i++)
+    {
+        entry_t *sentinel = get_sentinel(ht, i);
+        entry_t *next_entry = sentinel->next;
+        while (next_entry != NULL)
+        {
+            int current_key = next_entry->key;
+            char **current_value_p = &next_entry->value;
+            apply_fun(current_key, current_value_p, arg);
+            next_entry = next_entry->next;
+        }
+    }
+    
+}
+
+static bool has_key(int key, char *value, void *extra)
+{
+    int *looking_for = extra;
+    return key==*looking_for;
+}
+
+static bool has_value(int key, char *value, void *extra)
+{
+    char **looking_for = extra;
+    return strcmp(value, *looking_for)==0;
+}
+
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
+{
+    return ioopm_hash_table_any(ht, has_key, &key);
+}
+
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
+{
+    return ioopm_hash_table_any(ht, has_value, &value);
 }
