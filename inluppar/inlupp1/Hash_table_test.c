@@ -4,6 +4,10 @@
 
 #define No_Buckets 17
 
+typedef bool(*ioopm_predicate)(int key, char *value, void *extra);
+typedef void(*ioopm_apply_function)(int key, char **value, void *extra);
+
+
 int init_suite(void) {
   // Change this function if you want to do something *before* you
   // run a test suite
@@ -718,6 +722,175 @@ void test_has_value_same_bucket()
   ioopm_hash_table_destroy(ht);
 }
 
+bool predicate_not_true_all(int key, char *value, void *extra)
+{
+  int *got_int = extra;
+  bool got_extra = *got_int == 8;
+  return got_extra || strchr(value, 'c') != NULL;
+}
+
+bool predicate_not_true_any(int key, char *value, void *extra)
+{
+  int *got_int = extra;
+  bool got_extra = *got_int == 3;
+  return got_extra || strlen(value)>4;
+}
+
+bool predicate_true_all(int key, char *value, void *extra)
+{
+  int *got_int = extra;
+  bool got_extra = *got_int == 2;
+  return got_extra && strchr(value, 'a') != NULL;
+}
+
+bool predicate_true_any(int key, char *value, void *extra)
+{
+  int *got_int = extra;
+  bool got_extra = *got_int == 2;
+  return got_extra && strlen(value)<3;
+}
+
+char *values[4] = {"a", "ab", "abc", "abcd"};
+ioopm_predicate predicates[4] = {predicate_not_true_all, predicate_not_true_any, predicate_true_all, predicate_true_any};
+
+void test_predicates_empty_ht()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int digit = 2;
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[0], &digit));
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicates[1], &digit));
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[2], &digit));
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicates[3], &digit));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_predicates_single_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int digit = 2;
+  ioopm_hash_table_insert(ht, No_Buckets/2, values[0]);
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[0], &digit));
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicates[1], &digit));
+  CU_ASSERT(ioopm_hash_table_all(ht, predicates[2], &digit));
+  CU_ASSERT(ioopm_hash_table_any(ht, predicates[3], &digit));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_predicates_multiple_entries_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int digit = 2;
+  int keys[4] = {No_Buckets*3+No_Buckets/2, No_Buckets*1+No_Buckets/2, No_Buckets*5+No_Buckets/2, No_Buckets*7+No_Buckets/2};
+  for (int i = 0; i < 4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[0], &digit));
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicates[1], &digit));
+  CU_ASSERT(ioopm_hash_table_all(ht, predicates[2], &digit));
+  CU_ASSERT(ioopm_hash_table_any(ht, predicates[3], &digit));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_predicates_multiple_entries_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int digit = 2;
+  int keys[4] = {No_Buckets+2, No_Buckets+4, No_Buckets, No_Buckets+1};
+  for (int i = 0; i < 4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values[i]);
+  }
+  CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[0], &digit));
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicates[1], &digit));
+  CU_ASSERT(ioopm_hash_table_all(ht, predicates[2], &digit));
+  CU_ASSERT(ioopm_hash_table_any(ht, predicates[3], &digit));
+  ioopm_hash_table_destroy(ht);
+}
+
+char *values1[5] = {"H", "HE", "HEJ", "HEJS", "HEJSA"};
+char *values2[5] = {"a", "ab", "abc", "abcd", "abcde"};
+
+void apply_function(int key, char **value, void *extra)
+{
+  char **values_local = extra;
+  if (key%No_Buckets==0 && key != 0)
+  {
+    int idx = key/No_Buckets-1;
+    idx++;
+    *value = values_local[idx];
+  }
+  else
+  {
+    int idx = key;
+    idx++;
+    *value = values_local[idx];
+  }
+}
+
+bool predicate_for_function(int key, char *value, void *extra)
+{
+  if (key%No_Buckets==0 && key != 0)
+  {
+    int idx = key/No_Buckets-1;
+    idx++;
+    return strcmp(values2[idx], value) == 0;
+  }
+  else
+  {
+    int idx = key;
+    idx++;
+    return strcmp(values2[idx], value) == 0;
+  }
+}
+
+void test_apply_all_empty_ht()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  ioopm_hash_table_apply_to_all(ht, apply_function, &values2);
+  CU_ASSERT(ioopm_hash_table_is_empty(ht));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_apply_all_single_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int key = 3;
+  ioopm_hash_table_insert(ht, key, values1[key]);
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicate_for_function, NULL));
+  ioopm_hash_table_apply_to_all(ht, apply_function, values2);
+  CU_ASSERT(ioopm_hash_table_all(ht, predicate_for_function, NULL));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_apply_all_multiple_in_different_buckets()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[4] = {0, 1, 2, 3};
+  for (int i = 0; i < 4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values1[i]);
+  }
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicate_for_function, NULL));
+  ioopm_hash_table_apply_to_all(ht, apply_function, &values2);
+  CU_ASSERT(ioopm_hash_table_all(ht, predicate_for_function, NULL));
+  ioopm_hash_table_destroy(ht);
+}
+
+void test_apply_all_multiple_in_same_bucket()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create();
+  int keys[4] = {No_Buckets*1, No_Buckets*2, No_Buckets*3, No_Buckets*4};
+  for (int i = 0; i < 4; i++)
+  {
+    ioopm_hash_table_insert(ht, keys[i], values1[i]);
+  }
+  CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicate_for_function, NULL));
+  ioopm_hash_table_apply_to_all(ht, apply_function, &values2);
+  CU_ASSERT(ioopm_hash_table_all(ht, predicate_for_function, NULL));
+  ioopm_hash_table_destroy(ht);
+}
+
 int main() {
   // First we try to set up CUnit, and exit if we fail
   if (CU_initialize_registry() != CUE_SUCCESS)
@@ -796,6 +969,18 @@ int main() {
     (CU_add_test(my_test_suite, "Test checking that value exists in a hash table with single entry", test_has_value_single_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Test checking that value exists in a hash table with multiple entries in same bucket", test_has_value_same_bucket) == NULL) ||
     (CU_add_test(my_test_suite, "Test checking that value exists in a hash table with multiple entries in different buckets", test_has_value_different_buckets) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Applying predicates to an empty hash table", test_predicates_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Applying predicates to an hash table with a single entry", test_predicates_single_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Applying predicates to an hash table with multiple entries in same bucket", test_predicates_multiple_entries_same_bucket) == NULL) ||
+    (CU_add_test(my_test_suite, "Applying predicates to an hash table with a single entries in different buckets", test_predicates_multiple_entries_different_buckets) == NULL) ||
+    
+    (CU_add_test(my_test_suite, "Applying function to all elements in an empty hash table", test_apply_all_empty_ht) == NULL) ||
+    (CU_add_test(my_test_suite, "Applying function to all elements in hash table with single entry", test_apply_all_single_entry) == NULL) ||
+    (CU_add_test(my_test_suite, "Applying function to all elements in hash table with multiple entries in different buckets", test_apply_all_multiple_in_different_buckets) == NULL) ||
+    (CU_add_test(my_test_suite, "Applying function to all elements in hash table with multiple entries in same bucket", test_apply_all_multiple_in_same_bucket) == NULL) ||
+    
+    
     0
   )
     {
