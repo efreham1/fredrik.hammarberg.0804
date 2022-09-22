@@ -1,4 +1,28 @@
 Kan göra nu:
 H19
+* Identisk: samma pekare till datatyp i minnet
+* Ekvivalent: samma värde
+
+* I funktionella språk: eftersom man inte kan ha "globala" variabler
+  som går att nå så spelar identisk ingen roll. Man använder inte pekare
+  i haskell.
+* Aliasing: när samma data i minnet har flera olika namn (t.ex. i C
+  så är det när två pointer-variabler är ekvivalenta).Aliasing
+ 
+E10 (void-pekare för generectitet)
+*  Vad är genericitet? Att inte specifiera datatyp i en algoritm för 
+  att kunna använda den i flera sammanhang istället för att definiera
+  ny algoritm för varje datatyp.
+* Exempel: ioopm_hash_table_all(hash_table.c:229)
+
+
+
+F13 (iteration vs rekursion)
+*rekursion kan vara svårare att förstå än rekursion men kan ge simplare kod
+*rekursion kan ibland göra saker mer effektivit än iteration
+*alla rekursiva funktioner går inte att beskriva iterativt, t.ex. tornen i Hanoi
+*ja? iteration innebär att man går igenom något ett element i taget på samma ställe och rekursion att
+  man går igenom ett element i taget genom att anropa en funktion igen.
+*exempel Hash_table.c:168 vs. linked_list.c:86
 
 Kan göra snart:

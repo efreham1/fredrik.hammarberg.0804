@@ -79,7 +79,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(void)
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
     ioopm_hash_table_clear(ht);
-    free(&ht->buckets);
+    free(ht);
 }
 
 //add key => value entry in hash table ht
