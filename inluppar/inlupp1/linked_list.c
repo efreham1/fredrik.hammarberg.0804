@@ -83,6 +83,7 @@ static entry_t *get_entry(ioopm_list_t *list, int index)
 
 int ioopm_linked_list_get(ioopm_list_t *list, int index)
 {
+    assert(index < list->length && index >= 0);
     entry_t *entry = get_entry(list, index);
     int entry_value = entry->value;
     return entry_value;
@@ -140,7 +141,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
     }
 
     entry_t *entry_before = get_entry(list, index-1);
-    entry_t *entry_after = get_entry(list, index+1);
+    entry_t *entry_after = get_entry(list, index);
     entry_t *entry_p = create_entry(value, entry_after);
     entry_before->next = entry_p;
     list->length++;
