@@ -93,6 +93,11 @@ void test_prepend_multiple_entries()
   ioopm_linked_list_destroy(ll);
 }
 
+void test_append_prepend()
+{
+  
+}
+
 void test_length_empty_list()
 {
   ioopm_list_t *ll = make_test_list(0, 0);
@@ -165,9 +170,9 @@ void test_clear_multiple_entries()
   }
 }
 
-void test_append_prepend()
+void test_insert_empty_list()
 {
-  //TODO
+
 }
 
 int main()
