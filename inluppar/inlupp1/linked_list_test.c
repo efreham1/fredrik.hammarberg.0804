@@ -95,7 +95,14 @@ void test_prepend_multiple_entries()
 
 void test_append_prepend()
 {
-  
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  for (int i = 0; i < 2; i++)
+  {
+    ioopm_linked_list_append(ll, i);
+    ioopm_linked_list_prepend(ll, i);
+  }
+
+  ioopm_linked_list_destroy(ll);
 }
 
 void test_length_empty_list()
