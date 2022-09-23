@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "linked_list.h"
 
 typedef struct list ioopm_list_t;
@@ -70,17 +71,21 @@ int ioopm_linked_list_length(ioopm_list_t *list)
     return list->length;
 }
 
-int ioopm_linked_list_get(ioopm_list_t *list, int index)
+static entry_t *get_entry(ioopm_list_t *list, int index)
 {
-    entry_t *current_entry_p = list->sentinel.next;
-    
-    for(int i = 0; i < index; i++)
+    entry_t *current_entry_p = &list->sentinel;
+    for(int i = -1; i < index; i++)
     {
         current_entry_p = current_entry_p->next;
     }
-    int entry_value = current_entry_p->value;
+    return current_entry_p;
+}
+
+int ioopm_linked_list_get(ioopm_list_t *list, int index)
+{
+    entry_t *entry = get_entry(list, index);
+    int entry_value = entry->value;
     return entry_value;
-    
 }
 
 static void help_clear(entry_t *entry)
@@ -119,6 +124,26 @@ bool ioopm_linked_list_is_empty(ioopm_list_t *list)
 
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
 {
+    int list_length = list->length;
+    assert(list_length >= index && index >= 0);
+      
+    if (index == 0)
+    {
+        ioopm_linked_list_prepend(list, value);
+        return;
+    }
+
+    if (index == list_length)
+    {
+        ioopm_linked_list_append(list, value);
+        return;
+    }
+
+    entry_t *entry_before = get_entry(list, index-1);
+    entry_t *entry_after = get_entry(list, index+1);
+    entry_t *entry_p = create_entry(value, entry_after);
+    entry_before->next = entry_p;
+    list->length++;
     return;
 }
 

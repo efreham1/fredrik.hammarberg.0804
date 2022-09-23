@@ -98,10 +98,30 @@ void test_append_prepend()
   ioopm_list_t *ll = ioopm_linked_list_create();
   for (int i = 0; i < 2; i++)
   {
-    ioopm_linked_list_append(ll, i);
-    ioopm_linked_list_prepend(ll, i);
+    ioopm_linked_list_append(ll, list_entries[i+2]);
+    ioopm_linked_list_prepend(ll, list_entries[i]);
   }
+  for (int i = 0; i < 2; i++)
+  {
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), list_entries[1-i]);
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i+2), list_entries[i+2]);
+  }
+  ioopm_linked_list_destroy(ll);
+}
 
+void test_prepend_append()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  for (int i = 0; i < 2; i++)
+  {
+    ioopm_linked_list_prepend(ll, list_entries[i]);
+    ioopm_linked_list_append(ll, list_entries[i+2]);
+  }
+  for (int i = 0; i < 2; i++)
+  {
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), list_entries[1-i]);
+    CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i+2), list_entries[i+2]);
+  }
   ioopm_linked_list_destroy(ll);
 }
 
@@ -179,7 +199,91 @@ void test_clear_multiple_entries()
 
 void test_insert_empty_list()
 {
+  ioopm_list_t *ll = make_test_list(0, 0);
+  ioopm_linked_list_insert(ll, 0, 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), 42);
+  ioopm_linked_list_destroy(ll);
+}
 
+void test_insert_single_element_start()
+{
+  ioopm_list_t *ll = make_test_list(1, 0);
+  ioopm_linked_list_insert(ll, 0, 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 1), list_entries[0]);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_insert_single_element_end()
+{
+  ioopm_list_t *ll = make_test_list(1, 0);
+  ioopm_linked_list_insert(ll, 1, 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 1), 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), list_entries[0]);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_insert_multiple_elements_start()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_linked_list_insert(ll, 0, 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), 42);
+  for (int i = 0; i < 11; i++)
+  {
+    if(i != 0)
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), list_entries[i-1]);
+    }
+    else
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), 42);
+    }
+  }
+  
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_insert_multiple_elements_end()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_linked_list_insert(ll, 10, 42);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 10), 42);
+  for (int i = 0; i < 11; i++)
+  {
+    if(i != 10)
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), list_entries[i]);
+    }
+    else
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), 42);
+    }
+  }
+  
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_insert_multiple_elements_middle()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_linked_list_insert(ll, 5, 42);
+  for (int i = 0; i < 11; i++)
+  {
+    if(i < 5)
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), list_entries[i]);
+    }
+    else if (i>5)
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), list_entries[i-1]);
+    }
+    else
+    {
+      CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, i), 42);
+    }
+  }
+  
+  ioopm_linked_list_destroy(ll);
 }
 
 int main()
@@ -212,6 +316,9 @@ int main()
 
       (CU_add_test(my_test_suite, "Test prepending with a single entry", test_prepend_empty_list) == NULL) ||
       (CU_add_test(my_test_suite, "Test prepending with multiple entries", test_prepend_multiple_entries) == NULL) ||
+      
+      (CU_add_test(my_test_suite, "Test prepending and appending", test_prepend_append) == NULL) ||
+      (CU_add_test(my_test_suite, "Test appending  and prepending", test_append_prepend) == NULL) ||
 
       (CU_add_test(my_test_suite, "Test length of an empty list", test_length_empty_list) == NULL) ||
       (CU_add_test(my_test_suite, "Test length of a list with a single entry", test_length_single_entry) == NULL) ||
@@ -224,6 +331,13 @@ int main()
       (CU_add_test(my_test_suite, "Test clear on an empty list", test_clear_empty_list) == NULL) ||
       (CU_add_test(my_test_suite, "Test clear on a list with a single entry", test_clear_single_entry) == NULL) ||
       (CU_add_test(my_test_suite, "Test clear on a list with multiple entries", test_clear_multiple_entries) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test insert on an empty list", test_insert_empty_list) == NULL) ||
+      (CU_add_test(my_test_suite, "Test insert at start on a list with a single entry", test_insert_single_element_start) == NULL) ||
+      (CU_add_test(my_test_suite, "Test insert at end on a list with a single entry", test_insert_single_element_end) == NULL) ||
+      (CU_add_test(my_test_suite, "Test insert at start on a list with multiple entries", test_insert_multiple_elements_start) == NULL) ||
+      (CU_add_test(my_test_suite, "Test insert at end on a list with multiple entries", test_insert_multiple_elements_end) == NULL) ||
+      (CU_add_test(my_test_suite, "Test insert in middle on a list with multiple entries", test_insert_multiple_elements_middle) == NULL) ||
 
       0)
   {

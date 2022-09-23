@@ -98,7 +98,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
     {
         prev_entry->next = entry_create(key, value, curr_entry);
     }
-    }
+}
 
 //lookup value for key in hash table ht
 char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
