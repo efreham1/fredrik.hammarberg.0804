@@ -421,6 +421,49 @@ void test_apply_func_multiple()
 
 //TODO: test för remove och contains
 
+void test_remove_from_list_single_entry()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  ioopm_linked_list_append(ll, 0);
+  ioopm_linked_list_remove(ll, 0);
+  CU_ASSERT(ioopm_linked_list_is_empty(ll));
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_remove_from_list_multiple_entries()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  int first = 0;
+  int middle_left = 5;
+  int middle_right = 7;
+  int last = 10;
+  int elements_to_append[4] = {first, middle_left, middle_right,last};
+  for (int i = 0; i < 4; i++){
+    ioopm_linked_list_append(ll, elements_to_append[i]);
+  }
+  //test remove middle element
+  int middle_left_returned = ioopm_linked_list_remove(ll, 1);
+  CU_ASSERT_EQUAL(middle_left_returned, middle_left);
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 3); 
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), first);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 1), middle_right);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 2), last);
+
+  //test remove first element
+  int first_returned = ioopm_linked_list_remove(ll, 0);
+  CU_ASSERT_EQUAL(first_returned, first);
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 2);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), middle_right);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 1), last);
+
+  //test remove last element
+  int last_removed = ioopm_linked_list_remove(ll, 1);
+  CU_ASSERT_EQUAL(last_removed, last);
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 1);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(ll, 0), middle_right);
+
+  ioopm_linked_list_destroy(ll);
+}
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -481,6 +524,9 @@ int main()
       (CU_add_test(my_test_suite, "Test apply function to all on an empty list", test_apply_func_empty) == NULL) ||
       (CU_add_test(my_test_suite, "Test apply function to all on a list with a single entry", test_apply_func_single) == NULL) ||
       (CU_add_test(my_test_suite, "Test apply function to all on a list with multiple entries", test_apply_func_multiple) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test remove entry from list with single entry", test_remove_from_list_single_entry) == NULL) ||
+      (CU_add_test(my_test_suite, "Test remove entries (first, middle, last) from list with multiple entries", test_remove_from_list_multiple_entries) == NULL) ||
 
       0)
   {
