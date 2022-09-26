@@ -153,9 +153,11 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index)
     assert(index<list->length);
     entry_t *prev_entry = get_entry(list, index-1);
     entry_t *curr_ent = prev_entry->next;
+    int value = curr_ent->value;
     prev_entry->next = curr_ent->next;
     free(curr_ent);
     list->length--;
+    return value;
 }
 
 bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
