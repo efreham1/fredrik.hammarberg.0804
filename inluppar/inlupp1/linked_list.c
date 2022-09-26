@@ -22,14 +22,14 @@ struct list
 static entry_t *create_entry(int value, entry_t *next)
 {
     entry_t *entry_p = calloc(1, sizeof(entry_t));
-    *entry_p = (entry_t) {.value = value, .next = next};
+    *entry_p = (entry_t){.value = value, .next = next};
     return entry_p;
 }
 
 static void reset_end(ioopm_list_t *ll, entry_t *start_entry)
 {
     entry_t *entry = start_entry;
-    while(entry->next != NULL)
+    while (entry->next != NULL)
     {
         entry = entry->next;
     }
@@ -74,7 +74,7 @@ int ioopm_linked_list_length(ioopm_list_t *list)
 static entry_t *get_entry(ioopm_list_t *list, int index)
 {
     entry_t *current_entry_p = &list->sentinel;
-    for(int i = -1; i < index; i++)
+    for (int i = -1; i < index; i++)
     {
         current_entry_p = current_entry_p->next;
     }
@@ -127,7 +127,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
 {
     int list_length = list->length;
     assert(list_length >= index && index >= 0);
-      
+
     if (index == 0)
     {
         ioopm_linked_list_prepend(list, value);
@@ -140,7 +140,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
         return;
     }
 
-    entry_t *entry_before = get_entry(list, index-1);
+    entry_t *entry_before = get_entry(list, index - 1);
     entry_t *entry_after = get_entry(list, index);
     entry_t *entry_p = create_entry(value, entry_after);
     entry_before->next = entry_p;
@@ -153,22 +153,60 @@ int ioopm_linked_list_remove(ioopm_list_t *list, int index)
     return 0;
 }
 
-bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
-{
-    return true;
-}
-
 bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
 {
+    if (ioopm_linked_list_is_empty(list))
+    {
+        return false;
+    }
+    entry_t* current_entry = list->sentinel.next;
+    while(current_entry != NULL)
+    {
+        if (!prop(current_entry->value, extra))
+        {
+            return false;
+        }
+        current_entry = current_entry->next;
+    }
     return true;
 }
 
 bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
 {
-    return true;
+    if (ioopm_linked_list_is_empty(list))
+    {
+        return false;
+    }
+    entry_t* current_entry = list->sentinel.next;
+    while(current_entry != NULL)
+    {
+        if (prop(current_entry->value, extra))
+        {
+            return true;
+        }
+        current_entry = current_entry->next;
+    }
+    return false;
 }
+
+static bool is_equal(int value, void* extra)
+{
+    int *value_for_comparison = extra;
+    return value == *value_for_comparison;
+}
+
+bool ioopm_linked_list_contains(ioopm_list_t *list, int element)
+{
+    int ele = element;
+    return ioopm_linked_list_any(list, (ioopm_int_predicate) is_equal, &ele);
+}
+
 
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra)
 {
-    return;
+    entry_t *curr_ent = list->sentinel.next;
+    for (int i = 0; i < list->end; i++)
+    {
+        fun(&curr_ent->value, extra);
+    }
 }

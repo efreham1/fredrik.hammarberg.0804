@@ -286,6 +286,141 @@ void test_insert_multiple_elements_middle()
   ioopm_linked_list_destroy(ll);
 }
 
+bool predicate_not_true_any(int value, void *extra)
+{
+  int *ext_p = extra;
+  bool got_extra = *ext_p == 2;
+  return got_extra || value == 0;
+}                 
+
+bool predicate_not_true_all(int value, void *extra)
+{
+  int *ext_p = extra;
+  bool got_extra = *ext_p == 7;
+  return got_extra || value == 4;
+}         
+
+bool predicate_true_any(int value, void *extra)
+{
+  int *ext_p = extra;
+  bool got_extra = *ext_p == 3;
+  return got_extra && value == 8;
+}         
+
+bool predicate_true_all(int value, void *extra)
+{
+  int *ext_p = extra;
+  bool got_extra = *ext_p == 3;
+  return got_extra && value%4 == 0;
+}         
+
+ioopm_int_predicate predicates[4] = {predicate_not_true_any, predicate_not_true_all, predicate_true_any, predicate_true_all};
+
+void test_apply_predicates_empty()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  int extra = 3;
+  for (int i = 0; i < 4; i+=2)
+  {
+    CU_ASSERT_FALSE(ioopm_linked_list_any(ll, predicates[i], &extra));
+    CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicates[i+1], &extra));
+  }
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_apply_predicates_single()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  int extra = 3;
+  int value = 8;
+  ioopm_linked_list_append(ll, value);
+  CU_ASSERT_FALSE(ioopm_linked_list_any(ll, predicates[0], &extra));
+  CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicates[1], &extra));
+  CU_ASSERT(ioopm_linked_list_any(ll, predicates[2], &extra));
+  CU_ASSERT(ioopm_linked_list_all(ll, predicates[3], &extra));
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_apply_predicates_multiple()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  int extra = 3;
+  int values[7] = {4, 16, 8, 12, 20, 32, 28};
+  for (int i = 0; i < 7; i++)
+  {
+    ioopm_linked_list_append(ll, values[i]);
+  }
+  CU_ASSERT_FALSE(ioopm_linked_list_any(ll, predicates[0], &extra));
+  CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicates[1], &extra));
+  CU_ASSERT(ioopm_linked_list_any(ll, predicates[2], &extra));
+  CU_ASSERT(ioopm_linked_list_all(ll, predicates[3], &extra));
+  ioopm_linked_list_destroy(ll);
+}
+
+int values1[5] = {1, 2, 3, 4, 5};
+int values2[5] = {6, 7, 8, 9, 10};
+
+void test_function(int *value, void *extra)
+{
+  for (int i = 0; i < 5; i++)
+  {
+    if (*value == values1[i])
+    {
+      *value = values2[i];
+      return;
+    }
+  }
+}
+
+bool predicate_test_function(int value, void *extra)
+{
+  for (int i = 0; i < 5; i++)
+  {
+    if (value == values2[i])
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+void test_apply_func_empty()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
+  ioopm_linked_list_apply_to_all(ll, test_function, NULL);
+  CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 0);
+  ioopm_linked_list_destroy(ll);  
+}
+
+void test_apply_func_single()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  ioopm_linked_list_append(ll, values1[2]);
+  CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
+  ioopm_linked_list_apply_to_all(ll, test_function, NULL);
+  CU_ASSERT(ioopm_linked_list_all(ll, predicate_test_function, NULL));
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 1);
+  ioopm_linked_list_destroy(ll);  
+}
+
+void test_apply_func_multiple()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create();
+  for (int i = 0; i < 5; i++)
+  {
+    ioopm_linked_list_append(ll, values1[i]);
+  }
+  CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
+  ioopm_linked_list_apply_to_all(ll, test_function, NULL);
+  CU_ASSERT(ioopm_linked_list_all(ll, predicate_test_function, NULL));
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 5);
+  ioopm_linked_list_destroy(ll);  
+}
+
+//TODO: test för remove och contains
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -338,6 +473,14 @@ int main()
       (CU_add_test(my_test_suite, "Test insert at start on a list with multiple entries", test_insert_multiple_elements_start) == NULL) ||
       (CU_add_test(my_test_suite, "Test insert at end on a list with multiple entries", test_insert_multiple_elements_end) == NULL) ||
       (CU_add_test(my_test_suite, "Test insert in middle on a list with multiple entries", test_insert_multiple_elements_middle) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test predicates on an empty list", test_apply_predicates_empty) == NULL) ||
+      (CU_add_test(my_test_suite, "Test predicates on a list with a single entry", test_apply_predicates_single) == NULL) ||
+      (CU_add_test(my_test_suite, "Test predicates on a list with multiple entries", test_apply_predicates_multiple) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test apply function to all on an empty list", test_apply_func_empty) == NULL) ||
+      (CU_add_test(my_test_suite, "Test apply function to all on a list with a single entry", test_apply_func_single) == NULL) ||
+      (CU_add_test(my_test_suite, "Test apply function to all on a list with multiple entries", test_apply_func_multiple) == NULL) ||
 
       0)
   {
