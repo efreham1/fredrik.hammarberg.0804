@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include "linked_list.h"
 
 #pragma once
 
@@ -62,7 +63,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht);
 /// @brief return the keys for all entries in a hash map (in no particular order, but same as ioopm_hash_table_values)
 /// @param ht hash table operated upon
 /// @return an array of keys for hash table h
-int *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
 
 /// @brief return the values for all entries in a hash map (in no particular order, but same as ioopm_hash_table_keys)
 /// @param ht hash table operated upon
