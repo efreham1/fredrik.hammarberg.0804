@@ -63,6 +63,126 @@ void test_has_next_true()
   ioopm_iterator_destroy(iter);
 }
 
+void test_current_start()
+{
+  ioopm_list_t *ll = make_test_list(2, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_current_middle()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  for (int i = 0; i < 5; i++)
+  {
+    ioopm_iterator_next(iter);
+  }
+  
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[5])
+
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_current_end()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  for (int i = 0; i < 9; i++)
+  {
+    ioopm_iterator_next(iter);
+  }
+  
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[9])
+
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_next_single()
+{
+  ioopm_list_t *ll = make_test_list(1, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[0])
+  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[0])
+  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[0])
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_next_two()
+{
+  ioopm_list_t *ll = make_test_list(2, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[1])
+  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[1])
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_next_multiple()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  for (int i = 0; i < 9; i++)
+  {
+    CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[i+1]);
+  }
+  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[9]);
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+  
+void test_reset_start()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  ioopm_iterator_reset(iter);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_reset_middle()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  for (int i = 0; i < 4; i++)
+  {
+    ioopm_iterator_next(iter);
+  }
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[4])
+  ioopm_iterator_reset(iter);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_reset_end()
+{
+  ioopm_list_t *ll = make_test_list(10, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  for (int i = 0; i < 9; i++)
+  {
+    ioopm_iterator_next(iter);
+  }
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[9])
+  ioopm_iterator_reset(iter);
+  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  ioopm_iterator_destroy(iter);
+  ioopm_linked_list_destroy(ll);
+}
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -89,6 +209,18 @@ int main()
       (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
       (CU_add_test(my_test_suite, "Test for has next when false", test_has_next_false) == NULL) ||
       (CU_add_test(my_test_suite, "Test for has next when true", test_has_next_true) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test for next on a list with a single element", test_next_single) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for next on a list with two elements", test_next_two) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for next on a list with multiple elements", test_next_multiple) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test for current at start of a list with multiple elements", test_current_start) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for current at middle of a list with multiple elements", test_current_middle) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for current at end of a list with multiple elements", test_current_end) == NULL) ||
+
+      (CU_add_test(my_test_suite, "Test for reset at start of a list with multiple elements", test_reset_start) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for reset at middle of a list with multiple elements", test_reset_middle) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for reset at end of a list with multiple elements", test_reset_end) == NULL) ||
 
       0)
   {
