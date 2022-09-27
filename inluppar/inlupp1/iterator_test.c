@@ -43,7 +43,25 @@ void test_create_destroy()
 }
 
 
-  
+//has_next reset
+
+void test_has_next_false()
+{
+  ioopm_list_t *ll = make_test_list(1, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_FALSE(ioopm_iterator_has_next(iter));
+  ioopm_linked_list_destroy(ll);
+  ioopm_iterator_destroy(iter);
+}
+
+void test_has_next_true()
+{
+  ioopm_list_t *ll = make_test_list(2, 0);
+  ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_TRUE(ioopm_iterator_has_next(iter));
+  ioopm_linked_list_destroy(ll);
+  ioopm_iterator_destroy(iter);
+}
 
 int main()
 {
@@ -69,6 +87,8 @@ int main()
 
   if (
       (CU_add_test(my_test_suite, "Test for create and destroy", test_create_destroy) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for has next when false", test_has_next_false) == NULL) ||
+      (CU_add_test(my_test_suite, "Test for has next when true", test_has_next_true) == NULL) ||
 
       0)
   {
