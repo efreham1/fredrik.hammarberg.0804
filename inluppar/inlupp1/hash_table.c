@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "hash_table.h"
+#include "linked_list.h"
 
 #define No_Buckets 17
 
@@ -178,27 +179,25 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
     }
 }
 
-int *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
-    int *result = calloc(ioopm_hash_table_size(ht), sizeof(int));
-    int idx = 0;
+    ioopm_list_t *list = ioopm_linked_list_create();
     for(int i = 0; i<No_Buckets; i++)
     {
         entry_t *sentinel = get_sentinel(ht, i);
         entry_t *next_entry = sentinel->next;
         while (next_entry != NULL)
         {
-            result[idx] = next_entry->key;
-            idx++;
+            ioopm_linked_list_append(list, next_entry->key);
             next_entry = next_entry->next;
         }        
     }
-    if (idx==0)
+    if (ioopm_linked_list_length(list)==0)
     {
-        free(result);
+        ioopm_linked_list_destroy(list);
         return NULL;
     }
-    return result;
+    return list;
 }
 
 char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
