@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "linked_list.h"
 
-#define No_Buckets 17
-
 typedef bool (*ioopm_int_predicate)(int value, void *extra);
 typedef void (*ioopm_apply_int_function)(int *value, void *extra);
 

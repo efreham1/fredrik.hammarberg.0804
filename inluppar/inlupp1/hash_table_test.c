@@ -1,6 +1,6 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
-#include "Hash_table.h"
+#include "hash_table.h"
 
 #define No_Buckets 17
 

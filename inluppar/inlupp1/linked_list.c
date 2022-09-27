@@ -3,7 +3,6 @@
 #include <assert.h>
 #include "linked_list.h"
 
-typedef struct list ioopm_list_t;
 typedef struct entry entry_t;
 
 struct entry
