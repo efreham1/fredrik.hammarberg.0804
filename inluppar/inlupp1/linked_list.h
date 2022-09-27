@@ -1,5 +1,6 @@
 #pragma once
 #include <stdbool.h>
+#include "iterator.h"
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
 typedef bool(*ioopm_int_predicate)(int value, void *extra);

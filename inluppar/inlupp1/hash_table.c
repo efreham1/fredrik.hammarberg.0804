@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "Hash_table.h"
+#include "hash_table.h"
 
 #define No_Buckets 17
 
