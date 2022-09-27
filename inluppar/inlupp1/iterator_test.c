@@ -34,8 +34,14 @@ static ioopm_list_t *make_test_list(int no_entries, int start_idx)
 
 void test_create_destroy()
 {
-  ioopm_list_t *ll = ioopm_linked_list_create();
-  CU_ASSERT_PTR_NOT_NULL(ll);
+  ioopm_list_t *ll = make_test_list(2, 0);
+  ioopm_list_iterator *iter = ioopm_iterator_create(ll);
+  CU_ASSERT_PTR_EQUAL(iter->list, ll);
+  CU_ASSERT_EQUAL(iter->current_idx, 0);
+  CU_ASSERT_EQUAL(iter->max_idx, ll->length - 1);
+
+  ioopm_iterator_destroy(iter);
+  CU_ASSERT_PTR_NULL(iter);
   ioopm_linked_list_destroy(ll);
 }
 
