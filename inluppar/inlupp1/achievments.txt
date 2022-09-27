@@ -1,3 +1,2 @@
 Kan göra nu:
-52 (ioopm_linked_list_insert index+1 för entry_after)
 Kan göra snart:
