@@ -217,8 +217,3 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
         curr_ent = curr_ent->next;
     }
 }
-
-ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
-{
-    return ioopm_iterator_create(list);
-}

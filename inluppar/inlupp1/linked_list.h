@@ -1,9 +1,7 @@
 #pragma once
 #include <stdbool.h>
-#include "iterator.h"
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
-typedef struct iterator ioopm_list_iterator_t;
 typedef bool(*ioopm_int_predicate)(int value, void *extra);
 typedef void(*ioopm_apply_int_function)(int *value, void *extra);
 
@@ -91,8 +89,3 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *e
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function fun, void *extra);
-
-/// @brief Create an iterator for a given list
-/// @param list the list to be iterated over
-/// @return an iteration positioned at the start of list
-ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list);

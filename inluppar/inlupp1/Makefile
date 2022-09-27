@@ -10,7 +10,7 @@ test_ht: hash_table.o hash_table_test.c
 mem_test_ht: test_ht
 	valgrind ./test_htmem
 
-test_ll: linked_list.o iterator.o linked_list_test.c
+test_ll: linked_list.o linked_list_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
 mem_test_ll: test_ll
