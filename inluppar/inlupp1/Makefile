@@ -1,5 +1,5 @@
 CC=gcc 
-FLAGS=-Wall 
+FLAGS=-Wall -g
 OBJECTS=hash_table.o linked_list.o 
 %.o: %.c %.h
 	$(CC) $(FLAGS) $< -c
@@ -8,7 +8,7 @@ test_ht: $(OBJECTS) hash_table_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
 mem_test_ht: test_ht
-	valgrind ./test_htmem
+	valgrind ./test_ht
 
 test_ll: linked_list.o linked_list_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@

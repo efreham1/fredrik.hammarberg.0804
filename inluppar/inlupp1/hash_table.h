@@ -38,7 +38,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value);
 /// @param ht hash table operated upon
 /// @param key key to lookup
 /// @return the adress of the value mapped from the key
-char **ioopm_hash_table_lookup(const ioopm_hash_table_t *ht, int key);
+char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key);
 
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
@@ -49,26 +49,26 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
 /// @brief returns the number of key => value entries in the hash table
 /// @param ht hash table operated upon
 /// @return the number of key => value entries in the hash table
-size_t ioopm_hash_table_size(const ioopm_hash_table_t *ht);
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht);
 
 /// @brief checks if the hash table is empty
 /// @param ht hash table operated upon
 /// @return true is size == 0, else false
-bool ioopm_hash_table_is_empty(const ioopm_hash_table_t *ht);
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht);
 
 /// @brief clear all the entries in a hash table
 /// @param ht hash table operated upon
 void ioopm_hash_table_clear(ioopm_hash_table_t *ht);
 
-/// @brief return the keys for all entries in a hash map (in no particular order, but same as ioopm_hash_table_values)
+/// @brief return the keys for all entries in a linked list (in no particular order, but same as ioopm_hash_table_values)
 /// @param ht hash table operated upon
-/// @return an array of keys for hash table h
-ioopm_list_t *ioopm_hash_table_keys(const ioopm_hash_table_t *ht);
+/// @return an array of keys for hash table ht
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht);
 
 /// @brief return the values for all entries in a hash map (in no particular order, but same as ioopm_hash_table_keys)
 /// @param ht hash table operated upon
 /// @return an array of values for hash table h
-char **ioopm_hash_table_values(const ioopm_hash_table_t *ht);
+char **ioopm_hash_table_values(ioopm_hash_table_t *ht);
 
 /// @brief check if a hash table has an entry with a given key
 /// @param ht hash table operated upon
@@ -84,13 +84,13 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value);
 /// @param ht hash table operated upon
 /// @param pred the predicate
 /// @param arg extra argument to pred
-bool ioopm_hash_table_all(const ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
 
 /// @brief check if a predicate is satisfied by any entry in a hash table
 /// @param ht hash table operated upon
 /// @param pred the predicate
 /// @param arg extra argument to pred
-bool ioopm_hash_table_any(const ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg);
 
 /// @brief apply a function to all entries in a hash table
 /// @param ht hash table operated upon

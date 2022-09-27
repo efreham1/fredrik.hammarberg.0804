@@ -102,7 +102,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 }
 
 //lookup value for key in hash table ht
-char **ioopm_hash_table_lookup(const ioopm_hash_table_t *ht, int key)
+char **ioopm_hash_table_lookup(ioopm_hash_table_t *ht, int key)
 {
     entry_t *sentinel = get_sentinel(ht, key);
     entry_t *prev_entry = find_previous_entry_for_key(sentinel, key);
@@ -134,7 +134,7 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     
 }
 
-size_t ioopm_hash_table_size(const ioopm_hash_table_t *ht)
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
 {
     size_t count = 0;
     for (int i = 0; i < No_Buckets; i++)
@@ -152,7 +152,7 @@ size_t ioopm_hash_table_size(const ioopm_hash_table_t *ht)
     return count;
 }
 
-bool ioopm_hash_table_is_empty(const ioopm_hash_table_t *ht)
+bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 {
     for (int i = No_Buckets-1; i>=0; i--)
     {
@@ -179,7 +179,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
     }
 }
 
-ioopm_list_t *ioopm_hash_table_keys(const ioopm_hash_table_t *ht)
+ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
     ioopm_list_t *list = ioopm_linked_list_create();
     for(int i = 0; i<No_Buckets; i++)
@@ -192,15 +192,10 @@ ioopm_list_t *ioopm_hash_table_keys(const ioopm_hash_table_t *ht)
             next_entry = next_entry->next;
         }        
     }
-    if (ioopm_linked_list_length(list)==0)
-    {
-        ioopm_linked_list_destroy(list);
-        return NULL;
-    }
     return list;
 }
 
-char **ioopm_hash_table_values(const ioopm_hash_table_t *ht)
+char **ioopm_hash_table_values(ioopm_hash_table_t *ht)
 {
     char **result = calloc(ioopm_hash_table_size(ht), sizeof(char *));
     int idx = 0;
@@ -224,7 +219,7 @@ char **ioopm_hash_table_values(const ioopm_hash_table_t *ht)
 }
 
 
-bool ioopm_hash_table_all(const ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
     if (ioopm_hash_table_is_empty(ht))
     {
@@ -248,7 +243,7 @@ bool ioopm_hash_table_all(const ioopm_hash_table_t *ht, ioopm_predicate pred, vo
     return true;
 }
 
-bool ioopm_hash_table_any(const ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
+bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate pred, void *arg)
 {
     if (ioopm_hash_table_is_empty(ht))
     {
@@ -290,13 +285,13 @@ void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function 
     
 }
 
-static bool has_key(int key, const char *value, void *extra)
+static bool has_key(int key, char *value, void *extra)
 {
     int *looking_for = extra;
     return key==*looking_for;
 }
 
-static bool has_value(int key, const char *value, void *extra)
+static bool has_value(int key, char *value, void *extra)
 {
     char **looking_for = extra;
     return strcmp(value, *looking_for)==0;
