@@ -1,10 +1,10 @@
 CC=gcc 
 FLAGS=-Wall 
-
+OBJECTS=hash_table.o linked_list.o 
 %.o: %.c %.h
 	$(CC) $(FLAGS) $< -c
 
-test_ht: hash_table.o hash_table_test.c
+test_ht: $(OBJECTS) hash_table_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
 mem_test_ht: test_ht

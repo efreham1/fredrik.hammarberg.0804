@@ -331,7 +331,7 @@ void test_keys_empty_ht()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
   ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
-  CU_ASSERT_PTR_NULL(keys);
+  CU_ASSERT(ioopm_linked_list_is_empty(keys_list));
   ioopm_hash_table_destroy(ht);
   ioopm_linked_list_destroy(keys_list);
 }
@@ -412,7 +412,7 @@ void test_keys_one_entry()
   char *value = "test";
   ioopm_hash_table_insert(ht, key, value);
   ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
-  CU_ASSERT_EQUAL(ioopm_linked_list_get(0), key);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(keys_list, 0), key);
   ioopm_hash_table_destroy(ht);
   ioopm_linked_list_destroy(keys_list);
 }
