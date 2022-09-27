@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "linked_list.h"
-#include "iterator.h"
 
 typedef struct entry entry_t;
 
@@ -219,7 +218,7 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_int_function
     }
 }
 
-ioopm_list_iterator_t *ioopm_iterator_create(ioopm_list_t *list)
+ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *list)
 {
     return ioopm_iterator_create(list);
 }

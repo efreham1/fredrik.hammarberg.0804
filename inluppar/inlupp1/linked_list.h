@@ -3,6 +3,7 @@
 #include "iterator.h"
 
 typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
+typedef struct iterator ioopm_list_iterator_t;
 typedef bool(*ioopm_int_predicate)(int value, void *extra);
 typedef void(*ioopm_apply_int_function)(int *value, void *extra);
 

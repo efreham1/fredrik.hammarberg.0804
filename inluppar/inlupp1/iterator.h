@@ -3,6 +3,7 @@
 #include "linked_list.h"
 
 typedef struct iterator ioopm_list_iterator_t;
+typedef struct list ioopm_list_t;
 
 /// @brief Creates a new iterator for a list
 /// @param list the linked list to be iterated over
