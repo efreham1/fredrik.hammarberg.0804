@@ -50,11 +50,11 @@ static entry_t *find_previous_entry_for_key(entry_t *sentinel, int key)
     return previous_entry;
 }
 
-static entry_t *destroy_entry(entry_t *entry)
+static void destroy_entry(entry_t *entry, entry_t **next_entry)
 {
-    entry_t *next = entry->next;
+    entry_t *next_entry_local = entry->next;
     free(entry);
-    return next;
+    *next_entry = next_entry_local;
 }
 
 static entry_t *get_sentinel(ioopm_hash_table_t *ht, int key)
@@ -125,9 +125,8 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     if (curr_entry != NULL && curr_entry->key == key) //key found
     {
         char **data_ptr = &curr_entry->value;
-        prev_entry->next = destroy_entry(curr_entry); //destroy entry returns what comes next
+        destroy_entry(curr_entry, &prev_entry->next);
         return data_ptr;
-
     }
     //else
     return NULL; //didn't find key, do nothing and return NULL
@@ -173,7 +172,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
         entry_t *to_be_destroyed = sentinel->next;
         while (to_be_destroyed != NULL)
         {
-            to_be_destroyed = destroy_entry(to_be_destroyed); //destory current entry and update to_be_destroyed to next entry
+            destroy_entry(to_be_destroyed, &to_be_destroyed); //destory current entry and update to_be_destroyed to next entry
         }
         sentinel->next = NULL;
     }
