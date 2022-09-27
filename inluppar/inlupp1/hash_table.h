@@ -32,7 +32,7 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht);
 /// @param ht hash table operated upon
 /// @param key key to insert
 /// @param value value to insert
-void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, const char *value);
+void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value);
 
 /// @brief lookup adress of value for key in hash table ht
 /// @param ht hash table operated upon
@@ -73,12 +73,12 @@ char **ioopm_hash_table_values(const ioopm_hash_table_t *ht);
 /// @brief check if a hash table has an entry with a given key
 /// @param ht hash table operated upon
 /// @param key the key sought
-bool ioopm_hash_table_has_key(const ioopm_hash_table_t *ht, int key);
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key);
 
 /// @brief check if a hash table has an entry with a given value
 /// @param ht hash table operated upon
 /// @param value the value sought
-bool ioopm_hash_table_has_value(const ioopm_hash_table_t *ht, const char *value);
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value);
 
 /// @brief check if a predicate is satisfied by all entries in a hash table
 /// @param ht hash table operated upon

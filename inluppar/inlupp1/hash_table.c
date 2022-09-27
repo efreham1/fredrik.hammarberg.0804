@@ -25,7 +25,7 @@ struct hash_table
     entry_t buckets[No_Buckets];
 };
 
-static entry_t *entry_create(int key, const char *value, entry_t *next)
+static entry_t *entry_create(int key, char *value, entry_t *next)
 {
     entry_t *entry_p = calloc(1, sizeof(entry_t));
     entry_t entry = {.key = key, .value = value, .next = next};
@@ -33,7 +33,7 @@ static entry_t *entry_create(int key, const char *value, entry_t *next)
     return entry_p;
 }
 
-static entry_t *find_previous_entry_for_key(const entry_t *sentinel, int key)
+static entry_t *find_previous_entry_for_key(entry_t *sentinel, int key)
 {
     if (sentinel->next == NULL)
     {
@@ -58,7 +58,7 @@ static void destroy_entry(entry_t *entry, entry_t **next_entry)
     *next_entry = next_entry_local;
 }
 
-static entry_t *get_sentinel(const ioopm_hash_table_t *ht, int key)
+static entry_t *get_sentinel(ioopm_hash_table_t *ht, int key)
 {
     /// Calculate the bucket for this entry
     int bucket = abs(key%No_Buckets);
@@ -84,7 +84,7 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 }
 
 //add key => value entry in hash table ht
-void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, const char *value)
+void ioopm_hash_table_insert(ioopm_hash_table_t *ht, int key, char *value)
 {
     entry_t *sentinel = get_sentinel(ht, key);
     entry_t *prev_entry = find_previous_entry_for_key(sentinel, key);
@@ -302,12 +302,12 @@ static bool has_value(int key, const char *value, void *extra)
     return strcmp(value, *looking_for)==0;
 }
 
-bool ioopm_hash_table_has_key(const ioopm_hash_table_t *ht, int key)
+bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, int key)
 {
     return ioopm_hash_table_any(ht, has_key, &key);
 }
 
-bool ioopm_hash_table_has_value(const ioopm_hash_table_t *ht, const char *value)
+bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, char *value)
 {
     return ioopm_hash_table_any(ht, has_value, &value);
 }
