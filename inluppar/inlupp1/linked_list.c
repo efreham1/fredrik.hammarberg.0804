@@ -15,7 +15,7 @@ struct list
 {
     entry_t sentinel;
     entry_t *end;
-    int length;
+    size_t length;
 };
 
 static entry_t *create_entry(int value, entry_t *next)
@@ -65,7 +65,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
     ++list->length;
 }
 
-int ioopm_linked_list_length(ioopm_list_t *list)
+size_t ioopm_linked_list_length(ioopm_list_t *list)
 {
     return list->length;
 }
