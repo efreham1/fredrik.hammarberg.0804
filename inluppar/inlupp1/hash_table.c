@@ -133,9 +133,9 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key)
     
 }
 
-int ioopm_hash_table_size(ioopm_hash_table_t *ht)
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
 {
-    int count = 0;
+    size_t count = 0;
     for (int i = 0; i < No_Buckets; i++)
     {
         entry_t *sentinel = get_sentinel(ht, i);

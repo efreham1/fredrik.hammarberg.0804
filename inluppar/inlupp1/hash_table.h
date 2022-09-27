@@ -48,7 +48,7 @@ char **ioopm_hash_table_remove(ioopm_hash_table_t *ht, int key);
 /// @brief returns the number of key => value entries in the hash table
 /// @param ht hash table operated upon
 /// @return the number of key => value entries in the hash table
-int ioopm_hash_table_size(ioopm_hash_table_t *ht);
+size_t ioopm_hash_table_size(ioopm_hash_table_t *ht);
 
 /// @brief checks if the hash table is empty
 /// @param ht hash table operated upon
