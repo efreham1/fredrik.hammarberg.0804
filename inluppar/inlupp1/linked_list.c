@@ -115,7 +115,7 @@ void ioopm_linked_list_clear(ioopm_list_t *list)
     list->length = 0;
 }
 
-bool ioopm_linked_list_is_empty(ioopm_list_t *list)
+bool ioopm_linked_list_is_empty(const ioopm_list_t *list)
 {
     return list->length == 0;
 }
@@ -157,7 +157,7 @@ int ioopm_linked_list_remove(ioopm_list_t *list, __uint128_t index)
     return value;
 }
 
-bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
+bool ioopm_linked_list_all(const ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
 {
     if (ioopm_linked_list_is_empty(list))
     {
@@ -175,7 +175,7 @@ bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *e
     return true;
 }
 
-bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
+bool ioopm_linked_list_any(const ioopm_list_t *list, ioopm_int_predicate prop, void *extra)
 {
     if (ioopm_linked_list_is_empty(list))
     {

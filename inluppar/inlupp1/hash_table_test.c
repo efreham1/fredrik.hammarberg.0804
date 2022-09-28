@@ -330,10 +330,10 @@ void test_clear_one_entry()
 void test_keys_empty_ht()
 {
   ioopm_hash_table_t *ht = ioopm_hash_table_create();
-  int *keys = ioopm_hash_table_keys(ht);
-  CU_ASSERT_PTR_NULL(keys);
+  ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
+  CU_ASSERT(ioopm_linked_list_is_empty(keys_list));
   ioopm_hash_table_destroy(ht);
-  free(keys);
+  ioopm_linked_list_destroy(keys_list);
 }
 
 
@@ -347,11 +347,11 @@ void test_keys_different_buckets()
   {
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
-  int *result_keys = ioopm_hash_table_keys(ht);
+  ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
 
   for (int i = 0; i < 3; i++)
   {
-    int key = result_keys[i];
+    int key = ioopm_linked_list_get(keys_list, i);
     int j = 0;
     while (key != keys[j])
     {
@@ -368,7 +368,7 @@ void test_keys_different_buckets()
     CU_ASSERT(found[i]);
   }
   ioopm_hash_table_destroy(ht);
-  free(result_keys);
+  ioopm_linked_list_destroy(keys_list);
 }
 
 void test_keys_same_bucket()
@@ -381,12 +381,12 @@ void test_keys_same_bucket()
   {
     ioopm_hash_table_insert(ht, keys[i], value);
   }
-  int *result_keys = ioopm_hash_table_keys(ht);
+  ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
   for (int i = 0; i<4; i++)
   {
     for (int j = 0; j<4; j++)
     {
-      if (keys[j] == result_keys[i])
+      if (keys[j] == ioopm_linked_list_get(keys_list, i))
       {
         found[j] = true;
         break;
@@ -402,7 +402,7 @@ void test_keys_same_bucket()
     CU_ASSERT(found[i]);
   }
   ioopm_hash_table_destroy(ht);
-  free(result_keys);
+  ioopm_linked_list_destroy(keys_list);
 }
 
 void test_keys_one_entry()
@@ -411,10 +411,10 @@ void test_keys_one_entry()
   int key = 42;
   char *value = "test";
   ioopm_hash_table_insert(ht, key, value);
-  int *keys = ioopm_hash_table_keys(ht);
-  CU_ASSERT_EQUAL(*keys, key);
+  ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
+  CU_ASSERT_EQUAL(ioopm_linked_list_get(keys_list, 0), key);
   ioopm_hash_table_destroy(ht);
-  free(keys);
+  ioopm_linked_list_destroy(keys_list);
 }
 
 
@@ -428,12 +428,12 @@ void test_keys_and_values_different_buckets()
   {
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
-  int *result_keys = ioopm_hash_table_keys(ht);
+  ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
   char **result_values = ioopm_hash_table_values(ht);
 
   for (int i = 0; i < 3; i++)
   {
-    int key = result_keys[i];
+    int key = ioopm_linked_list_get(keys_list, i);
     char *value = result_values[i];
     int j = 0;
     while (key != keys[j] && value != values[j])
@@ -452,7 +452,7 @@ void test_keys_and_values_different_buckets()
   }
   ioopm_hash_table_destroy(ht);
   free(result_values);
-  free(result_keys);
+  ioopm_linked_list_destroy(keys_list);
 }
 
 
@@ -466,12 +466,12 @@ void test_keys_and_values_same_bucket()
   {
     ioopm_hash_table_insert(ht, keys[i], values[i]);
   }
-  int *result_keys = ioopm_hash_table_keys(ht);
+  ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
   char **result_values = ioopm_hash_table_values(ht);
 
   for (int i = 0; i < 3; i++)
   {
-    int key = result_keys[i];
+    int key = ioopm_linked_list_get(keys_list, i);
     char *value = result_values[i];
     int j = 0;
     while (key != keys[j] && value != values[j])
@@ -488,7 +488,7 @@ void test_keys_and_values_same_bucket()
   {
     CU_ASSERT(found[i]);
   }
-  free(result_keys);
+  ioopm_linked_list_destroy(keys_list);
   free(result_values);
   ioopm_hash_table_destroy(ht);
 }
