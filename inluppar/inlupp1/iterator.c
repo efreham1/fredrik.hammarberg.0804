@@ -1,7 +1,4 @@
 #include "iterator.h"
-#include <stdbool.h>
-#include <stdlib.h>
-#include <assert.h>
 
 typedef struct iterator ioopm_list_iterator_t;
 struct iterator

@@ -1,9 +1,6 @@
-#pragma once
-#include <stdbool.h>
+#include "data_structure.h"
 
-typedef struct list ioopm_list_t; /// Meta: struct definition goes in C file
-typedef bool(*ioopm_int_predicate)(int value, void *extra);
-typedef void(*ioopm_apply_int_function)(int *value, void *extra);
+#pragma once
 
 /// @brief Creates a new empty list
 /// @return an empty linked list
@@ -57,12 +54,12 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, int element);
 /// @brief Lookup the number of elements in the linked list in O(1) time
 /// @param list the linked list
 /// @return the number of elements in the list
-size_t ioopm_linked_list_length(const ioopm_list_t *list);
+size_t ioopm_linked_list_length(ioopm_list_t *list);
 
 /// @brief Test whether a list is empty or not
 /// @param list the linked list
 /// @return true if the number of elements int the list is 0, else false
-bool ioopm_linked_list_is_empty(const ioopm_list_t *list);
+bool ioopm_linked_list_is_empty(ioopm_list_t *list);
 
 /// @brief Remove all elements from a linked list
 /// @param list the linked list
@@ -74,7 +71,7 @@ void ioopm_linked_list_clear(ioopm_list_t *list);
 /// @param prop the property to be tested (function pointer)
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of prop
 /// @return true if prop holds for all elements in the list, else false
-bool ioopm_linked_list_all(const ioopm_list_t *list, ioopm_int_predicate prop, void *extra);
+bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_int_predicate prop, void *extra);
 
 /// @brief Test if a supplied property holds for any element in a list.
 /// The function returns as soon as the return value can be determined.
@@ -82,7 +79,7 @@ bool ioopm_linked_list_all(const ioopm_list_t *list, ioopm_int_predicate prop, v
 /// @param prop the property to be tested
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of prop
 /// @return true if prop holds for any elements in the list, else false
-bool ioopm_linked_list_any(const ioopm_list_t *list, ioopm_int_predicate prop, void *extra);
+bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_int_predicate prop, void *extra);
 
 /// @brief Apply a supplied function to all elements in a list.
 /// @param list the linked list

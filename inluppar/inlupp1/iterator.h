@@ -1,6 +1,6 @@
-#pragma once
-#include <stdbool.h>
 #include "linked_list.h"
+
+#pragma once
 
 typedef struct iterator ioopm_list_iterator_t;
 typedef struct list ioopm_list_t;
