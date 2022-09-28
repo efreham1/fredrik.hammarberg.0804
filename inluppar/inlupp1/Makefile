@@ -1,7 +1,7 @@
 CC=gcc 
 FLAGS=-Wall -g
 OBJECTS=hash_table.o linked_list.o 
-%.o: %.c %.h
+%.o: %.c %.h data_structure.h
 	$(CC) $(FLAGS) $< -c
 
 test_ht: $(OBJECTS) hash_table_test.c
