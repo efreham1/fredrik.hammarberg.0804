@@ -65,12 +65,12 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, int value)
     ++list->length;
 }
 
-size_t ioopm_linked_list_length(const ioopm_list_t *list)
+size_t ioopm_linked_list_length(ioopm_list_t *list)
 {
     return list->length;
 }
 
-static entry_t *get_entry(ioopm_list_t *list, int index)
+static entry_t *get_entry(ioopm_list_t *list, __uint128_t index)
 {
     entry_t *current_entry_p = &list->sentinel;
     for (int i = -1; i < index; i++)
@@ -80,7 +80,7 @@ static entry_t *get_entry(ioopm_list_t *list, int index)
     return current_entry_p;
 }
 
-int ioopm_linked_list_get(ioopm_list_t *list, int index)
+int ioopm_linked_list_get(ioopm_list_t *list, __uint128_t index)
 {
     assert(index < list->length && index >= 0);
     entry_t *entry = get_entry(list, index);
@@ -120,11 +120,9 @@ bool ioopm_linked_list_is_empty(const ioopm_list_t *list)
     return list->length == 0;
 }
 
-// tester hit ==============================================================
-
-void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
+void ioopm_linked_list_insert(ioopm_list_t *list, __uint128_t index, int value)
 {
-    int list_length = list->length;
+    size_t list_length = list->length;
     assert(list_length >= index && index >= 0);
 
     if (index == 0)
@@ -147,7 +145,7 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, int value)
     return;
 }
 
-int ioopm_linked_list_remove(ioopm_list_t *list, int index)
+int ioopm_linked_list_remove(ioopm_list_t *list, __uint128_t index)
 {
     assert(index<list->length);
     entry_t *prev_entry = get_entry(list, index-1);
