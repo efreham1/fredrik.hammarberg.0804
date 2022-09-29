@@ -17,8 +17,7 @@ union elem
   bool bool_v;
   float float_v;
   char char_v;
-  char *str_v;
-  void *void_ptr_v;
+  void *ptr_v;
 };
 
 // For hash tables:
