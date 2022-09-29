@@ -4,7 +4,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/fredrik/Local_reps/fredrik.hammarberg.0804/inluppar/inlupp1/a.out",
+            "program": "/home/fredrik/Local_reps/fredrik.hammarberg.0804/inluppar/inlupp1/freq",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

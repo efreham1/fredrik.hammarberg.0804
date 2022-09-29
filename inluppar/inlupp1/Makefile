@@ -19,11 +19,17 @@ mem_test_ll: test_ll
 test_it: iterator.o linked_list.o iterator_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
+freq: $(OBJECTS) iterator.o freq-count.c
+	$(CC) $(FLAGS) $^ -lcunit -o $@
+
+mem_test_freq: freq
+	valgrind ./freq bee_movie.txt
+
 mem_test_it: test_it
 	valgrind ./test_it
 
 clean:
 	rm -f *.o
-	rm -f test_ht test_ll test_it
+	rm -f test_ht test_ll test_it freq output.txt
 
 .PHONY: clean

@@ -1,1 +1,26 @@
-gcc  -Wall -g hash_table.o linked_list.o hash_table_test.c -lcunit -o test_ht
+Curabitur: 1
+Etiam: 1
+Lorem: 1
+Ut: 1
+a: 1
+adipiscing: 1
+amet: 1
+consectetur: 1
+dolor: 1
+eleifend: 1
+elementum: 1
+elit: 1
+eu: 1
+imperdiet: 1
+ipsum: 1
+leo: 1
+lorem: 1
+malesuada: 1
+mattis: 1
+molestie: 1
+pharetra: 1
+purus: 1
+sapien: 1
+sit: 1
+velit: 1
+vitae: 1
