@@ -8,7 +8,10 @@
 
 // For genericity:
 typedef union elem elem_t;
+
 typedef bool(*ioopm_eq_function)(elem_t a, elem_t b);
+typedef bool(*ioopm_lt_function)(elem_t a, elem_t b);
+typedef int(*ioopm_hash_function)(elem_t key, int buckets);
 
 union elem
 {
@@ -24,8 +27,8 @@ union elem
 typedef struct hash_table ioopm_hash_table_t;
 typedef struct entry_ht ht_entry_t;
 
-typedef bool(*ioopm_predicate_ht)(int key, char *value, void *extra);
-typedef void(*ioopm_apply_function_ht)(int key, char **value, void *extra);
+typedef bool(*ioopm_predicate_ht)(elem_t key, elem_t value, void *extra);
+typedef void(*ioopm_apply_function_ht)(elem_t key, elem_t *value, void *extra);
 
 // For linked lists:
 typedef struct list ioopm_list_t;
