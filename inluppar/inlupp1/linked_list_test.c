@@ -26,6 +26,31 @@ bool int_compare_equal(elem_t a, elem_t b)
   return a.int_v == b.int_v;
 }
 
+bool unsigned_int_compare_equal(elem_t a, elem_t b)
+{
+  return a.u_int_v == b.u_int_v;
+}
+
+bool bool_compare_equal(elem_t a, elem_t b)
+{
+  return a.bool_v == b.bool_v;
+}
+
+bool float_compare_equal(elem_t a, elem_t b)
+{
+  return a.float_v == b.float_v;
+}
+
+bool char_compare_equal(elem_t a, elem_t b)
+{
+  return a.char_v == b.char_v;
+}
+
+bool pointer_compare_equal(elem_t a, elem_t b)
+{
+  return a.ptr_v == b.ptr_v;
+}
+
 // These are example test functions. You should replace them with
 // functions of your own.
 void test_create_destroy()
@@ -493,6 +518,48 @@ void test_remove_from_list_multiple_entries()
 
   ioopm_linked_list_destroy(ll);
 }
+
+void test_contains_unsigned_int()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create(unsigned_int_compare_equal);
+  ioopm_linked_list_append(ll, (elem_t) {.u_int_v = 42});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.u_int_v = 42}));
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_contains_bool()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create(bool_compare_equal);
+  ioopm_linked_list_append(ll, (elem_t) {.bool_v = true});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.bool_v = true}));
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_contains_float()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create(float_compare_equal);
+  ioopm_linked_list_append(ll, (elem_t) {.float_v = 6.9});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.float_v = 6.9}));
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_contains_char()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create(char_compare_equal);
+  ioopm_linked_list_append(ll, (elem_t) {.char_v = 'd'});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.char_v = 'd'}));
+  ioopm_linked_list_destroy(ll);
+}
+
+void test_contains_pointer()
+{
+  ioopm_list_t *ll = ioopm_linked_list_create(pointer_compare_equal);
+  ioopm_list_t *list_ptr = ioopm_linked_list_create(int_compare_equal);
+  ioopm_linked_list_append(ll, (elem_t) {.ptr_v = list_ptr});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.ptr_v = list_ptr}));
+  ioopm_linked_list_destroy(ll);
+  ioopm_linked_list_destroy(list_ptr);
+}
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -560,7 +627,12 @@ int main()
       (CU_add_test(my_test_suite, "Test contains on an empty list", test_contains_empty) == NULL) ||
       (CU_add_test(my_test_suite, "Test contains on a list with a single entry", test_contains_single) == NULL) ||
       (CU_add_test(my_test_suite, "Test contains on a list with multiple entries", test_contains_multiple) == NULL) ||
-
+      (CU_add_test(my_test_suite, "Test contains on a list with multiple entries", test_contains_multiple) == NULL) ||
+      (CU_add_test(my_test_suite, "Test contains when elem_t is unsigned int", test_contains_unsigned_int) == NULL) ||
+      (CU_add_test(my_test_suite, "Test contains when elem_t is bool", test_contains_bool) == NULL) ||
+      (CU_add_test(my_test_suite, "Test contains when elem_t is float", test_contains_float) == NULL) ||
+      (CU_add_test(my_test_suite, "Test contains when elem_t is char", test_contains_char) == NULL) ||
+      (CU_add_test(my_test_suite, "Test contains when elem_t is void ptr", test_contains_pointer) == NULL) ||
       0)
   {
     // If adding any of the tests fails, we tear down CUnit and exit
