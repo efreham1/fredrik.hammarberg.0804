@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash_table.h"
+#include <math.h>
 
 #define No_Buckets 17
 
@@ -21,31 +22,118 @@ int clean_suite(void) {
   return 0;
 }
 
+
+//hash functions start
 int simple_hash_int(elem_t key, int buckets)
 {
   return abs(key.int_v%buckets);
 }
 
-bool compare_eq_value(elem_t a, elem_t b)
+int hash_unsigned_int(elem_t key, int buckets)
+{
+  return key.u_int_v % buckets;
+}
+
+int hash_float(elem_t key, int buckets)
+{
+  int rounded_float = round(key.float_v);
+  return abs(rounded_float % buckets);
+}
+
+int hash_char(elem_t key, int buckets)
+{
+  int char_to_int = (int) key.char_v;
+  return char_to_int % buckets;
+}
+int hash_string(elem_t key, int buckets)
+{
+  char *str = (char *) key.ptr_v;
+  int str_len = strlen(str);
+  int total_product = 1;
+  for (int i = 0; i < str_len; i++)
+    {
+      total_product = str[i] * total_product;
+    }
+  return total_product % buckets;
+}
+
+//hash functions end
+
+//equals function start
+bool compare_eq_string(elem_t a, elem_t b)
 {
   return strcmp(a.ptr_v, b.ptr_v) == 0;
 }
 
-bool compare_eq_keys(elem_t a, elem_t b)
+bool compare_eq_int(elem_t a, elem_t b)
 {
   return a.int_v == b.int_v;
 }
 
-bool compare_lt_keys(elem_t a, elem_t b)
+bool compare_eq_unsigned_int(elem_t a, elem_t b)
+{
+  return a.u_int_v == b.u_int_v;
+}
+
+bool compare_eq_bool(elem_t a, elem_t b)
+{
+  return a.bool_v == b.bool_v;
+}
+
+bool compare_eq_float(elem_t a, elem_t b)
+{
+  return a.float_v == b.float_v;
+}
+
+bool compare_eq_char(elem_t a, elem_t b)
+{
+  return a.char_v == b.char_v;
+}
+
+//equals functions end
+
+//less than functions start
+bool compare_lt_int(elem_t a, elem_t b)
 {
   return a.int_v < b.int_v;
 }
 
+bool compare_lt_unsigned_int(elem_t a, elem_t b)
+{
+  return a.u_int_v < b.u_int_v;
+}
+
+bool compare_lt_bool(elem_t a, elem_t b)
+{
+  return a.bool_v < b.bool_v;
+}
+
+bool compare_lt_float(elem_t a, elem_t b)
+{
+  return a.float_v < b.float_v;
+}
+
+bool compare_lt_char(elem_t a, elem_t b)
+{
+  return a.char_v < b.char_v;
+}
+
+bool compare_lt_string(elem_t a, elem_t b)
+{
+  char *str1 = (char *) a.ptr_v;
+  char *str2 = (char *) b.ptr_v;
+  return strcmp(str1, str2) < 0;
+}
+
+
+
+
+//less than function ends
 // These are example test functions. You should replace them with
 // functions of your own.
 void test_create_destroy()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   CU_ASSERT_PTR_NOT_NULL(ht);
   ioopm_hash_table_destroy(ht);
 }
@@ -54,7 +142,7 @@ void test_insert_once()
 {
   elem_t k = {.int_v = 5};
   elem_t v = {.ptr_v = "BRUH"};
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, k));
   ioopm_hash_table_insert(ht, k, v);
   CU_ASSERT_PTR_EQUAL(ioopm_hash_table_lookup(ht, k)->ptr_v, v.ptr_v);
@@ -63,7 +151,7 @@ void test_insert_once()
 
 void test_insert_multiple()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   elem_t v = {.ptr_v = "BRUH"};
   for (int i = -40; i<40; i++)
   {
@@ -80,7 +168,7 @@ void test_insert_multiple()
 
 void test_insert_two_backwards()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   elem_t v1 = {.ptr_v = "test1"};
   elem_t v2 = {.ptr_v = "test2"};
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets*2+3}, v1);
@@ -92,7 +180,7 @@ void test_insert_two_backwards()
 
 void test_insert_multiple_backwards()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   elem_t v = {.ptr_v = "test"};
   for (int i = 40; i>-40; i--)
   {
@@ -111,7 +199,7 @@ void test_insert_existing_key()
 {
   elem_t k = {.int_v = 5};
   elem_t v = {.ptr_v = "BRUH"};
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, k, v);
   elem_t v2 = {.ptr_v = "oops"};
   ioopm_hash_table_insert(ht, k, v2);
@@ -123,7 +211,7 @@ void test_insert_existing_and_new_key()
 {
   elem_t k = {.int_v = 5};
   elem_t v = {.ptr_v = "BRUH"};
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, k, v);
   elem_t v2 = {.ptr_v = "oops"};
   ioopm_hash_table_insert(ht, k, v2);
@@ -138,7 +226,7 @@ void test_insert_existing_and_new_key()
 
 void test_insert_multiple_values_in_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets*1, 
                 No_Buckets*0, 
                 No_Buckets*2, 
@@ -160,7 +248,7 @@ void test_insert_multiple_values_in_same_bucket()
 
 void test_lookup_nonexisting_key()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets*1, No_Buckets*2, No_Buckets*4};
   int badkeys[] = {No_Buckets*0, No_Buckets*3, No_Buckets*5};
   char *value = "test";
@@ -179,7 +267,7 @@ void test_lookup_nonexisting_key()
 
 void test_lookup_empty()
 {
-   ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+   ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
    for (int i = 0; i < No_Buckets + 1; ++i)
      {
        CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, (elem_t) {.int_v = i}));
@@ -190,7 +278,7 @@ void test_lookup_empty()
 
 void test_remove_single_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = 123}, (elem_t) {.ptr_v = "hello world"});
   ioopm_hash_table_remove(ht, (elem_t) {.int_v = 123});
   CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, (elem_t) {.int_v = 123}));
@@ -200,7 +288,7 @@ void test_remove_single_entry()
 
 void test_remove_multiple_entries_in_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   char *values[] = {"test1", "test2", "test3"};
   int keys[] = {No_Buckets + No_Buckets / 2, No_Buckets - No_Buckets /5, No_Buckets + No_Buckets/9};
   for (int i = 0; i < 3; i++)
@@ -218,7 +306,7 @@ void test_remove_multiple_entries_in_different_buckets()
 
 void test_remove_multiple_entries_in_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   char *value = "Bertil";
   int keys[] = {No_Buckets*1, No_Buckets*6, No_Buckets*0, No_Buckets*2, No_Buckets*4};
   for (int i = 0; i < 4; i++)
@@ -237,14 +325,14 @@ void test_remove_multiple_entries_in_same_bucket()
 
 void test_size_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   CU_ASSERT(ioopm_hash_table_size(ht) == 0);
   ioopm_hash_table_destroy(ht);
 }
 
 void test_size_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   char *values[] = {"test1", "test2", "test3"};
   for ( int i = 0; i < 3; i++)
@@ -257,7 +345,7 @@ void test_size_different_buckets()
 
 void test_size_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys [] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
   char *value = "test";
   for (int i = 0; i<4; i++)
@@ -270,7 +358,7 @@ void test_size_same_bucket()
 
 void test_size_one_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int key = 42;
   char *value = "test";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = key}, (elem_t) {.ptr_v = value});
@@ -280,14 +368,14 @@ void test_size_one_entry()
 
 void test_empty_empty_ht()
 {
- ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+ ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
  CU_ASSERT(ioopm_hash_table_is_empty(ht));
  ioopm_hash_table_destroy(ht); 
 }
 
 void test_empty_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   char *values[] = {"test1", "test2", "test3"};
   for ( int i = 0; i < 3; i++)
@@ -301,7 +389,7 @@ void test_empty_different_buckets()
 
 void test_empty_one_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int key = 42;
   char *value = "test";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = key}, (elem_t) {.ptr_v = value});
@@ -311,7 +399,7 @@ void test_empty_one_entry()
 
 void test_clear_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_clear(ht);
   CU_ASSERT(ioopm_hash_table_is_empty(ht));
   ioopm_hash_table_destroy(ht);
@@ -319,7 +407,7 @@ void test_clear_empty_ht()
 
 void test_clear_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   char *values[] = {"test1", "test2", "test3"};
   for ( int i = 0; i < 3; i++)
@@ -333,7 +421,7 @@ void test_clear_different_buckets()
 
 void test_clear_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys [] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
   char *value = "test";
   for (int i = 0; i<4; i++)
@@ -347,7 +435,7 @@ void test_clear_same_bucket()
 
 void test_clear_one_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int key = 42;
   char *value = "test";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = key}, (elem_t) {.ptr_v = value});
@@ -358,7 +446,7 @@ void test_clear_one_entry()
 
 void test_keys_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_list_t *keys_list = ioopm_hash_table_keys(ht);
   CU_ASSERT(ioopm_linked_list_is_empty(keys_list));
   ioopm_hash_table_destroy(ht);
@@ -368,7 +456,7 @@ void test_keys_empty_ht()
 
 void test_keys_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   bool found[3] = {false, false, false}; 
   char *values[] = {"test1", "test2", "test3"};
@@ -382,7 +470,7 @@ void test_keys_different_buckets()
   {
     elem_t key = ioopm_linked_list_get(keys_list, i);
     int j = 0;
-    while (compare_eq_keys(key, (elem_t) {.int_v = keys[j]}) == false)
+    while (compare_eq_int(key, (elem_t) {.int_v = keys[j]}) == false)
     {
       j += 1;
       if (j == 3)
@@ -402,7 +490,7 @@ void test_keys_different_buckets()
 
 void test_keys_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys [] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
   bool found[4] = {false};
   char *value = "test";
@@ -415,7 +503,7 @@ void test_keys_same_bucket()
   {
     for (int j = 0; j<4; j++)
     {
-      if (compare_eq_keys((elem_t) {.int_v = keys[j]}, ioopm_linked_list_get(keys_list, i)))
+      if (compare_eq_int((elem_t) {.int_v = keys[j]}, ioopm_linked_list_get(keys_list, i)))
       {
         found[j] = true;
         break;
@@ -436,7 +524,7 @@ void test_keys_same_bucket()
 
 void test_keys_one_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int key = 42;
   char *value = "test";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = key}, (elem_t) {.ptr_v = value});
@@ -449,7 +537,7 @@ void test_keys_one_entry()
 
 void test_keys_and_values_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   char *values[3] = {"test1", "test2", "test3"};
   bool found[3] = {false, false, false}; 
@@ -488,7 +576,7 @@ void test_keys_and_values_different_buckets()
 
 void test_keys_and_values_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[3] = {No_Buckets, No_Buckets*2, No_Buckets*3};
   char *values[3] = {"test1", "test2", "test3"};
   bool found[3] = {false, false, false}; 
@@ -526,7 +614,7 @@ void test_keys_and_values_same_bucket()
 
 void test_values_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_list_t *values = ioopm_hash_table_values(ht);
   CU_ASSERT(ioopm_linked_list_is_empty(values));
   ioopm_hash_table_destroy(ht);
@@ -536,7 +624,7 @@ void test_values_empty_ht()
 
 void test_values_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   bool found[3] = {false, false, false}; 
   char *values[] = {"test1", "test2", "test3"};
@@ -570,7 +658,7 @@ void test_values_different_buckets()
 
 void test_values_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
   bool found[4] = {false};
   char *values[] = {"test1", "test2", "test3", "test4"};
@@ -604,7 +692,7 @@ void test_values_same_bucket()
 
 void test_values_one_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int key = 42;
   char *value = "test";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = key}, (elem_t) {.ptr_v = value});
@@ -616,21 +704,21 @@ void test_values_one_entry()
 
 void test_not_has_key_empty()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, (elem_t) {.int_v = No_Buckets}));
   ioopm_hash_table_destroy(ht);
 }
 
 void test_has_key_single()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets}, (elem_t) {.ptr_v = "test"});
   CU_ASSERT(ioopm_hash_table_has_key(ht, (elem_t) {.int_v = No_Buckets}));
   ioopm_hash_table_destroy(ht);
 }
 void test_not_has_key_single()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets}, (elem_t) {.ptr_v = "test"});
   CU_ASSERT_FALSE(ioopm_hash_table_has_key(ht, (elem_t) {.int_v = No_Buckets+1}));
   ioopm_hash_table_destroy(ht);
@@ -638,7 +726,7 @@ void test_not_has_key_single()
 
 void test_has_key_multiple()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets}, (elem_t) {.ptr_v = "test"});
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets+1}, (elem_t) {.ptr_v = "test"});
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets+2}, (elem_t) {.ptr_v = "test"});
@@ -650,7 +738,7 @@ void test_has_key_multiple()
 
 void test_not_has_key_multiple()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets}, (elem_t) {.ptr_v = "test"});
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets+1}, (elem_t) {.ptr_v = "test"});
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets+2}, (elem_t) {.ptr_v = "test"});
@@ -661,7 +749,7 @@ void test_not_has_key_multiple()
 }
 void test_not_has_value_empty()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   char *value = "test";
   CU_ASSERT_FALSE(ioopm_hash_table_has_value(ht, (elem_t) {.ptr_v = value}));
   ioopm_hash_table_destroy(ht);
@@ -669,7 +757,7 @@ void test_not_has_value_empty()
 
 void test_not_has_value_single_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   char *value = "test";
   char *fake_value = "test2";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets/2}, (elem_t) {.ptr_v = value});
@@ -679,7 +767,7 @@ void test_not_has_value_single_entry()
 
 void test_not_has_value_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   char *values[] = {"test1", "test2", "test3"};
   char *fake_values[] = {"test4", "test5", "test6"};
@@ -696,7 +784,7 @@ void test_not_has_value_different_buckets()
 
 void test_not_has_value_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
   char *values[] = {"test1", "test2", "test3", "test4"};
   char *fake_values[] = {"test5", "test6", "test7", "test8"};
@@ -713,7 +801,7 @@ void test_not_has_value_same_bucket()
 
 void test_has_value_single_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   char *value = "test";
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets/2}, (elem_t) {.ptr_v = value});
   CU_ASSERT(ioopm_hash_table_has_value(ht, (elem_t) {.ptr_v = value}));
@@ -722,7 +810,7 @@ void test_has_value_single_entry()
 
 void test_has_value_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[3] = {No_Buckets, No_Buckets-1, No_Buckets+1};
   char *values[] = {"test1", "test2", "test3"};
   for (int i = 0; i<3; i++)
@@ -738,7 +826,7 @@ void test_has_value_different_buckets()
 
 void test_has_value_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[] = {No_Buckets*0, No_Buckets*2, No_Buckets*8, No_Buckets*3};
   char *values[] = {"test1", "test2", "test3", "test4"};
   for (int i = 0; i<4; i++)
@@ -785,7 +873,7 @@ ioopm_predicate predicates[4] = {predicate_not_true_all, predicate_not_true_any,
 
 void test_predicates_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int digit = 2;
   CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[0], &digit));
   CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicates[1], &digit));
@@ -796,7 +884,7 @@ void test_predicates_empty_ht()
 
 void test_predicates_single_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int digit = 2;
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = No_Buckets/2}, (elem_t) {.ptr_v = values[0]});
   CU_ASSERT_FALSE(ioopm_hash_table_all(ht, predicates[0], &digit));
@@ -808,7 +896,7 @@ void test_predicates_single_entry()
 
 void test_predicates_multiple_entries_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int digit = 2;
   int keys[4] = {No_Buckets*3+No_Buckets/2, No_Buckets*1+No_Buckets/2, No_Buckets*5+No_Buckets/2, No_Buckets*7+No_Buckets/2};
   for (int i = 0; i < 4; i++)
@@ -824,7 +912,7 @@ void test_predicates_multiple_entries_same_bucket()
 
 void test_predicates_multiple_entries_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int digit = 2;
   int keys[4] = {No_Buckets+2, No_Buckets+4, No_Buckets, No_Buckets+1};
   for (int i = 0; i < 4; i++)
@@ -876,7 +964,7 @@ bool predicate_for_function(elem_t key, elem_t value, void *extra)
 
 void test_apply_all_empty_ht()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   ioopm_hash_table_apply_to_all(ht, apply_function, &values2);
   CU_ASSERT(ioopm_hash_table_is_empty(ht));
   ioopm_hash_table_destroy(ht);
@@ -884,7 +972,7 @@ void test_apply_all_empty_ht()
 
 void test_apply_all_single_entry()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int key = 3;
   ioopm_hash_table_insert(ht, (elem_t) {.int_v = key}, (elem_t) {.ptr_v = values1[key]});
   CU_ASSERT_FALSE(ioopm_hash_table_any(ht, predicate_for_function, NULL));
@@ -895,7 +983,7 @@ void test_apply_all_single_entry()
 
 void test_apply_all_multiple_in_different_buckets()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[4] = {0, 1, 2, 3};
   for (int i = 0; i < 4; i++)
   {
@@ -909,7 +997,7 @@ void test_apply_all_multiple_in_different_buckets()
 
 void test_apply_all_multiple_in_same_bucket()
 {
-  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_keys, compare_eq_value, compare_lt_keys);
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
   int keys[4] = {No_Buckets*1, No_Buckets*2, No_Buckets*3, No_Buckets*4};
   for (int i = 0; i < 4; i++)
   {
@@ -919,6 +1007,39 @@ void test_apply_all_multiple_in_same_bucket()
   ioopm_hash_table_apply_to_all(ht, apply_function, &values2);
   CU_ASSERT(ioopm_hash_table_all(ht, predicate_for_function, NULL));
   ioopm_hash_table_destroy(ht);
+}
+
+void test_all_possible_elem_combinations()
+{
+  int int_array[3] = {1,2,3};
+  elem_t keys[] = { (elem_t) {.int_v = 1}, (elem_t) {.u_int_v = 42}, (elem_t) {.bool_v = true}, (elem_t) {.float_v = 6.9}, (elem_t) {.char_v = 'd'}, (elem_t) {.ptr_v = int_array} };
+  elem_t *values = keys;
+  ioopm_eq_function eq_functions[] = {compare_eq_int, compare_eq_unsigned_int, compare_eq_bool, compare_eq_float, compare_eq_char, compare_eq_string};
+  ioopm_lt_function lt_functions[] = {compare_lt_int, compare_lt_unsigned_int, compare_lt_bool, compare_lt_float, compare_lt_char, compare_lt_string};
+  ioopm_hash_function hash_functions[] = {simple_hash_int, hash_unsigned_int, NULL, hash_float, hash_char, hash_string};
+  int ARRAY_LENGTHS = 6;
+  //Testing keys
+  for (int i = 0; i < ARRAY_LENGTHS; i++)
+    {
+      if (hash_functions[i] == NULL)
+	{
+	  break;
+	}
+      ioopm_eq_function current_eq_function = eq_functions[i];
+      ioopm_lt_function current_lt_function = lt_functions[i];
+      ioopm_hash_function current_hash_function = hash_functions[i];
+     
+      //Testing values
+      for (int j = 0; j < ARRAY_LENGTHS; j++)
+	{
+	  ioopm_hash_table_t *ht = ioopm_hash_table_create(current_hash_function, current_eq_function, eq_functions[j], current_lt_function);
+	  elem_t key = keys[i];
+	  elem_t value = values[j];
+	  ioopm_hash_table_insert(ht, key, value);
+	  CU_ASSERT(eq_functions[j] (*ioopm_hash_table_lookup(ht, key), value));
+	  ioopm_hash_table_destroy(ht);
+	}
+    }
 }
 
 int main() {
@@ -1009,6 +1130,9 @@ int main() {
     (CU_add_test(my_test_suite, "Applying function to all elements in hash table with single entry", test_apply_all_single_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Applying function to all elements in hash table with multiple entries in different buckets", test_apply_all_multiple_in_different_buckets) == NULL) ||
     (CU_add_test(my_test_suite, "Applying function to all elements in hash table with multiple entries in same bucket", test_apply_all_multiple_in_same_bucket) == NULL) ||
+
+    (CU_add_test(my_test_suite, "Testing all combinations of type for keys and values", test_all_possible_elem_combinations) == NULL) ||
+    
     
     
     0

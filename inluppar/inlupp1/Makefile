@@ -5,7 +5,7 @@ OBJECTS=hash_table.o linked_list.o
 	$(CC) $(FLAGS) $< -c
 
 test_ht: $(OBJECTS) hash_table_test.c
-	$(CC) $(FLAGS) $^ -lcunit -o $@
+	$(CC) $(FLAGS) $^ -lcunit -lm -o $@
 
 mem_test_ht: test_ht
 	valgrind ./test_ht
