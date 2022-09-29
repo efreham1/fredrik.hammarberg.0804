@@ -15,7 +15,7 @@ struct hash_table
     ioopm_hash_function h_fnc;
     ioopm_eq_function compare_equal_keys;
     ioopm_eq_function compare_equal_values;
-    ioopm_lt_function copmare_lessthan_keys;
+    ioopm_lt_function compare_lessthan_keys;
 };
 
 static ht_entry_t *entry_create(elem_t key, elem_t value, ht_entry_t *next)
@@ -35,7 +35,7 @@ static ht_entry_t *find_previous_entry_for_key(ioopm_hash_table_t *ht, ht_entry_
     //else
     ht_entry_t *cursor = sentinel;
     ht_entry_t *next_entry = cursor->next;
-    while(next_entry != NULL && ht->copmare_lessthan_keys(next_entry->key, key))
+    while(next_entry != NULL && ht->compare_lessthan_keys(next_entry->key, key))
     {
         cursor = next_entry;
         next_entry = cursor->next;
@@ -78,7 +78,7 @@ ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_function, i
     ioopm_hash_table_t *hash_table = calloc(1, sizeof(ioopm_hash_table_t));
     hash_table->h_fnc = hash_function;
     hash_table->compare_equal_keys = compare_eq_key;
-    hash_table->copmare_lessthan_keys = compare_lt_keys;
+    hash_table->compare_lessthan_keys = compare_lt_keys;
     hash_table->compare_equal_values = compare_eq_values;
     
     return hash_table;
@@ -222,6 +222,11 @@ ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate_ht pred, void *arg)
 {
+    if (ioopm_hash_table_is_empty(ht))
+    {
+        return false;
+    }
+    
     for (int i = 0; i < No_Buckets; i++)
     {
         ht_entry_t *sentinel = get_sentinel_bucket(ht, i);

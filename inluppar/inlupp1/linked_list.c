@@ -174,10 +174,6 @@ bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_predicate_ll prop, void *ex
 
 bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_predicate_ll prop, void *extra)
 {
-    if (ioopm_linked_list_is_empty(list))
-    {
-        return false;
-    }
     ll_entry_t* current_entry = list->sentinel.next;
     while(current_entry != NULL)
     {
@@ -192,10 +188,6 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_predicate_ll prop, void *ex
 
 bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element)
 {
-    if (ioopm_linked_list_is_empty(list))
-    {
-        return false;
-    }
     ll_entry_t* current_entry = list->sentinel.next;
     while(current_entry != NULL)
     {
