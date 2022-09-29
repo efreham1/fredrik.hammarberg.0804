@@ -20,7 +20,7 @@ test_it: iterator.o linked_list.o iterator_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
 freq: $(OBJECTS) iterator.o freq-count.c
-	$(CC) $(FLAGS) $^ -lcunit -o $@
+	$(CC) $(FLAGS) $^ -o $@
 
 mem_test_freq: freq
 	valgrind ./freq bee_movie.txt
