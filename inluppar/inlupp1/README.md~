@@ -1,0 +1,30 @@
+# Initial Profiling Results
+
+FORMAT:
+funktionsnamn (anrop,
+Topp 3 funktioner för varje input:
+1k:
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00    52075     0.00     0.00  get_sentinel_bucket
+  0.00      0.00     0.00    13959     0.00     0.00  string_eq
+  0.00      0.00     0.00     2231     0.00     0.00  string_lt
+
+10k:
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+  0.00      0.00     0.00   934203     0.00     0.00  string_eq
+  0.00      0.00     0.00   476590     0.00     0.00  get_sentinel_bucket
+  0.00      0.00     0.00    40785     0.00     0.00  string_lt
+
+16k:
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  ms/call  ms/call  name    
+ 47.14      0.08     0.08    16992     0.00     0.01  ioopm_hash_table_has_key
+ 29.46      0.13     0.05                             get_entry
+ 17.68      0.16     0.03 24027334     0.00     0.00  string_eq
+
+
+
+
+
