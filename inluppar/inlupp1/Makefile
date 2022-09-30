@@ -1,5 +1,5 @@
 CC=gcc 
-FLAGS=-Wall -g
+FLAGS=-Wall -g -fprofile-arcs -ftest-coverage
 OBJECTS=hash_table.o linked_list.o 
 %.o: %.c %.h data_structure.h
 	$(CC) $(FLAGS) $< -c -pg
@@ -10,8 +10,8 @@ test_ht: $(OBJECTS) hash_table_test.c
 mem_test_ht: test_ht
 	valgrind ./test_ht
 
-test_ll: linked_list.o linked_list_test.c
-	$(CC) $(FLAGS) $^ -lcunit -o $@
+test_ll: $(OBJECTS) linked_list_test.c
+	$(CC) $(FLAGS) $^ -lcunit -lm -o $@
 
 mem_test_ll: test_ll
 	valgrind ./test_ll
@@ -30,6 +30,9 @@ mem_test_it: test_it
 
 clean:
 	rm -f *.o
+	rm -f *.gcda
+	rm -f *.gcno
+	rm -f *.gcov
 	rm -f test_ht test_ll test_it freq output.txt
 
 .PHONY: clean

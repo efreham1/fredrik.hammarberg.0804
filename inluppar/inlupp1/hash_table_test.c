@@ -4,11 +4,10 @@
 #include "hash_table.h"
 #include <math.h>
 
-#define No_Buckets 17
+#define No_Buckets 50
 
 typedef bool(*ioopm_predicate)(elem_t key, elem_t value, void *extra);
 typedef void(*ioopm_apply_function)(elem_t key, elem_t *value, void *extra);
-
 
 int init_suite(void) {
   // Change this function if you want to do something *before* you
@@ -274,6 +273,18 @@ void test_lookup_empty()
      }
    CU_ASSERT_PTR_NULL(ioopm_hash_table_lookup(ht, (elem_t) {.int_v = -1}));
    ioopm_hash_table_destroy(ht);
+}
+
+void test_remove_non_existing_entry()
+{
+  ioopm_hash_table_t *ht = ioopm_hash_table_create(simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
+  char *values[] = {"test1", "test2", "test3"};
+  int keys[] = {No_Buckets + No_Buckets / 2, No_Buckets - No_Buckets /5, No_Buckets + No_Buckets/9};
+  for (int i = 0; i < 3; i++)
+  {
+    ioopm_hash_table_insert(ht, (elem_t) {.int_v = keys[i]}, (elem_t) {.ptr_v = values[i]});
+  }
+  CU_ASSERT_PTR_NULL(ioopm_hash_table_remove(ht, (elem_t) {No_Buckets*52-6}));
 }
 
 void test_remove_single_entry()
@@ -568,7 +579,6 @@ void test_keys_and_values_different_buckets()
     CU_ASSERT(found[i]);
   }
   ioopm_hash_table_destroy(ht);
-  free(result_values);
   ioopm_linked_list_destroy(keys_list);
   ioopm_linked_list_destroy(result_values);
 }
@@ -1075,6 +1085,7 @@ int main() {
     (CU_add_test(my_test_suite, "Test for looking up multiple non_exsisting entries in the same bucket", test_lookup_nonexisting_key) == NULL) ||
     (CU_add_test(my_test_suite, "Test for looking in an empty hash-table", test_lookup_empty) == NULL) ||
 
+    (CU_add_test(my_test_suite, "Test for removing a non-existant entry", test_remove_non_existing_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Test for removing a single entry", test_remove_single_entry) == NULL) ||
     (CU_add_test(my_test_suite, "Test for removing multiple entries in different buckets", test_remove_multiple_entries_in_different_buckets) == NULL) ||
     (CU_add_test(my_test_suite, "Test for removing multiple entries in the same bucket", test_remove_multiple_entries_in_same_bucket) == NULL) ||
