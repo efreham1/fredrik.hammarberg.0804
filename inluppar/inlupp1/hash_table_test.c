@@ -285,6 +285,7 @@ void test_remove_non_existing_entry()
     ioopm_hash_table_insert(ht, (elem_t) {.int_v = keys[i]}, (elem_t) {.ptr_v = values[i]});
   }
   CU_ASSERT_PTR_NULL(ioopm_hash_table_remove(ht, (elem_t) {No_Buckets*52-6}));
+  ioopm_hash_table_destroy(ht);
 }
 
 void test_remove_single_entry()

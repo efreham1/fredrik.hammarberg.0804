@@ -1,4 +1,11 @@
-Kan göra nu:
-T55
-Kan göra snart:
-Z100, Q50, (I23, F14) 
+Z100:
+*kör de tre test filerna genom valgrind
+
+
+T55:
+
+
+
+Q50:
+
+
