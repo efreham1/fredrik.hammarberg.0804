@@ -23,11 +23,15 @@ freq: $(OBJECTS) iterator.o freq-count.c
 	$(CC) $(FLAGS) $^ -pg -lm -o $@
 
 mem_test_freq: freq
-	valgrind ./freq bee_movie.txt
+	valgrind ./freq ./freq_text_files/16k-words.txt
 
 mem_test_it: test_it
 	valgrind ./test_it
 
+mem_test_all: test_ht test_it test_ll
+	valgrind ./test_ht
+	valgrind ./test_ll
+	valgrind ./test_it
 
 clean:
 	rm -f *.o

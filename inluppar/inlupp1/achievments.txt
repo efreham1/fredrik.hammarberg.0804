@@ -1,3 +1,13 @@
 Z100/Q50/T55:
-*kör de tre test filerna genom valgrind
-*visa testerna 
+
+Fredriks dator:
+    *kör de tre test filerna genom valgrind
+    *visa testerna och gå snabbt igenom vad vi testar
+    *hitta olika funktioner (T55)
+Villes dator:
+    *kör testerna genom gcov
+    *förklara resultatet och resonera kring testkvalité
+    *hitta olika funktioner (T55)
+
+*visa readme filen och diskutera kring den
+*visa dokumentationen för alla filerna
