@@ -11,3 +11,4 @@ Villes dator:
 
 *visa readme filen och diskutera kring den
 *visa dokumentationen för alla filerna
+*gå översiktligt igenom programmens funktioner
