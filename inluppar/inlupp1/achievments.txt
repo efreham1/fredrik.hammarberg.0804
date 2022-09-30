@@ -1,4 +1,4 @@
 Kan göra nu:
 T55
 Kan göra snart:
-Z100, Q50, (I23, F14)
+Z100, Q50, (I23, F14) 

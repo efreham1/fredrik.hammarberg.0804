@@ -23,12 +23,17 @@ int list_entries[500] = {2, 3, -5, 7, 11, -1187, 251, -719, 1553, -1033, -1949, 
 // These are example test functions. You should replace them with
 // functions of your own.
 
+bool int_compare_equal(elem_t a, elem_t b)
+{
+  return a.int_v == b.int_v;
+}
+
 static ioopm_list_t *make_test_list(int no_entries, int start_idx)
 {
-  ioopm_list_t *ll = ioopm_linked_list_create();
+  ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = start_idx; i < no_entries + start_idx; i++)
   {
-    ioopm_linked_list_append(ll, list_entries[i]);
+    ioopm_linked_list_append(ll, (elem_t) {.int_v = list_entries[i]});
   }
   return ll;
 }
@@ -68,7 +73,7 @@ void test_current_start()
   ioopm_list_t *ll = make_test_list(2, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
   
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
 
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
@@ -83,7 +88,7 @@ void test_current_middle()
     ioopm_iterator_next(iter);
   }
   
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[5])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[5]}))
 
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
@@ -98,7 +103,7 @@ void test_current_end()
     ioopm_iterator_next(iter);
   }
   
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[9])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[9]}))
 
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
@@ -108,9 +113,9 @@ void test_next_single()
 {
   ioopm_list_t *ll = make_test_list(1, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
-  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[0])
-  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[0])
-  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[0]}))
+  CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[0]}))
+  CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[0]}))
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
 }
@@ -119,9 +124,9 @@ void test_next_two()
 {
   ioopm_list_t *ll = make_test_list(2, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
-  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[1])
-  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[1])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
+  CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[1]}))
+  CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[1]}))
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
 }
@@ -130,12 +135,12 @@ void test_next_multiple()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   for (int i = 0; i < 9; i++)
   {
-    CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[i+1]);
+    CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[i+1]}));
   }
-  CU_ASSERT_EQUAL(ioopm_iterator_next(iter), list_entries[9]);
+  CU_ASSERT(int_compare_equal(ioopm_iterator_next(iter), (elem_t) {.int_v = list_entries[9]}));
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
 }
@@ -144,9 +149,9 @@ void test_reset_start()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   ioopm_iterator_reset(iter);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
 }
@@ -155,14 +160,14 @@ void test_reset_middle()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   for (int i = 0; i < 4; i++)
   {
     ioopm_iterator_next(iter);
   }
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[4])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[4]}))
   ioopm_iterator_reset(iter);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
 }
@@ -171,14 +176,14 @@ void test_reset_end()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
   ioopm_list_iterator_t *iter = ioopm_iterator_create(ll);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   for (int i = 0; i < 9; i++)
   {
     ioopm_iterator_next(iter);
   }
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[9])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[9]}))
   ioopm_iterator_reset(iter);
-  CU_ASSERT_EQUAL(ioopm_iterator_current(iter), list_entries[0])
+  CU_ASSERT(int_compare_equal(ioopm_iterator_current(iter), (elem_t) {.int_v = list_entries[0]}))
   ioopm_iterator_destroy(iter);
   ioopm_linked_list_destroy(ll);
 }

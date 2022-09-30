@@ -1,7 +1,4 @@
 #include "iterator.h"
-#include <stdbool.h>
-#include <stdlib.h>
-#include <assert.h>
 
 typedef struct iterator ioopm_list_iterator_t;
 struct iterator
@@ -29,7 +26,7 @@ bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter)
     return iter->current_idx < iter->max_idx;
 }
 
-int ioopm_iterator_next(ioopm_list_iterator_t *iter)
+elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter)
 {
     assert(iter->max_idx > -1);
     if (ioopm_iterator_has_next(iter))
@@ -44,7 +41,7 @@ void ioopm_iterator_reset(ioopm_list_iterator_t *iter)
     iter->current_idx = 0;
 }
 
-int ioopm_iterator_current(ioopm_list_iterator_t *iter)
+elem_t ioopm_iterator_current(ioopm_list_iterator_t *iter)
 {
     return ioopm_linked_list_get(iter->list, iter->current_idx);
 }
