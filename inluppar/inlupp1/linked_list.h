@@ -3,8 +3,8 @@
 #pragma once
 
 /// @brief Creates a new empty list
-/// @param compare_equal the function to test if to elements are equal
-/// @return an empty linked list
+/// @param compare_equal the function to test if two elements are equal
+/// @return an empty linked list (that supports the type of element that the equals function supports)
 ioopm_list_t *ioopm_linked_list_create(ioopm_eq_function compare_equal);
 
 /// @brief Tear down the linked list and return all its memory (but not the memory of the elements)
@@ -25,6 +25,8 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value);
 /// The valid values of index are [0,n] for a list of n elements,
 /// where 0 means before the first element and n means after
 /// the last element.
+/// (NOTE: inserting at index 0/n has O(1) since
+/// it is the same as calling prepend/append)
 /// @param list the linked list that will be extended
 /// @param index the position in the list
 /// @param value the value to be inserted
@@ -43,7 +45,7 @@ elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index);
 /// where 0 means the first element and n-1 means the last element.
 /// @param list the linked list that will be extended
 /// @param index the position in the list
-/// @return the value at the given position
+/// @return the element at the given position
 elem_t ioopm_linked_list_get(ioopm_list_t *list, int index);
 
 /// @brief Test if an element is in the list

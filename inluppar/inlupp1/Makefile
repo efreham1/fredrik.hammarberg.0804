@@ -28,6 +28,7 @@ mem_test_freq: freq
 mem_test_it: test_it
 	valgrind ./test_it
 
+
 clean:
 	rm -f *.o
 	rm -f *.gcda
