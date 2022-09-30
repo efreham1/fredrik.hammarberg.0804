@@ -2,7 +2,7 @@ CC=gcc
 FLAGS=-Wall -g
 OBJECTS=hash_table.o linked_list.o 
 %.o: %.c %.h data_structure.h
-	$(CC) $(FLAGS) $< -c
+	$(CC) $(FLAGS) $< -c -pg
 
 test_ht: $(OBJECTS) hash_table_test.c
 	$(CC) $(FLAGS) $^ -lcunit -lm -o $@
@@ -20,7 +20,7 @@ test_it: iterator.o linked_list.o iterator_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
 freq: $(OBJECTS) iterator.o freq-count.c
-	$(CC) $(FLAGS) $^ -o $@
+	$(CC) $(FLAGS) $^ -pg -o $@
 
 mem_test_freq: freq
 	valgrind ./freq bee_movie.txt

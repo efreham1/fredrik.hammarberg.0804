@@ -1,6 +1,7 @@
 #include "hash_table.h"
+#include <math.h>
 
-#define No_Buckets 17
+#define No_Buckets 100
 
 struct entry_ht
 {
@@ -16,6 +17,7 @@ struct hash_table
     ioopm_eq_function compare_equal_keys;
     ioopm_eq_function compare_equal_values;
     ioopm_lt_function compare_lessthan_keys;
+    int No_buckets;
 };
 
 static ht_entry_t *entry_create(elem_t key, elem_t value, ht_entry_t *next)
@@ -73,15 +75,17 @@ static ht_entry_t *get_sentinel_bucket(ioopm_hash_table_t *ht, int i)
 //Create a new hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys)
 {
-    /// Allocate space for a ioopm_hash_table_t = No_Buckets pointers to
-    /// ht_entry_t's, which will be set to NULL
+    return ioopm_hash_table_create_spec(0.75, 100, hash_function, compare_eq_key, compare_eq_values, compare_lt_keys);
+}
+
+ioopm_hash_table_t *ioopm_hash_table_create_spec(float load_factor, int capacity, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys)
+{
     ioopm_hash_table_t *hash_table = calloc(1, sizeof(ioopm_hash_table_t));
     hash_table->h_fnc = hash_function;
     hash_table->compare_equal_keys = compare_eq_key;
     hash_table->compare_lessthan_keys = compare_lt_keys;
     hash_table->compare_equal_values = compare_eq_values;
-    
-    return hash_table;
+    hash_table->No_buckets = (int) sqrt(capacity/load_factor);
 }
 
 //Delete a hash table and free its memory

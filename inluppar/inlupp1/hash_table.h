@@ -16,9 +16,23 @@
  * @see https://uppsala.instructure.com/courses/68435/assignments/130155
  */
 
+/// @param hash_function the hash function that will hash the keys
+/// @param compare_eq_keys a equals function that will compare the keys
+/// @param compare_eq_values a equals function that will compare the values
+/// @param compare_lt_keys a less than function that will compare the keys
 /// @brief Create a new hash table
 /// @return A new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys);
+
+/// @param load_factor how full should the buckets be, if a lot of searching for keys will be done this factor should be >>1
+/// @param capacity how many elements the hash_table will hold comfortably
+/// @param hash_function the hash function that will hash the keys
+/// @param compare_eq_keys a equals function that will compare the keys
+/// @param compare_eq_values a equals function that will compare the values
+/// @param compare_lt_keys a less than function that will compare the keys
+/// @brief Create a new specified hash table
+/// @return A new empty hash table
+ioopm_hash_table_t *ioopm_hash_table_create_spec(float load_factor, int capacity, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys);
 
 /// @brief Delete a hash table and free its memory
 /// @param ht a hash table to be deleted
