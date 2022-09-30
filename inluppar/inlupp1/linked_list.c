@@ -144,8 +144,8 @@ void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value)
 
 elem_t ioopm_linked_list_remove(ioopm_list_t *list, int index)
 {
-    assert(index<list->length);
-    ll_entry_t *prev_entry = get_entry(list, index-1);
+    assert(index < list->length);
+    ll_entry_t *prev_entry = get_entry(list, index - 1);
     ll_entry_t *curr_ent = prev_entry->next;
     elem_t value = curr_ent->value;
     prev_entry->next = curr_ent->next;
@@ -160,8 +160,8 @@ bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_predicate_ll prop, void *ex
     {
         return false;
     }
-    ll_entry_t* current_entry = list->sentinel.next;
-    while(current_entry != NULL)
+    ll_entry_t *current_entry = list->sentinel.next;
+    while (current_entry != NULL)
     {
         if (!prop(current_entry->value, extra))
         {
@@ -174,8 +174,8 @@ bool ioopm_linked_list_all(ioopm_list_t *list, ioopm_predicate_ll prop, void *ex
 
 bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_predicate_ll prop, void *extra)
 {
-    ll_entry_t* current_entry = list->sentinel.next;
-    while(current_entry != NULL)
+    ll_entry_t *current_entry = list->sentinel.next;
+    while (current_entry != NULL)
     {
         if (prop(current_entry->value, extra))
         {
@@ -188,8 +188,8 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_predicate_ll prop, void *ex
 
 bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element)
 {
-    ll_entry_t* current_entry = list->sentinel.next;
-    while(current_entry != NULL)
+    ll_entry_t *current_entry = list->sentinel.next;
+    while (current_entry != NULL)
     {
         if (list->compare_equal(current_entry->value, element))
         {
@@ -199,7 +199,6 @@ bool ioopm_linked_list_contains(ioopm_list_t *list, elem_t element)
     }
     return false;
 }
-
 
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_function_ll fun, void *extra)
 {

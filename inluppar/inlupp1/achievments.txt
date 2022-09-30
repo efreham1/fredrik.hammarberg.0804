@@ -1,11 +1,3 @@
-Z100:
+Z100/Q50/T55:
 *kör de tre test filerna genom valgrind
-
-
-T55:
-
-
-
-Q50:
-
-
+*visa testerna 

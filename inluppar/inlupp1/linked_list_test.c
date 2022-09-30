@@ -65,7 +65,7 @@ static ioopm_list_t *make_test_list(int no_entries, int start_idx)
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = start_idx; i < no_entries + start_idx; i++)
   {
-    ioopm_linked_list_append(ll, (elem_t) {.int_v = list_entries[i]});
+    ioopm_linked_list_append(ll, (elem_t){.int_v = list_entries[i]});
   }
   return ll;
 }
@@ -73,8 +73,8 @@ static ioopm_list_t *make_test_list(int no_entries, int start_idx)
 void test_append_empty_list()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = 42}));
+  ioopm_linked_list_append(ll, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = 42}));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 1);
   ioopm_linked_list_destroy(ll);
 }
@@ -84,13 +84,13 @@ void test_append_multiple_entries()
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = 0; i < 10; i++)
   {
-    ioopm_linked_list_append(ll, (elem_t) {.int_v = list_entries[i]});
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[i]}));
+    ioopm_linked_list_append(ll, (elem_t){.int_v = list_entries[i]});
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[i]}));
   }
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 10);
   for (int i = 0; i < 10; i++)
   {
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[i]}));
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[i]}));
   }
   ioopm_linked_list_destroy(ll);
 }
@@ -98,8 +98,8 @@ void test_append_multiple_entries()
 void test_prepend_empty_list()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
-  ioopm_linked_list_prepend(ll, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = 42}));
+  ioopm_linked_list_prepend(ll, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = 42}));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 1);
   ioopm_linked_list_destroy(ll);
 }
@@ -109,14 +109,14 @@ void test_prepend_multiple_entries()
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = 0; i < 10; i++)
   {
-    ioopm_linked_list_prepend(ll, (elem_t) {.int_v = list_entries[i]});
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = list_entries[i]}));
+    ioopm_linked_list_prepend(ll, (elem_t){.int_v = list_entries[i]});
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = list_entries[i]}));
   }
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 10);
   for (int i = 0; i < 10; i++)
   {
     int idx = 9 - i;
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[idx]}));
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[idx]}));
   }
   ioopm_linked_list_destroy(ll);
 }
@@ -126,13 +126,13 @@ void test_append_prepend()
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = 0; i < 2; i++)
   {
-    ioopm_linked_list_append(ll, (elem_t) {.int_v = list_entries[i+2]});
-    ioopm_linked_list_prepend(ll, (elem_t) {.int_v = list_entries[i]});
+    ioopm_linked_list_append(ll, (elem_t){.int_v = list_entries[i + 2]});
+    ioopm_linked_list_prepend(ll, (elem_t){.int_v = list_entries[i]});
   }
   for (int i = 0; i < 2; i++)
   {
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[1-i]}));
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i+2), (elem_t) {.int_v = list_entries[i+2]}));
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[1 - i]}));
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i + 2), (elem_t){.int_v = list_entries[i + 2]}));
   }
   ioopm_linked_list_destroy(ll);
 }
@@ -142,13 +142,13 @@ void test_prepend_append()
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = 0; i < 2; i++)
   {
-    ioopm_linked_list_prepend(ll, (elem_t) {.int_v = list_entries[i]});
-    ioopm_linked_list_append(ll, (elem_t) {.int_v = list_entries[i+2]});
+    ioopm_linked_list_prepend(ll, (elem_t){.int_v = list_entries[i]});
+    ioopm_linked_list_append(ll, (elem_t){.int_v = list_entries[i + 2]});
   }
   for (int i = 0; i < 2; i++)
   {
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[1-i]}));
-    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i+2), (elem_t) {.int_v = list_entries[i+2]}));
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[1 - i]}));
+    CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i + 2), (elem_t){.int_v = list_entries[i + 2]}));
   }
   ioopm_linked_list_destroy(ll);
 }
@@ -180,21 +180,21 @@ void test_length_multiple_entries()
 void test_get_first_element()
 {
   ioopm_list_t *ls = make_test_list(5, 0);
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ls, 0), (elem_t) {.int_v = list_entries[0]}));
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ls, 0), (elem_t){.int_v = list_entries[0]}));
   ioopm_linked_list_destroy(ls);
 }
 
 void test_get_middle_element()
 {
   ioopm_list_t *ls = make_test_list(5, 0);
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ls, 2), (elem_t) {.int_v = list_entries[2]}));
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ls, 2), (elem_t){.int_v = list_entries[2]}));
   ioopm_linked_list_destroy(ls);
 }
 
 void test_get_last_element()
 {
   ioopm_list_t *ls = make_test_list(5, 0);
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ls, 4), (elem_t) {.int_v = list_entries[4]}));
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ls, 4), (elem_t){.int_v = list_entries[4]}));
   ioopm_linked_list_destroy(ls);
 }
 
@@ -228,26 +228,26 @@ void test_clear_multiple_entries()
 void test_insert_empty_list()
 {
   ioopm_list_t *ll = make_test_list(0, 0);
-  ioopm_linked_list_insert(ll, 0, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = 42}));
+  ioopm_linked_list_insert(ll, 0, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = 42}));
   ioopm_linked_list_destroy(ll);
 }
 
 void test_insert_single_element_start()
 {
   ioopm_list_t *ll = make_test_list(1, 0);
-  ioopm_linked_list_insert(ll, 0, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = 42}));
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 1), (elem_t) {.int_v = list_entries[0]}));
+  ioopm_linked_list_insert(ll, 0, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = 42}));
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 1), (elem_t){.int_v = list_entries[0]}));
   ioopm_linked_list_destroy(ll);
 }
 
 void test_insert_single_element_end()
 {
   ioopm_list_t *ll = make_test_list(1, 0);
-  ioopm_linked_list_insert(ll, 1, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 1), (elem_t) {.int_v = 42}));
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = list_entries[0]}));
+  ioopm_linked_list_insert(ll, 1, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 1), (elem_t){.int_v = 42}));
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = list_entries[0]}));
   ioopm_linked_list_destroy(ll);
 }
 
@@ -255,64 +255,64 @@ void test_insert_multiple_elements_start()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
 
-  ioopm_linked_list_insert(ll, 0, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = 42}));
+  ioopm_linked_list_insert(ll, 0, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = 42}));
   for (int i = 0; i < 11; i++)
   {
-    if(i != 0)
+    if (i != 0)
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[i-1]}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[i - 1]}));
     }
     else
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t) {.int_v = 42}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), (elem_t){.int_v = 42}));
     }
   }
-  
+
   ioopm_linked_list_destroy(ll);
 }
 
 void test_insert_multiple_elements_end()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
-  ioopm_linked_list_insert(ll, 10, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 10), (elem_t) {.int_v = 42}));
+  ioopm_linked_list_insert(ll, 10, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 10), (elem_t){.int_v = 42}));
   for (int i = 0; i < 11; i++)
   {
-    if(i != 10)
+    if (i != 10)
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[i]}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[i]}));
     }
     else
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = 42}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = 42}));
     }
   }
-  
+
   ioopm_linked_list_destroy(ll);
 }
 
 void test_insert_multiple_elements_middle()
 {
   ioopm_list_t *ll = make_test_list(10, 0);
-  ioopm_linked_list_insert(ll, 5, (elem_t) {.int_v = 42});
-  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 5), (elem_t) {.int_v = 42}));
+  ioopm_linked_list_insert(ll, 5, (elem_t){.int_v = 42});
+  CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 5), (elem_t){.int_v = 42}));
   for (int i = 0; i < 11; i++)
   {
-    if(i < 5)
+    if (i < 5)
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[i]}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[i]}));
     }
-    else if (i>5)
+    else if (i > 5)
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t) {.int_v = list_entries[i-1]}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, i), (elem_t){.int_v = list_entries[i - 1]}));
     }
     else
     {
-      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 5), (elem_t) {.int_v = 42}));
+      CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 5), (elem_t){.int_v = 42}));
     }
   }
-  
+
   ioopm_linked_list_destroy(ll);
 }
 
@@ -321,28 +321,28 @@ bool predicate_not_true_any(elem_t value, void *extra)
   int *ext_p = extra;
   bool got_extra = *ext_p == 2;
   return got_extra || value.int_v == 0;
-}                 
+}
 
 bool predicate_not_true_all(elem_t value, void *extra)
 {
   int *ext_p = extra;
   bool got_extra = *ext_p == 7;
   return got_extra || value.int_v == 4;
-}         
+}
 
 bool predicate_true_any(elem_t value, void *extra)
 {
   int *ext_p = extra;
   bool got_extra = *ext_p == 3;
   return got_extra && value.int_v == 8;
-}         
+}
 
 bool predicate_true_all(elem_t value, void *extra)
 {
   int *ext_p = extra;
   bool got_extra = *ext_p == 3;
-  return got_extra && value.int_v%4 == 0;
-}         
+  return got_extra && value.int_v % 4 == 0;
+}
 
 ioopm_predicate_ll predicates[4] = {predicate_not_true_any, predicate_not_true_all, predicate_true_any, predicate_true_all};
 
@@ -350,10 +350,10 @@ void test_apply_predicates_empty()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   int extra = 3;
-  for (int i = 0; i < 4; i+=2)
+  for (int i = 0; i < 4; i += 2)
   {
     CU_ASSERT_FALSE(ioopm_linked_list_any(ll, predicates[i], &extra));
-    CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicates[i+1], &extra));
+    CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicates[i + 1], &extra));
   }
   ioopm_linked_list_destroy(ll);
 }
@@ -378,7 +378,7 @@ void test_apply_predicates_multiple()
   int ints[7] = {4, 16, 8, 12, 20, 32, 28};
   for (int i = 0; i < 7; i++)
   {
-    ioopm_linked_list_append(ll, (elem_t) {.int_v = ints[i]});
+    ioopm_linked_list_append(ll, (elem_t){.int_v = ints[i]});
   }
   CU_ASSERT_FALSE(ioopm_linked_list_any(ll, predicates[0], &extra));
   CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicates[1], &extra));
@@ -421,18 +421,18 @@ void test_apply_func_empty()
   ioopm_linked_list_apply_to_all(ll, test_function, NULL);
   CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 0);
-  ioopm_linked_list_destroy(ll);  
+  ioopm_linked_list_destroy(ll);
 }
 
 void test_apply_func_single()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.int_v = values1[2]});
+  ioopm_linked_list_append(ll, (elem_t){.int_v = values1[2]});
   CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
   ioopm_linked_list_apply_to_all(ll, test_function, NULL);
   CU_ASSERT(ioopm_linked_list_all(ll, predicate_test_function, NULL));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 1);
-  ioopm_linked_list_destroy(ll);  
+  ioopm_linked_list_destroy(ll);
 }
 
 void test_apply_func_multiple()
@@ -440,27 +440,27 @@ void test_apply_func_multiple()
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
   for (int i = 0; i < 5; i++)
   {
-    ioopm_linked_list_append(ll, (elem_t) {.int_v = values1[i]});
+    ioopm_linked_list_append(ll, (elem_t){.int_v = values1[i]});
   }
   CU_ASSERT_FALSE(ioopm_linked_list_all(ll, predicate_test_function, NULL));
   ioopm_linked_list_apply_to_all(ll, test_function, NULL);
   CU_ASSERT(ioopm_linked_list_all(ll, predicate_test_function, NULL));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 5);
-  ioopm_linked_list_destroy(ll);  
+  ioopm_linked_list_destroy(ll);
 }
 
 void test_contains_empty()
 {
   ioopm_list_t *ll = make_test_list(0, 0);
-  CU_ASSERT_FALSE(ioopm_linked_list_contains(ll, (elem_t) {.int_v = 42}))
+  CU_ASSERT_FALSE(ioopm_linked_list_contains(ll, (elem_t){.int_v = 42}))
   ioopm_linked_list_destroy(ll);
 }
 
 void test_contains_single()
 {
   ioopm_list_t *ll = make_test_list(1, 0);
-  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.int_v = list_entries[0]}))
-  CU_ASSERT_FALSE(ioopm_linked_list_contains(ll, (elem_t) {.int_v = list_entries[1]}))
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.int_v = list_entries[0]}))
+  CU_ASSERT_FALSE(ioopm_linked_list_contains(ll, (elem_t){.int_v = list_entries[1]}))
   ioopm_linked_list_destroy(ll);
 }
 
@@ -469,8 +469,8 @@ void test_contains_multiple()
   ioopm_list_t *ll = make_test_list(16, 0);
   for (int i = 0; i < 16; i++)
   {
-    CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.int_v = list_entries[i]}))
-    CU_ASSERT_FALSE(ioopm_linked_list_contains(ll, (elem_t) {.int_v = list_entries[16+i]}))
+    CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.int_v = list_entries[i]}))
+    CU_ASSERT_FALSE(ioopm_linked_list_contains(ll, (elem_t){.int_v = list_entries[16 + i]}))
   }
   ioopm_linked_list_destroy(ll);
 }
@@ -478,7 +478,7 @@ void test_contains_multiple()
 void test_remove_from_list_single_entry()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.int_v = 0});
+  ioopm_linked_list_append(ll, (elem_t){.int_v = 0});
   ioopm_linked_list_remove(ll, 0);
   CU_ASSERT(ioopm_linked_list_is_empty(ll));
   ioopm_linked_list_destroy(ll);
@@ -487,30 +487,31 @@ void test_remove_from_list_single_entry()
 void test_remove_from_list_multiple_entries()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(int_compare_equal);
-  elem_t first = (elem_t) {.int_v = 0};
-  elem_t middle_left = (elem_t) {.int_v = 5};
-  elem_t middle_right = (elem_t) {.int_v = 7};
-  elem_t last = (elem_t) {.int_v = 10};
-  elem_t elements_to_append[4] = {first, middle_left, middle_right,last};
-  for (int i = 0; i < 4; i++){
+  elem_t first = (elem_t){.int_v = 0};
+  elem_t middle_left = (elem_t){.int_v = 5};
+  elem_t middle_right = (elem_t){.int_v = 7};
+  elem_t last = (elem_t){.int_v = 10};
+  elem_t elements_to_append[4] = {first, middle_left, middle_right, last};
+  for (int i = 0; i < 4; i++)
+  {
     ioopm_linked_list_append(ll, elements_to_append[i]);
   }
-  //test remove middle element
+  // test remove middle element
   elem_t middle_left_returned = ioopm_linked_list_remove(ll, 1);
   CU_ASSERT(int_compare_equal(middle_left_returned, middle_left));
-  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 3); 
+  CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 3);
   CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), first));
   CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 1), middle_right));
   CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 2), last));
 
-  //test remove first element
+  // test remove first element
   elem_t first_returned = ioopm_linked_list_remove(ll, 0);
   CU_ASSERT(int_compare_equal(first_returned, first));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 2);
   CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 0), middle_right));
   CU_ASSERT(int_compare_equal(ioopm_linked_list_get(ll, 1), last));
 
-  //test remove last element
+  // test remove last element
   elem_t last_removed = ioopm_linked_list_remove(ll, 1);
   CU_ASSERT(int_compare_equal(last_removed, last));
   CU_ASSERT_EQUAL(ioopm_linked_list_length(ll), 1);
@@ -522,32 +523,32 @@ void test_remove_from_list_multiple_entries()
 void test_contains_unsigned_int()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(unsigned_int_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.u_int_v = 42});
-  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.u_int_v = 42}));
+  ioopm_linked_list_append(ll, (elem_t){.u_int_v = 42});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.u_int_v = 42}));
   ioopm_linked_list_destroy(ll);
 }
 
 void test_contains_bool()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(bool_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.bool_v = true});
-  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.bool_v = true}));
+  ioopm_linked_list_append(ll, (elem_t){.bool_v = true});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.bool_v = true}));
   ioopm_linked_list_destroy(ll);
 }
 
 void test_contains_float()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(float_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.float_v = 6.9});
-  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.float_v = 6.9}));
+  ioopm_linked_list_append(ll, (elem_t){.float_v = 6.9});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.float_v = 6.9}));
   ioopm_linked_list_destroy(ll);
 }
 
 void test_contains_char()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(char_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.char_v = 'd'});
-  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.char_v = 'd'}));
+  ioopm_linked_list_append(ll, (elem_t){.char_v = 'd'});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.char_v = 'd'}));
   ioopm_linked_list_destroy(ll);
 }
 
@@ -555,8 +556,8 @@ void test_contains_pointer()
 {
   ioopm_list_t *ll = ioopm_linked_list_create(pointer_compare_equal);
   ioopm_list_t *list_ptr = ioopm_linked_list_create(int_compare_equal);
-  ioopm_linked_list_append(ll, (elem_t) {.ptr_v = list_ptr});
-  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t) {.ptr_v = list_ptr}));
+  ioopm_linked_list_append(ll, (elem_t){.ptr_v = list_ptr});
+  CU_ASSERT(ioopm_linked_list_contains(ll, (elem_t){.ptr_v = list_ptr}));
   ioopm_linked_list_destroy(ll);
   ioopm_linked_list_destroy(list_ptr);
 }
@@ -590,7 +591,7 @@ int main()
 
       (CU_add_test(my_test_suite, "Test prepending with a single entry", test_prepend_empty_list) == NULL) ||
       (CU_add_test(my_test_suite, "Test prepending with multiple entries", test_prepend_multiple_entries) == NULL) ||
-      
+
       (CU_add_test(my_test_suite, "Test prepending and appending", test_prepend_append) == NULL) ||
       (CU_add_test(my_test_suite, "Test appending  and prepending", test_append_prepend) == NULL) ||
 
@@ -623,7 +624,7 @@ int main()
 
       (CU_add_test(my_test_suite, "Test remove entry from list with single entry", test_remove_from_list_single_entry) == NULL) ||
       (CU_add_test(my_test_suite, "Test remove entries (first, middle, last) from list with multiple entries", test_remove_from_list_multiple_entries) == NULL) ||
-      
+
       (CU_add_test(my_test_suite, "Test contains on an empty list", test_contains_empty) == NULL) ||
       (CU_add_test(my_test_suite, "Test contains on a list with a single entry", test_contains_single) == NULL) ||
       (CU_add_test(my_test_suite, "Test contains on a list with multiple entries", test_contains_multiple) == NULL) ||

@@ -27,7 +27,7 @@ void ioopm_linked_list_prepend(ioopm_list_t *list, elem_t value);
 /// the last element.
 /// @param list the linked list that will be extended
 /// @param index the position in the list
-/// @param value the value to be inserted 
+/// @param value the value to be inserted
 void ioopm_linked_list_insert(ioopm_list_t *list, int index, elem_t value);
 
 /// @brief Remove an element from a linked list in O(n) time.

@@ -4,8 +4,8 @@
 
 struct entry_ht
 {
-    elem_t  key;       // holds the key     
-    elem_t value;   // holds the value
+    elem_t key;       // holds the key
+    elem_t value;     // holds the value
     ht_entry_t *next; // points to the next entry (possibly NULL)
 };
 
@@ -30,12 +30,12 @@ static ht_entry_t *find_previous_entry_for_key(ioopm_hash_table_t *ht, ht_entry_
 {
     if (sentinel->next == NULL)
     {
-        return sentinel; //bucket is empty
+        return sentinel; // bucket is empty
     }
-    //else
+    // else
     ht_entry_t *cursor = sentinel;
     ht_entry_t *next_entry = cursor->next;
-    while(next_entry != NULL && ht->compare_lessthan_keys(next_entry->key, key))
+    while (next_entry != NULL && ht->compare_lessthan_keys(next_entry->key, key))
     {
         cursor = next_entry;
         next_entry = cursor->next;
@@ -55,22 +55,22 @@ static ht_entry_t *get_sentinel(ioopm_hash_table_t *ht, elem_t key)
 {
     /// Calculate the bucket for this entry
     int bucket = ht->h_fnc(key, No_Buckets);
-    //get correct sentinel from buckets
+    // get correct sentinel from buckets
     ht_entry_t *sentinel = &ht->buckets[bucket];
     return sentinel;
 }
 
 static ht_entry_t *get_sentinel_bucket(ioopm_hash_table_t *ht, int i)
 {
-    assert(i>-1 && i<No_Buckets);
+    assert(i > -1 && i < No_Buckets);
     /// Calculate the bucket for this entry
     int bucket = i;
-    //get correct sentinel from buckets
+    // get correct sentinel from buckets
     ht_entry_t *sentinel = &ht->buckets[bucket];
     return sentinel;
 }
 
-//Create a new hash table
+// Create a new hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys)
 {
     ioopm_hash_table_t *hash_table = calloc(1, sizeof(ioopm_hash_table_t));
@@ -81,14 +81,14 @@ ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_function, i
     return hash_table;
 }
 
-//Delete a hash table and free its memory
+// Delete a hash table and free its memory
 void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 {
     ioopm_hash_table_clear(ht);
     free(ht);
 }
 
-//add key => value entry in hash table ht
+// add key => value entry in hash table ht
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
     ht_entry_t *sentinel = get_sentinel(ht, key);
@@ -106,7 +106,7 @@ void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
     }
 }
 
-//lookup value for key in hash table ht
+// lookup value for key in hash table ht
 elem_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
 {
     ht_entry_t *sentinel = get_sentinel(ht, key);
@@ -117,26 +117,25 @@ elem_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
     {
         return &curr_entry->value;
     }
-    //else
+    // else
     return NULL;
 }
 
-//remove any mapping from key to a value
+// remove any mapping from key to a value
 elem_t *ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 {
     ht_entry_t *sentinel = get_sentinel(ht, key);
     ht_entry_t *prev_entry = find_previous_entry_for_key(ht, sentinel, key);
     ht_entry_t *curr_entry = prev_entry->next;
 
-    if (curr_entry != NULL && ht->compare_equal_keys(curr_entry->key, key)) //key found
+    if (curr_entry != NULL && ht->compare_equal_keys(curr_entry->key, key)) // key found
     {
         elem_t *data_ptr = &curr_entry->value;
         destroy_entry(curr_entry, &prev_entry->next);
         return data_ptr;
     }
-    //else
-    return NULL; //didn't find key, do nothing and return NULL
-    
+    // else
+    return NULL; // didn't find key, do nothing and return NULL
 }
 
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
@@ -151,34 +150,32 @@ size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
             count += 1;
             next_entry = next_entry->next;
         }
-        
-        
     }
     return count;
 }
 
 bool ioopm_hash_table_is_empty(ioopm_hash_table_t *ht)
 {
-    for (int i = No_Buckets-1; i>=0; i--)
+    for (int i = No_Buckets - 1; i >= 0; i--)
     {
         ht_entry_t *sentinel = get_sentinel_bucket(ht, i);
         if (sentinel->next != NULL)
         {
             return false;
-        } 
+        }
     }
     return true;
 }
 
 void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 {
-    for (int i = No_Buckets-1; i>=0; i--)
+    for (int i = No_Buckets - 1; i >= 0; i--)
     {
         ht_entry_t *sentinel = get_sentinel_bucket(ht, i);
         ht_entry_t *to_be_destroyed = sentinel->next;
         while (to_be_destroyed != NULL)
         {
-            destroy_entry(to_be_destroyed, &to_be_destroyed); //destory current entry and update to_be_destroyed to next entry
+            destroy_entry(to_be_destroyed, &to_be_destroyed); // destory current entry and update to_be_destroyed to next entry
         }
         sentinel->next = NULL;
     }
@@ -187,7 +184,7 @@ void ioopm_hash_table_clear(ioopm_hash_table_t *ht)
 ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 {
     ioopm_list_t *list = ioopm_linked_list_create(ht->compare_equal_keys);
-    for(int i = 0; i<No_Buckets; i++)
+    for (int i = 0; i < No_Buckets; i++)
     {
         ht_entry_t *sentinel = get_sentinel_bucket(ht, i);
         ht_entry_t *next_entry = sentinel->next;
@@ -195,7 +192,7 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
         {
             ioopm_linked_list_append(list, next_entry->key);
             next_entry = next_entry->next;
-        }        
+        }
     }
     return list;
 }
@@ -203,7 +200,7 @@ ioopm_list_t *ioopm_hash_table_keys(ioopm_hash_table_t *ht)
 ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
 {
     ioopm_list_t *list = ioopm_linked_list_create(ht->compare_equal_values);
-    for(int i = 0; i<No_Buckets; i++)
+    for (int i = 0; i < No_Buckets; i++)
     {
         ht_entry_t *sentinel = get_sentinel_bucket(ht, i);
         ht_entry_t *next_entry = sentinel->next;
@@ -211,11 +208,10 @@ ioopm_list_t *ioopm_hash_table_values(ioopm_hash_table_t *ht)
         {
             ioopm_linked_list_append(list, next_entry->value);
             next_entry = next_entry->next;
-        }        
+        }
     }
     return list;
 }
-
 
 bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate_ht pred, void *arg)
 {
@@ -223,7 +219,7 @@ bool ioopm_hash_table_all(ioopm_hash_table_t *ht, ioopm_predicate_ht pred, void 
     {
         return false;
     }
-    
+
     for (int i = 0; i < No_Buckets; i++)
     {
         ht_entry_t *sentinel = get_sentinel_bucket(ht, i);
@@ -262,7 +258,6 @@ bool ioopm_hash_table_any(ioopm_hash_table_t *ht, ioopm_predicate_ht pred, void 
     return false;
 }
 
-
 void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function_ht apply_fun, void *arg)
 {
     for (int i = 0; i < No_Buckets; i++)
@@ -277,7 +272,6 @@ void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function_
             next_entry = next_entry->next;
         }
     }
-    
 }
 
 bool ioopm_hash_table_has_key(ioopm_hash_table_t *ht, elem_t key)

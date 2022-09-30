@@ -11,7 +11,7 @@ ioopm_list_iterator_t *ioopm_iterator_create(ioopm_list_t *list);
 
 /// @brief Checks if there are more elements to iterate over
 /// @param iter the iterator
-/// @return true if there is at least one more element 
+/// @return true if there is at least one more element
 bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter);
 
 /// @brief Step the iterator forward one step if possible. Does not allow iteration on an empty list
