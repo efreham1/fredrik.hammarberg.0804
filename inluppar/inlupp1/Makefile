@@ -38,6 +38,7 @@ clean:
 	rm -f *.gcda
 	rm -f *.gcno
 	rm -f *.gcov
+	rm -f *.out
 	rm -f test_ht test_ll test_it freq output.txt
 
 .PHONY: clean
