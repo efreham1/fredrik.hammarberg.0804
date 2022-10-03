@@ -79,18 +79,19 @@ static void set_NO_buckets(ioopm_hash_table_t *ht)
     ht->buckets = calloc(ht->number_of_buckets, sizeof(ht_entry_t));
 }
 
-static void update_NO_buckets(ioopm_hash_table_t **ht)
+static void update_NO_buckets(ioopm_hash_table_t *ht)
 {
-    int new_capacity = (*ht)->capacity*1.5;
-    ioopm_hash_table_t *new_ht = ioopm_hash_table_create_spec((*ht)->load_factor, new_capacity, (*ht)->h_fnc, (*ht)->compare_equal_keys, (*ht)->compare_equal_values, (*ht)->compare_lessthan_keys);
-    ioopm_list_t *keys = ioopm_hash_table_keys(*ht);
-    ioopm_list_t *values = ioopm_hash_table_values(*ht);
+    int new_capacity = ht->capacity*1.5;
+    ioopm_hash_table_t *new_ht = ioopm_hash_table_create_spec(ht->load_factor, new_capacity, ht->h_fnc, ht->compare_equal_keys, ht->compare_equal_values, ht->compare_lessthan_keys);
+    ioopm_list_t *keys = ioopm_hash_table_keys(ht);
+    ioopm_list_t *values = ioopm_hash_table_values(ht);
     for (int i = 0; i < ioopm_linked_list_length(keys); i++)
     {
         ioopm_hash_table_insert(new_ht, ioopm_linked_list_get(keys, i), ioopm_linked_list_get(values, i));
     }
-    ioopm_hash_table_destroy(*ht);
-    *ht = new_ht;
+    ioopm_hash_table_destroy(new_ht);
+    ioopm_linked_list_destroy(keys);
+    ioopm_linked_list_destroy(values);
 }
 
 // Create a new hash table
