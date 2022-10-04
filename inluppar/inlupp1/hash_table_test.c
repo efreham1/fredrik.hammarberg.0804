@@ -930,9 +930,9 @@ char *values2[5] = {"a", "ab", "abc", "abcd", "abcde"};
 void apply_function(elem_t key, elem_t *value, void *extra)
 {
   char **values_local = extra;
-  if (key.int_v % 16 == 0 && key.int_v != 0)
+  if (key.int_v % 266 == 0 && key.int_v != 0)
   {
-    int idx = key.int_v / 16 - 1;
+    int idx = key.int_v / 266 - 1;
     idx++;
     value->ptr_v = values_local[idx];
   }
@@ -946,9 +946,9 @@ void apply_function(elem_t key, elem_t *value, void *extra)
 
 bool predicate_for_function(elem_t key, elem_t value, void *extra)
 {
-  if (key.int_v % 16 == 0 && key.int_v != 0)
+  if (key.int_v % 266 == 0 && key.int_v != 0)
   {
-    int idx = key.int_v / 16 - 1;
+    int idx = key.int_v / 266 - 1;
     idx++;
     return strcmp(values2[idx], value.ptr_v) == 0;
   }
@@ -1047,25 +1047,25 @@ void test_dynamic_No_buckets()
   {
     ioopm_hash_table_insert(ht, (elem_t) {.int_v = i}, (elem_t) {.int_v = i});
   }
-  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 10);
+  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 100);
 
-  for (int i = 0; i < 10; i++)
+  for (int i = 50; i < 60; i++)
   {
     ioopm_hash_table_insert(ht, (elem_t) {.int_v = i}, (elem_t) {.int_v = i});
   }
-  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 12);
+  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 150);
 
-  for (int i = 0; i < 15; i++)
+  for (int i = 60; i < 75; i++)
   {
     ioopm_hash_table_insert(ht, (elem_t) {.int_v = i}, (elem_t) {.int_v = i});
   }
-  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 12);
+  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 150);
 
-  for (int i = 0; i < 15; i++)
+  for (int i = 75; i < 90; i++)
   {
     ioopm_hash_table_insert(ht, (elem_t) {.int_v = i}, (elem_t) {.int_v = i});
   }
-  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 15);
+  CU_ASSERT_EQUAL(ioopm_hash_table_number_of_buckets(ht), 224);
 
   ioopm_hash_table_destroy(ht);
 }
@@ -1163,6 +1163,7 @@ int main()
       (CU_add_test(my_test_suite, "Applying function to all elements in hash table with multiple entries in same bucket", test_apply_all_multiple_in_same_bucket) == NULL) ||
 
       (CU_add_test(my_test_suite, "Testing all combinations of type for keys and values", test_all_possible_elem_combinations) == NULL) ||
+
       (CU_add_test(my_test_suite, "Testing dynamic changing of number of buckets", test_dynamic_No_buckets) == NULL) ||
 
       0)

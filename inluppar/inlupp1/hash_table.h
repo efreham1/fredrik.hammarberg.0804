@@ -24,7 +24,7 @@
 /// @return A new empty hash table
 ioopm_hash_table_t *ioopm_hash_table_create(ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys);
 
-/// @param load_factor how full the hash table is allowed to be, valid values are in (0, 1]
+/// @param load_factor how full the hash table is allowed to be
 /// @param capacity how many elements the hash table initially can hold
 /// @param hash_function the hash function that will hash the keys
 /// @param compare_eq_keys an equals function that will compare the keys

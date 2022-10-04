@@ -75,13 +75,24 @@ static ht_entry_t *get_sentinel_bucket(ioopm_hash_table_t *ht, int i)
 
 static void set_NO_buckets(ioopm_hash_table_t *ht)
 {
-    ht->number_of_buckets = (int) sqrt(ht->capacity/ht->load_factor);
+    ht->number_of_buckets = (int) ht->capacity/ht->load_factor;
     ht->buckets = calloc(ht->number_of_buckets, sizeof(ht_entry_t));
+}
+
+static void transfer_and_delete(ioopm_hash_table_t *from_ht, ioopm_hash_table_t *to_ht)
+{
+    ioopm_hash_table_clear(to_ht);
+    free(to_ht->buckets);
+    to_ht->buckets = from_ht->buckets;
+    to_ht->number_of_buckets = from_ht->number_of_buckets;
+    to_ht->NO_entries = from_ht->NO_entries;
+    free(from_ht);
 }
 
 static void update_NO_buckets(ioopm_hash_table_t *ht)
 {
     int new_capacity = ht->capacity*1.5;
+    ht->capacity = new_capacity;
     ioopm_hash_table_t *new_ht = ioopm_hash_table_create_spec(ht->load_factor, new_capacity, ht->h_fnc, ht->compare_equal_keys, ht->compare_equal_values, ht->compare_lessthan_keys);
     ioopm_list_t *keys = ioopm_hash_table_keys(ht);
     ioopm_list_t *values = ioopm_hash_table_values(ht);
@@ -89,7 +100,7 @@ static void update_NO_buckets(ioopm_hash_table_t *ht)
     {
         ioopm_hash_table_insert(new_ht, ioopm_linked_list_get(keys, i), ioopm_linked_list_get(values, i));
     }
-    ioopm_hash_table_destroy(new_ht);
+    transfer_and_delete(new_ht, ht);
     ioopm_linked_list_destroy(keys);
     ioopm_linked_list_destroy(values);
 }
@@ -127,9 +138,9 @@ void ioopm_hash_table_destroy(ioopm_hash_table_t *ht)
 // add key => value entry in hash table ht
 void ioopm_hash_table_insert(ioopm_hash_table_t *ht, elem_t key, elem_t value)
 {
-    if (ht->capacity < ht->NO_entries + 1)
+    if (ht->capacity == ht->NO_entries)
     {
-        update_NO_buckets(&ht);
+        update_NO_buckets(ht);
     }
 
     ht_entry_t *sentinel = get_sentinel(ht, key);
