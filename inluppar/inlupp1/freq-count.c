@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 {
   if (argc > 1)
   {
-    ioopm_hash_table_t *ht = ioopm_hash_table_create((ioopm_hash_function)string_sum_hash, string_eq, int_eq, string_lt);
+    ioopm_hash_table_t *ht = ioopm_hash_table_create_spec(150, 5000, (ioopm_hash_function)string_sum_hash, string_eq, int_eq, string_lt);
     for (int i = 1; i < argc; ++i)
     {
       process_file(argv[i], ht);
