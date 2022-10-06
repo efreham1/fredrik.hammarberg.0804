@@ -10,73 +10,108 @@ int do_checkout(inventory_t *inventory, cart_t *cart)
 
 int event_loop(inventory_t *inventory, cart_t *cart)
 {
+    char *admin_menu =
+        "-----------------Admin menu-----------------\n"
+        "Please chose an option by typing its number:\n"
+        "1. Add a merchandise to the inventory.\n"
+        "2. List all merchandise in the inventory.\n"
+        "3. Remove a merchandise from the inventory.\n"
+        "4. Edit a merchandise in the inventory.\n"
+        "5. Replenish a merchandise in the inventory.\n"
+        "6. Undo the previous action.\n"
+        "7. Exit the menu.\n";
+    
+    char* admin_options = "1234567";
     bool admin_access = ioopm_ask_admin_access();
     while (admin_access)
     {   
-        char menu_choice = ioopm_ask_admin_menu();
+        char menu_choice = ioopm_ask_menu(admin_menu, admin_options);
         switch (menu_choice)
         {
-        case 'A':
+        case 1:
             if(ioopm_inventory_add_merch(inventory)==1) return 1;
             break;
         
-        case 'L':
+        case 2:
             if(ioopm_inventory_list_merch(inventory)==1) return 1;
             break;
 
-        case 'D':
+        case 3:
             if(ioopm_inventory_remove_merch(inventory)==1) return 1;
             break;
 
-        case 'E':
+        case 4:
             if(ioopm_inventory_edit_merch(inventory)==1) return 1;
             break;
 
-        case 'R':
+        case 5:
             if(ioopm_inventory_repelenish_merch(inventory)==1) return 1;
             break;
 
-        case 'U':
+        case 6:
             if(ioopm_undo(inventory, cart)==1) return 1;
             break;
 
-        case 'Q':
+        case 7:
             return 0;
         }
     }
+
+    char *user_menu =
+        "------------------User menu------------------\n"
+        "Please chose an option by typing its number:\n"
+        "1. Add a merchandise to your cart.\n"
+        "2. List all merchandise in the store.\n"
+        "3. Remove a merchandise from your cart.\n"
+        "4. Get the cost of your cart's contents.\n"
+        "5. List the cart's contents.\n"
+        "6. CLear the cart's contents.\n"
+        "7. Checkout your cart.\n"
+        "8. Undo the previous action.\n"
+        "9. Exit the menu.\n";
+    
+    char* user_options = "123456789";
 
     bool user_access = ioopm_ask_user_access();
 
     while (user_access)
     {
-        char menu_choice = ioopm_ask_user_menu();
+        char menu_choice = ioopm_ask_menu(user_menu, user_options);
         switch (menu_choice)
         {
-        case 'A':
+        case 1:
             if(ioopm_cart_add(cart)==1) return 1;
             break;
 
-        case 'R':
-            if(ioopm_cart_remove(cart)==1) return 1;
-            break;
-
-        case 'L':
+        case 2:
             if(ioopm_inventory_list_merch(cart)==1) return 1;
             break;
 
-        case 'C':
+        case 3:
+            if(ioopm_cart_remove(cart)==1) return 1;
+            break;
+
+        case 4:
             if(ioopm_cart_get_cost(cart)==1) return 1;
             break;
 
-        case 'O':
+        case 5:
+            if(ioopm_cart_list_contents(cart)==1) return 1;
+            break;
+
+        case 6:
+            if(ioopm_cart_clear(cart)==1) return 1;
+            break;
+
+        case 7:
             if(do_checkout(inventory, cart)==1) return 1;
             break;
         
-        case 'U':
+        case 8:
             if(ioopm_undo(inventory, cart)==1) return 1;
             break;
 
-        case 'Q':
+        case 9:
             return 0;
         }
     }
@@ -86,7 +121,10 @@ int main(void)
 {
     inventory_t *inventory = ioopm_inventory_load();
     cart_t *cart = ioopm_cart_create();
+
     if (event_loop(inventory, cart)==1)return 1;
+
     ioopm_inventory_save(inventory);
+    ioopm_cart_destroy(cart);
     return 0; 
 }
