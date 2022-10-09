@@ -1,23 +1,24 @@
 #include <stdbool.h>
+#include "cart.h"
 
-int do_checkout(inventory_t *inventory, cart_t *cart)
+int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
-    ioopm_list_t *cart_merch = ioopm_cart_get_merch(cart);
-    if(ioopm_inventory_remove_merch_list(cart_merch)==1) return 1;
-    if(ioopm_cart_clear(cart)==1) return 1;
+    ioopm_hash_table_t *cart_merch = ioopm_cart_get_merch(cart);
+    ioopm_inventory_remove_merch_list(cart_merch);
+    ioopm_cart_clear(cart);
     return 0;
 }
 
-int event_loop(inventory_t *inventory, cart_t *cart)
+int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
     char *admin_menu =
         "-----------------Admin menu-----------------\n"
         "Please chose an option by typing its number:\n"
         "1. Add a merchandise to the inventory.\n"
         "2. List all merchandise in the inventory.\n"
-        "3. Remove a merchandise from the inventory.\n"
-        "4. Edit a merchandise in the inventory.\n"
-        "5. Replenish a merchandise in the inventory.\n"
+        "3. Remove merchandise from the inventory.\n"
+        "4. Edit merchandise in the inventory.\n"
+        "5. Replenish merchandise in the inventory.\n"
         "6. Undo the previous action.\n"
         "7. Exit the menu.\n";
     
@@ -29,27 +30,27 @@ int event_loop(inventory_t *inventory, cart_t *cart)
         switch (menu_choice)
         {
         case 1:
-            if(ioopm_inventory_add_merch(inventory)==1) return 1;
+            ioopm_inventory_add_merch(inventory);
             break;
         
         case 2:
-            if(ioopm_inventory_list_merch(inventory)==1) return 1;
+            ioopm_inventory_list_merch(inventory);
             break;
 
         case 3:
-            if(ioopm_inventory_remove_merch(inventory)==1) return 1;
+            ioopm_inventory_remove_merch(inventory);
             break;
 
         case 4:
-            if(ioopm_inventory_edit_merch(inventory)==1) return 1;
+            ioopm_inventory_edit_merch(inventory);
             break;
 
         case 5:
-            if(ioopm_inventory_repelenish_merch(inventory)==1) return 1;
+            ioopm_inventory_repelenish_merch(inventory);
             break;
 
         case 6:
-            if(ioopm_undo(inventory, cart)==1) return 1;
+            ioopm_undo(inventory, cart);
             break;
 
         case 7:
@@ -60,9 +61,9 @@ int event_loop(inventory_t *inventory, cart_t *cart)
     char *user_menu =
         "------------------User menu------------------\n"
         "Please chose an option by typing its number:\n"
-        "1. Add a merchandise to your cart.\n"
+        "1. Add merchandise to your cart.\n"
         "2. List all merchandise in the store.\n"
-        "3. Remove a merchandise from your cart.\n"
+        "3. Remove merchandise from your cart.\n"
         "4. Get the cost of your cart's contents.\n"
         "5. List the cart's contents.\n"
         "6. CLear the cart's contents.\n"
@@ -80,35 +81,35 @@ int event_loop(inventory_t *inventory, cart_t *cart)
         switch (menu_choice)
         {
         case 1:
-            if(ioopm_cart_add(cart)==1) return 1;
+            ioopm_cart_add(cart);
             break;
 
         case 2:
-            if(ioopm_inventory_list_merch(cart)==1) return 1;
+            ioopm_inventory_list_merch(inventory);
             break;
 
         case 3:
-            if(ioopm_cart_remove(cart)==1) return 1;
+            ioopm_cart_remove(cart);
             break;
 
         case 4:
-            if(ioopm_cart_get_cost(cart)==1) return 1;
+            ioopm_cart_get_cost(cart);
             break;
 
         case 5:
-            if(ioopm_cart_list_contents(cart)==1) return 1;
+            ioopm_cart_list_contents(cart);
             break;
 
         case 6:
-            if(ioopm_cart_clear(cart)==1) return 1;
+            ioopm_cart_clear(cart);
             break;
 
         case 7:
-            if(do_checkout(inventory, cart)==1) return 1;
+            do_checkout(inventory, cart);
             break;
         
         case 8:
-            if(ioopm_undo(inventory, cart)==1) return 1;
+            ioopm_undo(inventory, cart);
             break;
 
         case 9:
@@ -119,10 +120,10 @@ int event_loop(inventory_t *inventory, cart_t *cart)
 
 int main(void)
 {
-    inventory_t *inventory = ioopm_inventory_load();
-    cart_t *cart = ioopm_cart_create();
+    ioopm_inventory_t *inventory = ioopm_inventory_load();
+    ioopm_cart_t *cart = ioopm_cart_create();
 
-    if (event_loop(inventory, cart)==1)return 1;
+    if (event_loop(inventory, cart)==1) return 1;
 
     ioopm_inventory_save(inventory);
     ioopm_cart_destroy(cart);
