@@ -7,7 +7,7 @@
 int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
     ioopm_hash_table_t *cart_merch = ioopm_cart_get_merch(cart);
-    ioopm_inventory_remove_merch_hash_table(cart_merch);
+    ioopm_inventory_remove_merch_hash_table(inventory, cart_merch);
     ioopm_cart_clear(cart);
     return 0;
 }

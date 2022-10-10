@@ -21,13 +21,13 @@ void ioopm_TUI_cart_add(ioopm_cart_t *cart)
 void ioopm_TUI_cart_remove(ioopm_cart_t *cart)
 {
     char *merch_name = ioopm_ask_merch_name(cart);
-    int No_merch = ioopm_ask_No_merch(cart);
+    int No_merch = ioopm_ask_No_merch(cart, merch_name);
     ioopm_cart_remove(cart, merch_name, No_merch);
     bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
     while (remove_more)
     {
         char *merch_name = ioopm_ask_merch_name(cart);
-        int No_merch = ioopm_ask_No_merch(cart);
+        int No_merch = ioopm_ask_No_merch(cart, merch_name);
         ioopm_cart_remove(cart, merch_name, No_merch);
         bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
     }
