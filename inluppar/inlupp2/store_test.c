@@ -1,6 +1,8 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include "cart.h"
+#include "common_definitions.h"
+
 int init_suite_cart(void)
 {
   // Change this function if you want to do something *before* you
@@ -15,10 +17,16 @@ int clean_suite_cart(void)
   return 0;
 }
 
-void test_create_destroy(void)
+void cart_test_create_destroy(void)
 {
-    ioopm_cart_t *cart = ioopm_cart_create();
-    ioopm_cart_destroy(cart);
+  ioopm_cart_t *cart = ioopm_cart_create();
+  CU_ASSERT_PTR_NOT_NULL(cart);
+  ioopm_cart_destroy(cart);
+}
+
+void cart_test_add(void)
+{
+  ioopm_cart_t *cart = ioopm_cart_create();
 }
 
 int main()
@@ -44,7 +52,7 @@ int main()
   // copy a line below and change the information
 
   if (
-      (CU_add_test(suite_cart, "Test for create and destroy", test_create_destroy) == NULL) ||
+      (CU_add_test(suite_cart, "Test for create and destroy", cart_test_create_destroy) == NULL) ||
 
       0)
   {

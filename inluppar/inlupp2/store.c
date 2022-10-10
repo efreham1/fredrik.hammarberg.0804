@@ -1,5 +1,6 @@
 #include <stdbool.h>
 #include "cart.h"
+#include "ask.h"
 
 int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
@@ -81,7 +82,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         switch (menu_choice)
         {
         case 1:
-            ioopm_cart_add(cart);
+            ioopm_TUI_cart_add(cart);
             break;
 
         case 2:
@@ -89,15 +90,15 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
 
         case 3:
-            ioopm_cart_remove(cart);
+            ioopm_TUI_cart_remove(cart);
             break;
 
         case 4:
-            ioopm_cart_get_cost(cart);
+            ioopm_TUI_cart_get_cost(cart);
             break;
 
         case 5:
-            ioopm_cart_list_contents(cart);
+            ioopm_TUI_cart_list_contents(cart);
             break;
 
         case 6:

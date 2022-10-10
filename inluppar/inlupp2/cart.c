@@ -20,26 +20,22 @@ ioopm_cart_t *ioopm_cart_create()
 
 void ioopm_cart_destroy(ioopm_cart_t *cart)
 {
+    ioopm_cart_clear(cart);
     ioopm_hash_table_destroy(cart->contents);
     free(cart);
 }
 
-void ioopm_cart_add(ioopm_cart_t *cart)
+void ioopm_cart_add(ioopm_cart_t *cart, merch_t merch)
 {
 
 }
 
-void ioopm_cart_remove(ioopm_cart_t *cart)
+void ioopm_cart_remove(ioopm_cart_t *cart, char *merch_name, int No_merch)
 {
 
 }
 
-void ioopm_cart_get_cost(ioopm_cart_t *cart)
-{
-
-}
-
-void ioopm_cart_list_contents(ioopm_cart_t *cart)
+int ioopm_cart_get_cost(ioopm_cart_t *cart)
 {
 
 }

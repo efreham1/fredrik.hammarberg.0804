@@ -12,27 +12,27 @@ ioopm_cart_t *ioopm_cart_create();
 /// @param cart The cart to be destroyed
 void ioopm_cart_destroy(ioopm_cart_t *cart);
 
-/// @brief Bring up a TUI for adding merchandise to a cart
+/// @brief Add a merchandise to a cart
 /// @param cart The cart where the merchandise will be added
-void ioopm_cart_add(ioopm_cart_t *cart);
+/// @param merch The merchandise to be added
+void ioopm_cart_add(ioopm_cart_t *cart, merch_t merch);
 
-/// @brief Bring up a TUI for removing merchandise from a cart
+/// @brief Remove a merchandise from a cart
 /// @param cart The cart where the merchandise will be removed from
-void ioopm_cart_remove(ioopm_cart_t *cart);
+/// @param merch Type of merchandise to be removed
+/// @param No_merch Number of merchandise of said type to be removed
+void ioopm_cart_remove(ioopm_cart_t *cart, char *merch_name, int No_merch);
 
 /// @brief Get the cost of all merchandise in a cart
 /// @param cart The cart from where the cost will be calculated
-void ioopm_cart_get_cost(ioopm_cart_t *cart);
-
-/// @brief List the contents of a cart
-/// @param cart The cart that the contents will be read from
-void ioopm_cart_list_contents(ioopm_cart_t *cart);
+/// @return The cost of the contents in öre
+int ioopm_cart_get_cost(ioopm_cart_t *cart);
 
 /// @brief Clear the contents of a cart
 /// @param cart The cart to be cleared
 void ioopm_cart_clear(ioopm_cart_t *cart);
 
-/// @brief Get a list of all merchandise in a cart
+/// @brief Get a hash table of all merchandise in a cart
 /// @param cart The cart to get the merchandise from
-/// @return A linked list of all the merchandise
+/// @return A hash table of all the merchandise
 ioopm_hash_table_t *ioopm_cart_get_merch(ioopm_cart_t *cart);
