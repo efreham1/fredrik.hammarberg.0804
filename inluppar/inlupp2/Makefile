@@ -1,8 +1,12 @@
 CC=gcc 
 FLAGS=-Wall -g
-OBJECTS=hash_table.o linked_list.o 
+FRONTEND= ask.o TUI_inventory.o TUI_cart.o general_TUI.o
+BACKEND= hash_table.o linked_list.o merch.o cart.o inventory.o undo.o iterator.o
 %.o: %.c %.h data_structure.h
-	$(CC) $(FLAGS) $< -c -pg
+	$(CC) $(FLAGS) $< -c
+
+store: $(FRONTEND) $(BACKEND) store.c
+	$(CC) $(FLAGS) $^ -o $@
 
 clean:
 	rm -f *.o
@@ -10,6 +14,6 @@ clean:
 	rm -f *.gcno
 	rm -f *.gcov
 	rm -f *.out
-	rm -f test_ht test_ll test_it freq output.txt
+	rm -f store
 
 .PHONY: clean

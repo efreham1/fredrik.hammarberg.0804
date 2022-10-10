@@ -1,4 +1,7 @@
-#include "common_definitions.h"
+#include "merch.h"
+#include "cart.h"
+
+#pragma once
 
 merch_t ioopm_ask_merch();
 

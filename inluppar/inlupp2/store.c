@@ -1,11 +1,13 @@
 #include <stdbool.h>
-#include "cart.h"
+#include "TUI_cart.h"
 #include "ask.h"
+#include "TUI_inventory.h"
+#include "undo.h"
 
 int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
     ioopm_hash_table_t *cart_merch = ioopm_cart_get_merch(cart);
-    ioopm_inventory_remove_merch_list(cart_merch);
+    ioopm_inventory_remove_merch_hash_table(cart_merch);
     ioopm_cart_clear(cart);
     return 0;
 }
@@ -31,27 +33,27 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         switch (menu_choice)
         {
         case 1:
-            ioopm_inventory_add_merch(inventory);
+            ioopm_TUI_inventory_add_merch(inventory);
             break;
         
         case 2:
-            ioopm_inventory_list_merch(inventory);
+            ioopm_TUI_inventory_list_merch(inventory);
             break;
 
         case 3:
-            ioopm_inventory_remove_merch(inventory);
+            ioopm_TUI_inventory_remove_merch(inventory);
             break;
 
         case 4:
-            ioopm_inventory_edit_merch(inventory);
+            ioopm_TUI_inventory_edit_merch(inventory);
             break;
 
         case 5:
-            ioopm_inventory_repelenish_merch(inventory);
+            ioopm_TUI_inventory_repelenish_merch(inventory);
             break;
 
         case 6:
-            ioopm_undo(inventory, cart);
+            ioopm_undo_undo(inventory, cart);
             break;
 
         case 7:
@@ -86,7 +88,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
 
         case 2:
-            ioopm_inventory_list_merch(inventory);
+            ioopm_TUI_inventory_list_merch(inventory);
             break;
 
         case 3:
@@ -110,13 +112,14 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
         
         case 8:
-            ioopm_undo(inventory, cart);
+            ioopm_undo_undo(inventory, cart);
             break;
 
         case 9:
             return 0;
         }
     }
+    return 1;
 }
 
 int main(void)

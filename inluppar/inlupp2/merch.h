@@ -1,6 +1,8 @@
 #include "data_structure.h"
 #include <stdbool.h>
 
+#pragma once
+
 typedef struct merchandise merch_t;
 
 struct merchandise
@@ -8,7 +10,6 @@ struct merchandise
     char *name;
     char *description;
     int price;
-    
 };
 
 int hash_function_merch(elem_t key, int No_buckets);

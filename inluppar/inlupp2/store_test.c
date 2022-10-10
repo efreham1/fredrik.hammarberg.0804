@@ -1,7 +1,7 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include "cart.h"
-#include "common_definitions.h"
+#include "merch.h"
 
 int init_suite_cart(void)
 {

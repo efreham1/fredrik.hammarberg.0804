@@ -14,7 +14,7 @@ void ioopm_TUI_cart_add(ioopm_cart_t *cart)
     {
         merch_t merch = ioopm_ask_merch();
         ioopm_cart_add(cart, merch);
-        bool add_more = ioopm_ask_qustion_bool("Would you like to add more merchandise?");
+        bool add_more = ioopm_ask_question_bool("Would you like to add more merchandise?");
     }
 }
 
@@ -23,13 +23,13 @@ void ioopm_TUI_cart_remove(ioopm_cart_t *cart)
     char *merch_name = ioopm_ask_merch_name(cart);
     int No_merch = ioopm_ask_No_merch(cart);
     ioopm_cart_remove(cart, merch_name, No_merch);
-    bool remove_more = ioopm_ask_qustion_bool("Would you like to remove more merchandise?");
+    bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
     while (remove_more)
     {
         char *merch_name = ioopm_ask_merch_name(cart);
         int No_merch = ioopm_ask_No_merch(cart);
         ioopm_cart_remove(cart, merch_name, No_merch);
-        bool remove_more = ioopm_ask_qustion_bool("Would you like to remove more merchandise?");
+        bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
     }
 }
 
@@ -47,7 +47,7 @@ void ioopm_TUI_cart_list_contents(ioopm_cart_t *cart)
     for (int i = 0; i < ioopm_linked_list_length(all_merch); i++)
     {
         char *name = ((merch_t *) ioopm_iterator_current(merch_iterator).ptr_v)->name;
-        int No_art = ioopm_hash_table_lookup(all_merch, ioopm_iterator_current(merch_iterator))->int_v;
+        int No_art = ioopm_hash_table_lookup(contents, ioopm_iterator_current(merch_iterator))->int_v;
         printf("%d. %s: %d pcs", i, name, No_art);
         ioopm_iterator_next(merch_iterator);
     }
