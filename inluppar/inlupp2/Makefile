@@ -1,14 +1,13 @@
 CC=gcc 
 FLAGS=-Wall -g
-FRONTEND= ask.o TUI_inventory.o TUI_cart.o general_TUI.o
-BACKEND= hash_table.o linked_list.o merch.o cart.o inventory.o undo.o iterator.o
+OBJECTS= hash_table.o linked_list.o cart.o inventory.o undo.o iterator.o ask.o general_TUI.o
 %.o: %.c %.h data_structure.h
 	$(CC) $(FLAGS) $< -c
 
-store: $(FRONTEND) $(BACKEND) store.c
+store: $(OBJECTS) store.c
 	$(CC) $(FLAGS) $^ -o $@
 
-test_store: $(FRONTEND) $(BACKEND) store_test.c
+test_store: $(OBJECTS) store_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
 memtest_store: test_store
@@ -20,6 +19,6 @@ clean:
 	rm -f *.gcno
 	rm -f *.gcov
 	rm -f *.out
-	rm -f store
+	rm -f store test_store
 
 .PHONY: clean

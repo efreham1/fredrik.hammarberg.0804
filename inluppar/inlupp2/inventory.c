@@ -18,7 +18,7 @@ ioopm_inventory_t *ioopm_inventory_load(void)
     return inventory;
 }
 
-void ioopm_inventory_remove_merch_hash_table(ioopm_inventory_t *inventory, ioopm_hash_table_t *contents)
+void ioopm_inventory_remove_merch_list(ioopm_inventory_t *inventory, ioopm_list_t *contents)
 {
 
 }

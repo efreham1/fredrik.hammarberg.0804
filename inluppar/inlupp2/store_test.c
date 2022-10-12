@@ -1,7 +1,6 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include "cart.h"
-#include "merch.h"
 
 int init_suite_cart(void)
 {
@@ -27,15 +26,7 @@ void cart_test_create_destroy(void)
 
 void cart_test_add(void)
 {
-  ioopm_cart_t *cart = ioopm_cart_create();
-  merch_t merch = {.name = "test", .description="A test", .price=1010};
-  ioopm_cart_add(cart, merch);
-  ioopm_list_t *merches = ioopm_hash_table_keys(ioopm_cart_get_merch(cart));
-  CU_ASSERT_EQUAL(((merch_t *)ioopm_linked_list_get(merches, 0).ptr_v)->name, merch.name);
-  CU_ASSERT_EQUAL(((merch_t *)ioopm_linked_list_get(merches, 0).ptr_v)->description, merch.description);
-  CU_ASSERT_EQUAL(((merch_t *)ioopm_linked_list_get(merches, 0).ptr_v)->price, merch.price);
-  ioopm_cart_destroy(cart);
-  ioopm_linked_list_destroy(merches);
+  
 }
 // end of cart tests ================================================================
 int main()

@@ -1,11 +1,10 @@
-#include "merch.h"
 #include "cart.h"
 
 #pragma once
 
 /// @brief Ask in a TUI for a merchandise
 /// @return The entered merchandise
-merch_t ioopm_ask_merch();
+cart_merch_t ioopm_ask_merch();
 
 /// @brief Ask for an existing merchandise's name
 /// @param cart The cart where the merchandise has to exist

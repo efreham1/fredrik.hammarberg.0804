@@ -1,5 +1,4 @@
 #include "hash_table.h"
-#include "merch.h"
 
 #pragma once
 
@@ -16,4 +15,4 @@ ioopm_inventory_t *ioopm_inventory_load();
 /// @brief Remove all merch listed in a hash table from inventory
 /// @param inventory The inventory to remove from
 /// @param contents The contents to remove
-void ioopm_inventory_remove_merch_hash_table(ioopm_inventory_t *inventory, ioopm_hash_table_t *contents);
+void ioopm_inventory_remove_merch_list(ioopm_inventory_t *inventory, ioopm_list_t *contents);

@@ -1,9 +1,9 @@
 #include "general_TUI.h"
 #include "ask.h"
 
-merch_t ioopm_ask_merch()
+cart_merch_t ioopm_ask_merch()
 {
-    return (merch_t) {.description = "a"};
+    return (cart_merch_t) {.description = "a"};
 }
 
 char *ioopm_ask_merch_name(ioopm_cart_t *cart)

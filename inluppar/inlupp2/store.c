@@ -1,13 +1,87 @@
 #include <stdbool.h>
-#include "TUI_cart.h"
 #include "ask.h"
-#include "TUI_inventory.h"
 #include "undo.h"
+#include "cart.h"
+#include "inventory.h"
+#include "iterator.h"
+
+void TUI_cart_add(ioopm_cart_t *cart)
+{
+    cart_merch_t merch = ioopm_ask_merch();
+    ioopm_cart_add(cart, merch);
+    bool add_more = ioopm_ask_question_bool("Would you like to add more merchandise?");
+    while (add_more)
+    {
+        cart_merch_t merch = ioopm_ask_merch();
+        ioopm_cart_add(cart, merch);
+        bool add_more = ioopm_ask_question_bool("Would you like to add more merchandise?");
+    }
+}
+
+void TUI_cart_remove(ioopm_cart_t *cart)
+{
+    char *merch_name = ioopm_ask_merch_name(cart);
+    int No_merch = ioopm_ask_No_merch(cart, merch_name);
+    ioopm_cart_remove(cart, merch_name, No_merch);
+    bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
+    while (remove_more)
+    {
+        char *merch_name = ioopm_ask_merch_name(cart);
+        int No_merch = ioopm_ask_No_merch(cart, merch_name);
+        ioopm_cart_remove(cart, merch_name, No_merch);
+        bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
+    }
+}
+
+void TUI_cart_get_cost(ioopm_cart_t *cart)
+{
+    int cost = ioopm_cart_get_cost(cart);
+    printf("The cost of all the contents in your cart is %d.%d SEK", cost/100, cost%100);
+}
+
+void TUI_cart_list_contents(ioopm_cart_t *cart)
+{
+    ioopm_list_t *all_merch = ioopm_cart_get_merch(cart);
+    ioopm_list_iterator_t *merch_iterator = ioopm_iterator_create(all_merch);
+    for (int i = 0; i < ioopm_linked_list_length(all_merch); i++)
+    {
+        cart_merch_t *current_merch = ioopm_iterator_current(merch_iterator).ptr_v;
+        char *name = current_merch->name;
+        int pcs = current_merch->pcs;
+        printf("%d. %s: %d pcs", i, name, pcs);
+        ioopm_iterator_next(merch_iterator);
+    }
+}
+
+void TUI_inventory_add_merch(ioopm_inventory_t *inventory)
+{
+
+}
+
+void TUI_inventory_list_merch(ioopm_inventory_t *inventory)
+{
+
+}
+
+void TUI_inventory_remove_merch(ioopm_inventory_t *inventory)
+{
+
+}
+
+void TUI_inventory_edit_merch(ioopm_inventory_t *inventory)
+{
+
+}
+
+void TUI_inventory_repelenish_merch(ioopm_inventory_t *inventory)
+{
+    
+}
 
 int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
-    ioopm_hash_table_t *cart_merch = ioopm_cart_get_merch(cart);
-    ioopm_inventory_remove_merch_hash_table(inventory, cart_merch);
+    ioopm_list_t *cart_merch = ioopm_cart_get_merch(cart);
+    ioopm_inventory_remove_merch_list(inventory, cart_merch);
     ioopm_cart_clear(cart);
     return 0;
 }
@@ -33,23 +107,23 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         switch (menu_choice)
         {
         case 1:
-            ioopm_TUI_inventory_add_merch(inventory);
+            TUI_inventory_add_merch(inventory);
             break;
         
         case 2:
-            ioopm_TUI_inventory_list_merch(inventory);
+            TUI_inventory_list_merch(inventory);
             break;
 
         case 3:
-            ioopm_TUI_inventory_remove_merch(inventory);
+            TUI_inventory_remove_merch(inventory);
             break;
 
         case 4:
-            ioopm_TUI_inventory_edit_merch(inventory);
+            TUI_inventory_edit_merch(inventory);
             break;
 
         case 5:
-            ioopm_TUI_inventory_repelenish_merch(inventory);
+            TUI_inventory_repelenish_merch(inventory);
             break;
 
         case 6:
@@ -84,23 +158,23 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         switch (menu_choice)
         {
         case 1:
-            ioopm_TUI_cart_add(cart);
+            TUI_cart_add(cart);
             break;
 
         case 2:
-            ioopm_TUI_inventory_list_merch(inventory);
+            TUI_inventory_list_merch(inventory);
             break;
 
         case 3:
-            ioopm_TUI_cart_remove(cart);
+            TUI_cart_remove(cart);
             break;
 
         case 4:
-            ioopm_TUI_cart_get_cost(cart);
+            TUI_cart_get_cost(cart);
             break;
 
         case 5:
-            ioopm_TUI_cart_list_contents(cart);
+            TUI_cart_list_contents(cart);
             break;
 
         case 6:

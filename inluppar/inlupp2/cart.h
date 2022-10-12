@@ -1,8 +1,21 @@
-#include "merch.h"
 #include "hash_table.h"
 #pragma once
 
 typedef struct cart ioopm_cart_t;
+
+typedef struct cart_merchandise cart_merch_t;
+
+struct cart_merchandise
+{
+    char *name;
+    char *description;
+    int price;
+    int pcs;
+};
+
+
+/// @brief eq comparison for merchandise
+bool eq_cart_merch(elem_t a, elem_t b);
 
 /// @brief Create a new empty cart
 /// @return An empty cart
@@ -15,7 +28,7 @@ void ioopm_cart_destroy(ioopm_cart_t *cart);
 /// @brief Add a merchandise to a cart
 /// @param cart The cart where the merchandise will be added
 /// @param merch The merchandise to be added
-void ioopm_cart_add(ioopm_cart_t *cart, merch_t merch);
+void ioopm_cart_add(ioopm_cart_t *cart, cart_merch_t merch);
 
 /// @brief Remove a merchandise from a cart
 /// @param cart The cart where the merchandise will be removed from
@@ -35,4 +48,4 @@ void ioopm_cart_clear(ioopm_cart_t *cart);
 /// @brief Get a hash table of all merchandise in a cart
 /// @param cart The cart to get the merchandise from
 /// @return A hash table of all the merchandise
-ioopm_hash_table_t *ioopm_cart_get_merch(ioopm_cart_t *cart);
+ioopm_list_t *ioopm_cart_get_merch(ioopm_cart_t *cart);
