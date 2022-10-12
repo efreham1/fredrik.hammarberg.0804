@@ -11,7 +11,7 @@ char *ioopm_ask_merch_name(ioopm_cart_t *cart)
     return "A";
 }
 
-int ioopm_ask_No_merch(ioopm_cart_t *cart)
+int ioopm_ask_No_merch(ioopm_cart_t *cart, char *merch_name)
 {
     return 5;
 }

@@ -17,6 +17,7 @@ int clean_suite_cart(void)
   return 0;
 }
 
+// start of cart tests ==============================================================
 void cart_test_create_destroy(void)
 {
   ioopm_cart_t *cart = ioopm_cart_create();
@@ -27,8 +28,16 @@ void cart_test_create_destroy(void)
 void cart_test_add(void)
 {
   ioopm_cart_t *cart = ioopm_cart_create();
+  merch_t merch = {.name = "test", .description="A test", .price=1010};
+  ioopm_cart_add(cart, merch);
+  ioopm_list_t *merches = ioopm_hash_table_keys(ioopm_cart_get_merch(cart));
+  CU_ASSERT_EQUAL(((merch_t *)ioopm_linked_list_get(merches, 0).ptr_v)->name, merch.name);
+  CU_ASSERT_EQUAL(((merch_t *)ioopm_linked_list_get(merches, 0).ptr_v)->description, merch.description);
+  CU_ASSERT_EQUAL(((merch_t *)ioopm_linked_list_get(merches, 0).ptr_v)->price, merch.price);
+  ioopm_cart_destroy(cart);
+  ioopm_linked_list_destroy(merches);
 }
-
+// end of cart tests ================================================================
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -52,7 +61,10 @@ int main()
   // copy a line below and change the information
 
   if (
+    // cart tests=======================================================================================
       (CU_add_test(suite_cart, "Test for create and destroy", cart_test_create_destroy) == NULL) ||
+
+      (CU_add_test(suite_cart, "Test for adding a single element to an empty cart", cart_test_add) == NULL) ||
 
       0)
   {

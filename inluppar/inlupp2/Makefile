@@ -8,6 +8,12 @@ BACKEND= hash_table.o linked_list.o merch.o cart.o inventory.o undo.o iterator.o
 store: $(FRONTEND) $(BACKEND) store.c
 	$(CC) $(FLAGS) $^ -o $@
 
+test_store: $(FRONTEND) $(BACKEND) store_test.c
+	$(CC) $(FLAGS) $^ -lcunit -o $@
+
+memtest_store: test_store
+	valgrind --leak-check=full ./test_store
+
 clean:
 	rm -f *.o
 	rm -f *.gcda
