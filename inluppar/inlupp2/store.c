@@ -97,13 +97,19 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "4. Edit merchandise in the inventory.\n"
         "5. Replenish merchandise in the inventory.\n"
         "6. Undo the previous action.\n"
-        "7. Exit the menu.\n";
+        "7. Add merchandise to your cart.\n"
+        "8. Remove merchandise from your cart.\n"
+        "9. Get the cost of your cart's contents.\n"
+        "10. List the cart's contents.\n"
+        "11. CLear the cart's contents.\n"
+        "12. Checkout your cart.\n"
+        "13. Exit the menu.\n";
     
-    char* admin_options = "1234567";
+    int[13] admin_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
     bool admin_access = ioopm_ask_admin_access();
     while (admin_access)
     {   
-        char menu_choice = ioopm_ask_menu(admin_menu, admin_options);
+        int menu_choice = ioopm_ask_menu(admin_menu, admin_options);
         switch (menu_choice)
         {
         case 1:
@@ -131,22 +137,43 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
 
         case 7:
+            TUI_cart_add(cart);
+            break;
+
+        case 8:
+            TUI_cart_remove(cart);
+            break;
+
+        case 9:
+            TUI_cart_get_cost(cart);
+            break;
+
+        case 10:
+            TUI_cart_list_contents(cart);
+            break;
+
+        case 11:
+            ioopm_cart_clear(cart);
+            break;
+
+        case 12:
+            do_checkout(inventory, cart);
+            break;
+
+        case 13:
             return 0;
         }
     }
-
+/*
     char *user_menu =
         "------------------User menu------------------\n"
         "Please chose an option by typing its number:\n"
         "1. Add merchandise to your cart.\n"
-        "2. List all merchandise in the store.\n"
         "3. Remove merchandise from your cart.\n"
         "4. Get the cost of your cart's contents.\n"
         "5. List the cart's contents.\n"
         "6. CLear the cart's contents.\n"
         "7. Checkout your cart.\n"
-        "8. Undo the previous action.\n"
-        "9. Exit the menu.\n";
     
     char* user_options = "123456789";
 
@@ -192,7 +219,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         case 9:
             return 0;
         }
-    }
+    } */
     return 1;
 }
 
