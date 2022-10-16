@@ -5,152 +5,6 @@
 #include "inventory.h"
 #include "iterator.h"
 
-void TUI_inventory_list_merch(ioopm_hash_table_t *warehouse) {
-    ioopm_list_t *merch_list = ioopm_get_merchandise_list(warehouse);
-    ioopm_list_iterator_t *iterator = ioopm_list_iterator(merch_list);
-    int size = ioopm_hash_table_size(warehouse);
-
-    printf("\n%d) %s", 1, ((char *)ioopm_iterator_current(iterator).pointer)); 
-
-    bool condition = true;
-    for (int j = 1; j < size && condition; ++j) {
-        if (j % 20 == 0 && 'Y' != ((char)toupper(*(ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n"))))) {
-            condition = false;
-        }
-        else if (ioopm_iterator_has_next(iterator)) {
-            printf("\n%d) %s", j+1, ((char *)ioopm_iterator_next(iterator).pointer));
-        }
-        else {
-            condition = false;
-        }
-    }
-    ioopm_linked_list_destroy(merch_list);
-    ioopm_iterator_destroy(iterator);
-}
-
-
-void TUI_inventory_remove_merch(ioopm_hash_table_t *warehouse) {
-    TUI_inventory_list_merch(warehouse);
-
-    char *merch = ask_question_string("\n\nMerchandise to remove:\n");
-    if (ioopm_hash_table_lookup(warehouse, (elem_t) { .pointer = merch }, &((elem_t) { .pointer = NULL }))) {
-        ioopm_remove_merchandise(warehouse, merch);
-    }
-    else {
-        printf("\n%s does not exist (check spelling)", merch);
-    }
-
-    if (!ioopm_hash_table_lookup(warehouse, (elem_t) { .pointer = merch }, &((elem_t) { .pointer = NULL }))) {
-        printf("\n%s removed succesfully from warehouse", merch);
-    }
-    else {
-        printf("\nSomething went wrong, try again");
-    }
-}
-
-
-void TUI_inventory_edit_merch(ioopm_hash_table_t *warehouse) {
-    TUI_inventory_list_merch(warehouse);
-    char *merch = ask_question_string("\nMerchandise to edit:\n");
-
-    elem_t result = { .pointer = NULL };
-    if (ioopm_hash_table_lookup(warehouse, (elem_t) { .pointer = merch }, &result)) {
-
-        char *new_name = NULL;
-        char *new_desc = NULL;
-        int new_price = 0;
-        char action;
-
-        while (action != 'F') {
-            printf(
-                "\nChoose what to edit:\n\n"
-                "Edit [n]ame\n"
-                "Edit [d]escription\n"
-                "Edit [p]rice\n"
-                "[F]inished editing\n"
-                );
-            action = (char)(toupper(*(ask_question_string(""))));
-
-            if (action == 'N') {
-                new_name = ask_question_string("\nEnter new name:\n");
-            }
-            else if (action == 'D') {
-                new_desc = ask_question_string("\nEnter new description:\n");
-            }
-            else if (action == 'P') {
-                new_price = ask_question_int("\nEnter new price:\n");
-            }
-            else if (action == 'F') {
-                printf("\nMerchandise has been successfully edited.");
-            }
-            else {
-                printf("\nInvalid input\n");
-            }
-        }
-        ioopm_edit_merchandise(warehouse, ((merchandise_t *)result.pointer), new_name, new_desc, new_price);
-    }
-    else {
-        printf("\n%s does not exist (check spelling)", merch);
-    }
-}
-
-
-void TUI_inventory_list_stock(ioopm_hash_table_t *warehouse) {
-    TUI_inventory_list_merch(warehouse);
-    char *merch = ask_question_string("\n\nMerchandise to show stock of:\n");
-
-    elem_t result = { .pointer = NULL };
-    if (ioopm_hash_table_lookup(warehouse, (elem_t) { .pointer = merch }, &result)) {
-        ioopm_list_t *storage_locations = ((merchandise_t *)result.pointer)->storage_locations;
-
-        if (!ioopm_linked_list_is_empty(storage_locations)) {
-
-            int size = ioopm_linked_list_size(storage_locations);
-            ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
-
-            printf("\nTotal stock of %s: %d\n\n Stock per shelf:\n\n", ((merchandise_t *)result.pointer)->name, ((merchandise_t *)result.pointer)->total_stock);
-            storage_location_t storage_location = *(storage_location_t *)ioopm_iterator_current(iterator).pointer;
-            printf("\n%s) %d", storage_location.shelf, storage_location.stock);
-
-            for (int i = 0; i < size; ++i) {
-                if (ioopm_iterator_has_next(iterator))
-                storage_location = *(storage_location_t *)ioopm_iterator_next(iterator).pointer;
-                   printf("\n%s) %d", storage_location.shelf, storage_location.stock);
-            }
-        }    
-    }
-    else {
-        printf("\n%s does not exist (check spelling)", merch); 
-    }
-    printf("\n%s is out of stock.", merch);
-}
-
-
-void TUI_inventory_increase_stock(ioopm_hash_table_t *warehouse) {
-    TUI_inventory_list_merch(warehouse);
-    char *name = ask_question_string("\n\nMerchandise to stock up on");
-
-    elem_t result = { .pointer = NULL };
-    if (!ioopm_hash_table_lookup(warehouse, (elem_t) { .pointer = name }, &result)) {
-        printf("\n%s does not exits (check spelling)", name);
-    }
-
-    // is_shelf funkar inte som den ska
-
-    char *shelf = " ";
-    while (!is_shelf(shelf) && !shelf_availible(shelf)) {
-        printf("\nShelf format is one capital letter (A-Z) followed by two digits (0-9)");
-        shelf = ask_question_string("\nShelf to store in");
-    }
-
-    int quantity = 0;
-    while(quantity <= 0) {
-        printf("\nStock to add must be bigger than 0");
-        quantity = ask_question_int("\nAmount of stock to be added");
-        }
-
-    ioopm_replenish_stock(warehouse, (merchandise_t *)result.pointer, quantity, shelf);
-}
 
 void TUI_cart_add(ioopm_cart_t *cart)
 {
@@ -200,30 +54,139 @@ void TUI_cart_list_contents(ioopm_cart_t *cart)
     }
 }
 
-void TUI_inventory_add_merch(ioopm_inventory_t *inventory)
-{
 
-}
+void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
 
-void TUI_inventory_list_merch(ioopm_inventory_t *inventory)
-{
+    char *name;
+    char *desc;
+    int price;
 
-}
+    ask_new_inventory_merch(inventory->warehouse, &name, &desc, &price);
 
-void TUI_inventory_remove_merch(ioopm_inventory_t *inventory)
-{
+    ioopm_add_merchandise(inventory, name, desc, price);
 
-}
-
-void TUI_inventory_edit_merch(ioopm_inventory_t *inventory)
-{
-
-}
-
-void TUI_inventory_repelenish_merch(ioopm_inventory_t *inventory)
-{
+    if (ioopm_hash_table_has_key(inventory->warehouse, (elem_t) { .ptr_v = name })) {
+    printf("\n%s succesfully added to warehouse", name);
+    }
     
 }
+
+void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
+    ioopm_list_t *merch_list = ioopm_get_merchandise_list(inventory);
+    ioopm_list_iterator_t *iterator = ioopm_list_iterator(merch_list);
+
+    int i = 1;
+    while (true)
+    {
+        printf("\n%d) %s", i, ((char *)ioopm_iterator_current(iterator).ptr_v));
+        if (!ioopm_iterator_has_next(iterator)) break;
+        ioopm_iterator_next(iterator);
+        if (i%20)
+        {
+            char answer = toupper(*(ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n")));
+            if (answer != 'Y') break;
+        }
+        i++;
+    }
+
+    ioopm_linked_list_destroy(merch_list);
+    ioopm_iterator_destroy(iterator);
+}
+
+
+void TUI_inventory_remove_merch(ioopm_inventory_t *inventory) {
+    TUI_inventory_list_merch(inventory);
+
+    char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
+    ioopm_remove_merchandise(inventory, merch_name);
+}
+
+
+void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
+    TUI_inventory_list_merch(inventory);
+    char *old_name = ask_existing_inventory_merch(inventory->warehouse);
+
+    elem_t result = { .ptr_v = NULL };
+
+    char *new_name = NULL;
+    char *new_desc = NULL;
+    int new_price = 0;
+    char action;
+
+    while (action != 'F') {
+        char *choice = 
+            "\nChoose what to edit:\n\n"
+            "Edit [n]ame\n"
+            "Edit [d]escription\n"
+            "Edit [p]rice\n"
+            "[F]inished editing\n"
+            ;
+        switch ((char)(toupper(*(ask_question_string("choice")))))
+        {
+        case 'N':
+            new_name = ask_question_string("\nEnter new name:\n");
+            break;
+        
+        case 'D':
+            new_desc = ask_question_string("\nEnter new description:\n");
+            break;
+        case 'P':
+            new_price = ask_question_int("\nEnter new price:\n");
+            break;
+        case 'F':
+            printf("\nMerchandise has been successfully edited.");
+            break;
+        default:
+            printf("\nInvalid input\n");
+            break;
+        }
+    }
+    ioopm_edit_merchandise(inventory, old_name, new_name, new_desc, new_price);
+}
+
+
+void TUI_inventory_show_stock(ioopm_inventory_t *inventory) {
+    TUI_inventory_list_merch(inventory);
+    char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
+
+        ioopm_list_t *storage_locations = ioopm_inventory_storage_locations_merch(inventory, merch_name);
+
+        if (!ioopm_linked_list_is_empty(storage_locations)) {
+
+            int size = ioopm_linked_list_size(storage_locations);
+            ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
+
+            printf("\nTotal stock of %s: %d\n\n Stock per shelf:\n\n", merch_name, ioopm_inventory_get_stock(inventory, merch_name));
+
+            while (true)
+            {
+                storage_location_t storage_location = *(storage_location_t *)ioopm_iterator_current(iterator).ptr_v;
+                printf("\n%s) %d", storage_location.shelf, storage_location.stock);
+                if (!ioopm_iterator_has_next(iterator)) break;
+                ioopm_iterator_has_next(iterator);
+            }
+            
+        }
+        else
+        {
+            printf("\n%s is out of stock.", merch_name);
+        }
+}
+
+
+void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
+    TUI_inventory_list_merch(inventory);
+    char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
+
+    // is_shelf funkar inte som den ska
+
+    char *shelf = ask_shelf();
+
+    int quantity = ask_question_u_int("How much stock would you like to replenish with?")
+
+    ioopm_replenish_stock(inventory, merch_name, quantity, shelf);
+}
+
 
 int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
@@ -252,7 +215,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "12. Checkout your cart.\n"
         "13. Exit the menu.\n";
     
-    int[13] admin_options = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
+    int admin_options[13] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
     bool admin_access = ioopm_ask_admin_access();
     while (admin_access)
     {   

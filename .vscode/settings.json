@@ -1,5 +1,8 @@
 {
     "githubPullRequests.ignoredPullRequestBranches": [
         "master"
-    ]
+    ],
+    "files.associations": {
+        "data_structure.h": "c"
+    }
 }

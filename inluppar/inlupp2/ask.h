@@ -34,3 +34,11 @@ bool ioopm_ask_user_access();
 /// @brief See if the user wants and can have admin access
 /// @return True if admin access is granted
 bool ioopm_ask_admin_access();
+
+void ask_new_inventory_merch(inventory->warehouse, &name, &desc, &price);
+
+char *ask_existing_inventory_merch(inventory->warehouse)
+
+char *ask_shelf();
+
+ask_question_u_int(question)

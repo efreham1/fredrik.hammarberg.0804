@@ -1,6 +1,6 @@
 #pragma once
 #include <stdbool.h>
-#include "common.h"
+#include "data_structure.h"
 
 /*
  * @file hash_table.h
@@ -17,9 +17,9 @@
 typedef struct iter ioopm_list_iterator_t;
 
 struct iter {
-    link_t *head;
-    link_t *current;
-    link_t *next;
+    ll_entry_t *head;
+    ll_entry_t *current;
+    ll_entry_t *next;
 };
 
 /// @brief Create an iterator for a given list

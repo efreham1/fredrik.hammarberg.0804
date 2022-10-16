@@ -96,7 +96,7 @@ static void update_NO_buckets(ioopm_hash_table_t *ht)
     ioopm_hash_table_t *new_ht = ioopm_hash_table_create_spec(ht->load_factor, new_capacity, ht->h_fnc, ht->compare_equal_keys, ht->compare_equal_values, ht->compare_lessthan_keys);
     ioopm_list_t *keys = ioopm_hash_table_keys(ht);
     ioopm_list_t *values = ioopm_hash_table_values(ht);
-    for (int i = 0; i < ioopm_linked_list_length(keys); i++)
+    for (int i = 0; i < ioopm_linked_list_size(keys); i++)
     {
         ioopm_hash_table_insert(new_ht, ioopm_linked_list_get(keys, i), ioopm_linked_list_get(values, i));
     }
