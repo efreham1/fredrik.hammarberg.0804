@@ -23,7 +23,7 @@ static merchandise_t *create_merchandise(char *name, char *desc, int price) {
 }
 
 
-void ioopm_add_merchandise(inventory_t *inventory, char *name, char *desc, int price) {
+void ioopm_inventory_add_merchandise(inventory_t *inventory, char *name, char *desc, int price) {
     merchandise_t *merch = create_merchandise(name, desc, price);
 
     elem_t key = { .pointer = name };
@@ -32,18 +32,18 @@ void ioopm_add_merchandise(inventory_t *inventory, char *name, char *desc, int p
 }
 
 
-ioopm_list_t *ioopm_get_merchandise_list(inventory_t *inventory) {
+ioopm_list_t *ioopm_inventory_get_merchandise_list(inventory_t *inventory) {
     return ioopm_hash_table_keys(warehouse);
 }
 
 
-void ioopm_remove_merchandise(inventory_t *inventory, char *merch) {
+void ioopm_inventory_remove_merchandise(inventory_t *inventory, char *merch) {
     elem_t key = { .pointer = merch };
     ioopm_hash_table_remove(warehouse, key);
 }
 
 
-void ioopm_edit_merchandise(inventory_t *inventory, merchandise_t *merch, char *new_name, char *new_desc, int new_price) {
+void ioopm_inventory_edit_merchandise(inventory_t *inventory, merchandise_t *merch, char *new_name, char *new_desc, int new_price) {
     if (new_name || new_desc || new_price != 0) {
         char *key = merch->name;
 
@@ -57,7 +57,7 @@ void ioopm_edit_merchandise(inventory_t *inventory, merchandise_t *merch, char *
         updated_merch->total_stock = total_stock;
         updated_merch->storage_locations = storage_locations;
 
-        ioopm_remove_merchandise(warehouse, key);
+        ioopm_inventory_remove_merchandise(warehouse, key);
         ioopm_hash_table_insert(warehouse, (elem_t) { .pointer = name }, (elem_t) { .pointer = updated_merch });
     }
     else {
@@ -66,7 +66,7 @@ void ioopm_edit_merchandise(inventory_t *inventory, merchandise_t *merch, char *
 }
 
 // seg fault
-void ioopm_replenish_stock(inventory_t *inventory, merchandise_t *merch, int quantity, char *shelf) {
+void ioopm_inventory_replenish_stock(inventory_t *inventory, merchandise_t *merch, int quantity, char *shelf) {
     ioopm_list_t *storage_locations = merch->storage_locations;
     ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
 

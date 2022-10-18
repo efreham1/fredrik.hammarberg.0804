@@ -1,4 +1,5 @@
 #include "cart.h"
+#include "hash_table.h"
 
 #pragma once
 
@@ -35,10 +36,14 @@ bool ioopm_ask_user_access();
 /// @return True if admin access is granted
 bool ioopm_ask_admin_access();
 
-void ask_new_inventory_merch(inventory->warehouse, &name, &desc, &price);
+void ask_new_inventory_merch(ioopm_hash_table_t *warehouse, char **name, char **desc, int *price);
 
-char *ask_existing_inventory_merch(inventory->warehouse)
+char *ask_existing_inventory_merch(ioopm_hash_table_t *warehouse);
 
 char *ask_shelf();
 
-ask_question_u_int(question)
+int ask_question_u_int(char *question);
+
+char *ask_question_string(char *question);
+
+int ask_question_int(char *question);

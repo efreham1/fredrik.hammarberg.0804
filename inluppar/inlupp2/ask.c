@@ -36,3 +36,33 @@ bool ioopm_ask_admin_access()
 {
     return true;
 }
+
+void ask_new_inventory_merch(ioopm_hash_table_t *warehouse, char **name, char **desc, int *price)
+{
+
+}
+
+char *ask_existing_inventory_merch(ioopm_hash_table_t *warehouse)
+{
+
+}
+
+char *ask_shelf()
+{
+
+}
+
+int ask_question_u_int(char *question)
+{
+
+}
+
+char *ask_question_string(char *question)
+{
+    return ask_question_string_(question);
+}
+
+int ask_question_int(char *question)
+{
+    return ask_question_int_(question)
+}

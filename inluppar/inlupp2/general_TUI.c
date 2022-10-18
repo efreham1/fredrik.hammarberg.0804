@@ -70,11 +70,11 @@ answer_t ask_question(char *question, check_func check, convert_func convert) {
 }
 
 
-int ask_question_int(char *question) {
+int ask_question_int_(char *question) {
 	return ask_question(question, is_number, (convert_func) atoi).int_t;
 }
 
 
-char *ask_question_string(char *question) {
+char *ask_question_string_(char *question) {
 	return ask_question(question, not_empty, (convert_func) strdup).str_t;
 }

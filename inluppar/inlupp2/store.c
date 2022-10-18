@@ -63,7 +63,7 @@ void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
 
     ask_new_inventory_merch(inventory->warehouse, &name, &desc, &price);
 
-    ioopm_add_merchandise(inventory, name, desc, price);
+    ioopm_inventory_add_merchandise(inventory, name, desc, price);
 
     if (ioopm_hash_table_has_key(inventory->warehouse, (elem_t) { .ptr_v = name })) {
     printf("\n%s succesfully added to warehouse", name);
@@ -72,7 +72,7 @@ void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
 }
 
 void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
-    ioopm_list_t *merch_list = ioopm_get_merchandise_list(inventory);
+    ioopm_list_t *merch_list = ioopm_inventory_get_merchandise_list(inventory);
     ioopm_list_iterator_t *iterator = ioopm_list_iterator(merch_list);
 
     int i = 1;
@@ -98,7 +98,7 @@ void TUI_inventory_remove_merch(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
 
     char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
-    ioopm_remove_merchandise(inventory, merch_name);
+    ioopm_inventory_remove_merchandise(inventory, merch_name);
 }
 
 
@@ -141,7 +141,7 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
             break;
         }
     }
-    ioopm_edit_merchandise(inventory, old_name, new_name, new_desc, new_price);
+    ioopm_inventory_edit_merchandise(inventory, old_name, new_name, new_desc, new_price);
 }
 
 
@@ -182,9 +182,9 @@ void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
 
     char *shelf = ask_shelf();
 
-    int quantity = ask_question_u_int("How much stock would you like to replenish with?")
+    int quantity = ask_question_u_int("How much stock would you like to replenish with?");
 
-    ioopm_replenish_stock(inventory, merch_name, quantity, shelf);
+    ioopm_inventory_replenish_stock(inventory, merch_name, quantity, shelf);
 }
 
 

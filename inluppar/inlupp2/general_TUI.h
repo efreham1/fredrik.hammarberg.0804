@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stdbool.h>
 
 #pragma once
 
@@ -16,9 +17,9 @@ typedef answer_t(*convert_func)(char *);
 
 answer_t ask_question(char *question, check_func check, convert_func convert);
 
-answer_t ask_question_string(char *question);
+char *ask_question_string_(char *question);
 
-answer_t ask_question_int(char *question)
+int ask_question_int_(char *question);
 
 bool not_empty(char *str);
 
