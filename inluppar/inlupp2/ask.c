@@ -22,7 +22,7 @@ bool ioopm_ask_question_bool(char *question)
     return true;
 }
 
-int ioopm_ask_menu(char *menu, char *options)
+int ioopm_ask_menu(char *menu, ioopm_list_t *options)
 {
     return 3;
 }
@@ -44,17 +44,17 @@ void ask_new_inventory_merch(ioopm_hash_table_t *warehouse, char **name, char **
 
 char *ask_existing_inventory_merch(ioopm_hash_table_t *warehouse)
 {
-
+    return "test";
 }
 
 char *ask_shelf()
 {
-
+    return "test";
 }
 
 int ask_question_u_int(char *question)
 {
-
+    return ask_question_u_int_(question);
 }
 
 char *ask_question_string(char *question)
@@ -64,5 +64,5 @@ char *ask_question_string(char *question)
 
 int ask_question_int(char *question)
 {
-    return ask_question_int_(question)
+    return ask_question_int_(question);
 }

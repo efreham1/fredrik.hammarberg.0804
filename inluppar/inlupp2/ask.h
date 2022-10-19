@@ -26,7 +26,7 @@ bool ioopm_ask_question_bool(char *question);
 /// @param menu The menu which will be displayed
 /// @param options The possible menu options
 /// @return The choosed option
-int ioopm_ask_menu(char *menu, char *options);
+int ioopm_ask_menu(char *menu, ioopm_list_t *options);
 
 /// @brief See if the user wants user access
 /// @return True if user access is granted

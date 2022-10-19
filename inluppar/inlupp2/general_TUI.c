@@ -56,16 +56,40 @@ bool is_number(char *str) {
 	return true;
 }
 
+bool is_pos_number(char *str)
+{
+	if (strlen(str) == 0) {
+		return false;
+	}
+	for(int i = 0; i < strlen(str); ++i) {
+		if (str[i] == 45 && strlen(str) > 1) {
+			if (i !=0) {
+				return false;
+			}
+		} else if (!isdigit(str[i])) {
+			return false;
+		}	
+	}
+	if (atoi(str)< 0 )
+	{
+		return false;
+	}
+	
+	return true;
+}
+
 
 answer_t ask_question(char *question, check_func check, convert_func convert) {
 	int buf_siz = 255;
 	char buf[buf_siz];
-
-	do {
+	printf("%s\n", question);
+	read_string(buf, buf_siz);
+	while (!check(buf))
+	{
+		printf("Answer does not have correct format.\n");
 		printf("%s\n", question);
-		read_string(buf, buf_siz);		
+		read_string(buf, buf_siz);
 	}
-	while (!check(buf));
 	return convert(buf);
 }
 
@@ -77,4 +101,8 @@ int ask_question_int_(char *question) {
 
 char *ask_question_string_(char *question) {
 	return ask_question(question, not_empty, (convert_func) strdup).str_t;
+}
+
+int ask_question_u_int_(char *question)	{
+	return ask_question(question, is_pos_number, (convert_func) atoi).int_t;
 }

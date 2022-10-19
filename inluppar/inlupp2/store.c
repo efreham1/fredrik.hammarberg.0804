@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <ctype.h>
 #include "ask.h"
 #include "undo.h"
 #include "cart.h"
@@ -10,12 +11,10 @@ void TUI_cart_add(ioopm_cart_t *cart)
 {
     cart_merch_t merch = ioopm_ask_merch();
     ioopm_cart_add(cart, merch);
-    bool add_more = ioopm_ask_question_bool("Would you like to add more merchandise?");
-    while (add_more)
+    while (ioopm_ask_question_bool("Would you like to add more merchandise?"))
     {
         cart_merch_t merch = ioopm_ask_merch();
         ioopm_cart_add(cart, merch);
-        bool add_more = ioopm_ask_question_bool("Would you like to add more merchandise?");
     }
 }
 
@@ -24,13 +23,11 @@ void TUI_cart_remove(ioopm_cart_t *cart)
     char *merch_name = ioopm_ask_merch_name(cart);
     int No_merch = ioopm_ask_No_merch(cart, merch_name);
     ioopm_cart_remove(cart, merch_name, No_merch);
-    bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
-    while (remove_more)
+    while (ioopm_ask_question_bool("Would you like to remove more merchandise?"))
     {
         char *merch_name = ioopm_ask_merch_name(cart);
         int No_merch = ioopm_ask_No_merch(cart, merch_name);
         ioopm_cart_remove(cart, merch_name, No_merch);
-        bool remove_more = ioopm_ask_question_bool("Would you like to remove more merchandise?");
     }
 }
 
@@ -43,8 +40,8 @@ void TUI_cart_get_cost(ioopm_cart_t *cart)
 void TUI_cart_list_contents(ioopm_cart_t *cart)
 {
     ioopm_list_t *all_merch = ioopm_cart_get_merch(cart);
-    ioopm_list_iterator_t *merch_iterator = ioopm_iterator_create(all_merch);
-    for (int i = 0; i < ioopm_linked_list_length(all_merch); i++)
+    ioopm_list_iterator_t *merch_iterator = ioopm_list_iterator(all_merch);
+    for (int i = 0; i < ioopm_linked_list_size(all_merch); i++)
     {
         cart_merch_t *current_merch = ioopm_iterator_current(merch_iterator).ptr_v;
         char *name = current_merch->name;
@@ -106,12 +103,10 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
     char *old_name = ask_existing_inventory_merch(inventory->warehouse);
 
-    elem_t result = { .ptr_v = NULL };
-
     char *new_name = NULL;
     char *new_desc = NULL;
     int new_price = 0;
-    char action;
+    char action = '\n';
 
     while (action != 'F') {
         char *choice = 
@@ -121,7 +116,7 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
             "Edit [p]rice\n"
             "[F]inished editing\n"
             ;
-        switch ((char)(toupper(*(ask_question_string("choice")))))
+        switch ((char)(toupper(*(ask_question_string(choice)))))
         {
         case 'N':
             new_name = ask_question_string("\nEnter new name:\n");
@@ -153,7 +148,6 @@ void TUI_inventory_show_stock(ioopm_inventory_t *inventory) {
 
         if (!ioopm_linked_list_is_empty(storage_locations)) {
 
-            int size = ioopm_linked_list_size(storage_locations);
             ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
 
             printf("\nTotal stock of %s: %d\n\n Stock per shelf:\n\n", merch_name, ioopm_inventory_get_stock(inventory, merch_name));
@@ -196,6 +190,11 @@ int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
     return 0;
 }
 
+bool int_eq_fun(elem_t a, elem_t b)
+{
+    return a.int_v == b.int_v;
+}
+
 int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
     char *admin_menu =
@@ -215,7 +214,12 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "12. Checkout your cart.\n"
         "13. Exit the menu.\n";
     
-    int admin_options[13] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    ioopm_list_t *admin_options = ioopm_linked_list_create(int_eq_fun);
+    for (int i = 1; i < 14; i++)
+    {
+        ioopm_linked_list_append(admin_options, (elem_t) {.int_v = i});
+    }
+    
     bool admin_access = ioopm_ask_admin_access();
     while (admin_access)
     {   
@@ -239,7 +243,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
 
         case 5:
-            TUI_inventory_repelenish_merch(inventory);
+            TUI_inventory_replenish_stock(inventory);
             break;
 
         case 6:

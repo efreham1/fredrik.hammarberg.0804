@@ -17,7 +17,7 @@
  * @see https://uppsala.instructure.com/courses/68435/assignments/130156
  */
 
-typedef struct merch inventory_merchandise_t;
+typedef struct merch inventory_merch_t;
 typedef struct storage_location storage_location_t;
 typedef struct inventory ioopm_inventory_t;
 
@@ -39,7 +39,7 @@ struct merch {
 struct inventory{
     ioopm_hash_table_t *warehouse;
     ioopm_list_t *used_shelfs;
-}
+};
 
 /// @brief add merchandise to warehouse 
 /// @param warehouse hash table that represents the warehouse
@@ -56,24 +56,28 @@ ioopm_list_t *ioopm_inventory_get_merchandise_list(ioopm_inventory_t *inventory)
 /// @brief removes a piece of merchandise from the warehouse
 /// @param warehouse warehouse to remove merchandise from
 /// @param merch key of merchandise to be removed
-void ioopm_inventory_remove_merchandise(ioopm_inventory_t *inventory, char *key);
+void ioopm_inventory_remove_merchandise(ioopm_inventory_t *inventory, char *merch_name);
 
 /// @brief allows the user to edit the information of a piece of merchandise
 /// @param merch merchandise to edit
 /// @param new_name new name for merchandise or NULL
 /// @param new_desc new description for merchandise or NULL
 /// @param new_price new price of merchandise or NULL
-void ioopm_inventory_edit_merchandise(ioopm_inventory_t *inventory, merchandise_t *merch ,char *new_name, char *new_desc, int new_price);
+void ioopm_inventory_edit_merchandise(ioopm_inventory_t *inventory, char *merch_name ,char *new_name, char *new_desc, int new_price);
 
 
 /// @brief replenishes stock of merchandise
 /// @param warehouse hash table to operate on
 /// @param merch piece of merchandise to replenish stock of
 /// @param quantity amount to restock merchandise with
-void ioopm_inventory_replenish_stock(ioopm_inventory_t *inventory, merchandise_t *merch, int quantity, char *shelf);
+void ioopm_inventory_replenish_stock(ioopm_inventory_t *inventory, char *merch_name, int quantity, char *shelf);
 
-ioopm_inventory_storage_locations_merch(inventory, merch_name);
+ioopm_list_t *ioopm_inventory_storage_locations_merch(ioopm_inventory_t *inventory, char *merch_name);
 
-ioopm_inventory_get_stock(inventory, merch_name);
+int ioopm_inventory_get_stock(ioopm_inventory_t *inventory, char *merch_name);
 
-ioopm_inventory_remove_merch_list(inventory, cart_merch);
+void ioopm_inventory_remove_merch_list(ioopm_inventory_t *inventory, ioopm_list_t *cart_merch);
+
+ioopm_inventory_t *ioopm_inventory_load();
+
+void ioopm_inventory_save(ioopm_inventory_t *inventory);

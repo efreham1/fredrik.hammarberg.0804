@@ -24,3 +24,5 @@ int ask_question_int_(char *question);
 bool not_empty(char *str);
 
 bool is_number(char *str);
+
+int ask_question_u_int_(char *question);

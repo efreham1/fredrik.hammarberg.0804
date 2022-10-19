@@ -201,7 +201,6 @@ bool ioopm_linked_list_any(ioopm_list_t *ll, ioopm_predicate_ll prop, void *extr
 void ioopm_linked_list_apply_to_all(ioopm_list_t *ll, ioopm_apply_function_ll fun, void *extra) {
     ll_entry_t *current = ll->head;
     for (int i = 0; i < ll->size; ++i) {
-        elem_t index = { .int_v = i };
         fun(&current->value, extra);
         current = current->next;
     }
