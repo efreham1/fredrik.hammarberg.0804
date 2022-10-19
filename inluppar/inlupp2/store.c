@@ -7,15 +7,13 @@
 #include "iterator.h"
 
 
-void TUI_cart_add(ioopm_cart_t *cart)
+void TUI_cart_add(ioopm_cart_t *cart, ioopm_inventory_t *inventory)
 {
-    cart_merch_t merch = ioopm_ask_merch();
-    ioopm_cart_add(cart, merch);
-    while (ioopm_ask_question_bool("Would you like to add more merchandise?"))
-    {
-        cart_merch_t merch = ioopm_ask_merch();
-        ioopm_cart_add(cart, merch);
-    }
+    char *merch_name;
+    int cost;
+    int pieces;
+    ioopm_ask_cart_merch(inventory, &merch_name, &cost, &pieces);
+    ioopm_cart_add(cart, merch_name, cost, pieces);
 }
 
 void TUI_cart_remove(ioopm_cart_t *cart)
@@ -58,7 +56,7 @@ void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
     char *desc;
     int price;
 
-    ask_new_inventory_merch(inventory->warehouse, &name, &desc, &price);
+    ioopm_ask_new_inventory_merch(inventory->warehouse, &name, &desc, &price);
 
     ioopm_inventory_add_merchandise(inventory, name, desc, price);
 
@@ -80,7 +78,7 @@ void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
         ioopm_iterator_next(iterator);
         if (i%20)
         {
-            char answer = toupper(*(ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n")));
+            char answer = toupper(*(ioopm_ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n")));
             if (answer != 'Y') break;
         }
         i++;
@@ -94,14 +92,14 @@ void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
 void TUI_inventory_remove_merch(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
 
-    char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
+    char *merch_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
     ioopm_inventory_remove_merchandise(inventory, merch_name);
 }
 
 
 void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
-    char *old_name = ask_existing_inventory_merch(inventory->warehouse);
+    char *old_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
 
     char *new_name = NULL;
     char *new_desc = NULL;
@@ -116,17 +114,17 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
             "Edit [p]rice\n"
             "[F]inished editing\n"
             ;
-        switch ((char)(toupper(*(ask_question_string(choice)))))
+        switch ((char)(toupper(*(ioopm_ask_question_string(choice)))))
         {
         case 'N':
-            new_name = ask_question_string("\nEnter new name:\n");
+            new_name = ioopm_ask_question_string("\nEnter new name:\n");
             break;
         
         case 'D':
-            new_desc = ask_question_string("\nEnter new description:\n");
+            new_desc = ioopm_ask_question_string("\nEnter new description:\n");
             break;
         case 'P':
-            new_price = ask_question_int("\nEnter new price:\n");
+            new_price = ioopm_ask_question_int("\nEnter new price:\n");
             break;
         case 'F':
             printf("\nMerchandise has been successfully edited.");
@@ -142,7 +140,7 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
 
 void TUI_inventory_show_stock(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
-    char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
+    char *merch_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
 
         ioopm_list_t *storage_locations = ioopm_inventory_storage_locations_merch(inventory, merch_name);
 
@@ -170,13 +168,13 @@ void TUI_inventory_show_stock(ioopm_inventory_t *inventory) {
 
 void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
-    char *merch_name = ask_existing_inventory_merch(inventory->warehouse);
+    char *merch_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
 
     // is_shelf funkar inte som den ska
 
-    char *shelf = ask_shelf();
+    char *shelf = ioopm_ask_shelf();
 
-    int quantity = ask_question_u_int("How much stock would you like to replenish with?");
+    int quantity = ioopm_ask_question_u_int("How much stock would you like to replenish with?");
 
     ioopm_inventory_replenish_stock(inventory, merch_name, quantity, shelf);
 }
@@ -251,7 +249,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
 
         case 7:
-            TUI_cart_add(cart);
+            TUI_cart_add(cart, inventory);
             break;
 
         case 8:

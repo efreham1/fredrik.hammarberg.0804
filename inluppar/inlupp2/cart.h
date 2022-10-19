@@ -8,7 +8,6 @@ typedef struct cart_merchandise cart_merch_t;
 struct cart_merchandise
 {
     char *name;
-    char *description;
     int price;
     int pcs;
 };
@@ -28,7 +27,7 @@ void ioopm_cart_destroy(ioopm_cart_t *cart);
 /// @brief Add a merchandise to a cart
 /// @param cart The cart where the merchandise will be added
 /// @param merch The merchandise to be added
-void ioopm_cart_add(ioopm_cart_t *cart, cart_merch_t merch);
+void ioopm_cart_add(ioopm_cart_t *cart, char *merch_name, int cost, int pieces);
 
 /// @brief Remove a merchandise from a cart
 /// @param cart The cart where the merchandise will be removed from

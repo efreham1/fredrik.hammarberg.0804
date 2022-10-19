@@ -210,8 +210,9 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *ll, ioopm_apply_function_ll fu
 ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *ll) {
     ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
     iter->head = ll->head;
-    iter->current = ll->head;
-    iter->next = ll->head->next;
+    iter->previous = ll->head;
+    iter->current = ll->head->next;
+    iter->next = ll->head->next != NULL ? ll->head->next->next : NULL;
     return iter;
 }
 
@@ -222,9 +223,16 @@ bool ioopm_iterator_has_next(ioopm_list_iterator_t *iter) {
 
 
 elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter) {
-    ll_entry_t *new_current = iter->next;
-    ll_entry_t *new_next = iter->next != NULL ? iter->next->next : NULL;
-
+    ll_entry_t *new_previous = iter->previous;
+    ll_entry_t *new_current = iter->current;
+    ll_entry_t *new_next = iter->next;
+    if (iter->next != NULL)
+    {
+        new_previous = iter->current;
+        new_current = iter->next;
+        new_next = iter->next->next;
+    }
+    iter->previous = new_previous;
     iter->current = new_current;
     iter->next = new_next;
 
@@ -233,8 +241,21 @@ elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter) {
 
 
 elem_t ioopm_iterator_remove(ioopm_list_iterator_t *iter) {
-    //TODO (optional)
-    return (elem_t) { .int_v = 0 };
+    iter->previous->next = iter->next;
+    elem_t to_return = iter->current->value;
+    free(iter->current);
+
+    ll_entry_t *new_current = iter->current;
+    ll_entry_t *new_next = iter->next;
+    if (iter->next != NULL)
+    {
+        new_current = iter->next;
+        new_next = iter->next->next;
+    }
+    iter->current = new_current;
+    iter->next = new_next;
+
+    return to_return;
 }
 
 
@@ -244,6 +265,7 @@ void ioopm_iterator_insert(ioopm_list_iterator_t *iter, elem_t element) {
 
 
 void ioopm_iterator_reset(ioopm_list_iterator_t *iter) {
+    iter->previous = iter->head;
     iter->current = iter->head;
     iter->next = iter->current->next;
 }

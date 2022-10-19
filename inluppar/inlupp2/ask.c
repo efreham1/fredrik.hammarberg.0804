@@ -2,9 +2,9 @@
 #include "ask.h"
 
 
-cart_merch_t ioopm_ask_merch()
+void ioopm_ask_cart_merch(ioopm_inventory_t *inventory, char **merch_name, int *cost, int *pieces)
 {
-    return (cart_merch_t) {.description = "a"};
+    
 }
 
 char *ioopm_ask_merch_name(ioopm_cart_t *cart)
@@ -37,32 +37,32 @@ bool ioopm_ask_admin_access()
     return true;
 }
 
-void ask_new_inventory_merch(ioopm_hash_table_t *warehouse, char **name, char **desc, int *price)
+void ioopm_ask_new_inventory_merch(ioopm_hash_table_t *warehouse, char **name, char **desc, int *price)
 {
 
 }
 
-char *ask_existing_inventory_merch(ioopm_hash_table_t *warehouse)
+char *ioopm_ask_existing_inventory_merch(ioopm_hash_table_t *warehouse)
 {
     return "test";
 }
 
-char *ask_shelf()
+char *ioopm_ask_shelf()
 {
     return "test";
 }
 
-int ask_question_u_int(char *question)
+int ioopm_ask_question_u_int(char *question)
 {
-    return ask_question_u_int_(question);
+    return ioopm_ask_question_u_int(question);
 }
 
-char *ask_question_string(char *question)
+char *ioopm_ask_question_string(char *question)
 {
-    return ask_question_string_(question);
+    return ioopm_ask_question_string(question);
 }
 
-int ask_question_int(char *question)
+int ioopm_ask_question_int(char *question)
 {
-    return ask_question_int_(question);
+    return ioopm_ask_question_int(question);
 }
