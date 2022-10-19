@@ -22,9 +22,24 @@ bool ioopm_ask_question_bool(char *question)
     return true;
 }
 
+static bool is_menu_choice_list(elem_t value, void *extra)
+{
+    int i = atoi(((char *) extra));
+    
+    return i == value.int_v;
+}
+
+static bool is_menu_choice(char *str, void *extra)
+{
+    if(!is_number(str)) return false;
+    
+    ioopm_list_t *options = (ioopm_list_t*) extra;
+    return ioopm_linked_list_any(options, is_menu_choice_list, str);
+}
+
 int ioopm_ask_menu(char *menu, ioopm_list_t *options)
 {
-    return 3;
+    return ask_question(menu, is_menu_choice, options, str_to_int, NULL).int_t;
 }
 
 bool ioopm_ask_user_access()

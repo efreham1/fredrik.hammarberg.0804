@@ -6,9 +6,9 @@
 // Warehouse / Cart logic in separate modules
 
 /*
- * @file bakend.h
+ * @file inventory.h
  * @author Joel Holmberg, Fredrik Hammarberg
- * @date 16 Oct 2022
+ * @date 19 Oct 2022
  * @brief Simple webstore backend for managing stock, merchandise and storage location in a warehouse.
  *
  * Header file provides definitions and documentation for all the functions that 
@@ -38,7 +38,7 @@ struct merch {
 
 struct inventory{
     ioopm_hash_table_t *warehouse;
-    ioopm_list_t *used_shelfs;
+    ioopm_list_t *used_shelves;
 };
 
 /// @brief add merchandise to warehouse 
@@ -75,8 +75,6 @@ void ioopm_inventory_replenish_stock(ioopm_inventory_t *inventory, char *merch_n
 ioopm_list_t *ioopm_inventory_storage_locations_merch(ioopm_inventory_t *inventory, char *merch_name);
 
 int ioopm_inventory_get_stock(ioopm_inventory_t *inventory, char *merch_name);
-
-void ioopm_inventory_remove_merch_list(ioopm_inventory_t *inventory, ioopm_list_t *cart_merch);
 
 ioopm_inventory_t *ioopm_inventory_load();
 

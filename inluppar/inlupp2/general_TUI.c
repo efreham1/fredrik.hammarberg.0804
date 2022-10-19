@@ -39,6 +39,10 @@ bool not_empty(char *str) {
 	return strlen(str) > 0;
 }
 
+bool not_empty_(char *str, void *extra) {
+	return not_empty(str);
+}
+
 
 bool is_number(char *str) {
 	if (strlen(str) == 0) {
@@ -54,6 +58,11 @@ bool is_number(char *str) {
 		}	
 	}
 	return true;
+}
+
+bool is_number_(char *str, void *extra)
+{
+	return is_number(str);
 }
 
 bool is_pos_number(char *str)
@@ -78,30 +87,45 @@ bool is_pos_number(char *str)
 	return true;
 }
 
+bool is_pos_number_(char *str, void *extra)
+{
+	return is_pos_number(str);
+}
 
-answer_t ask_question(char *question, check_func check, convert_func convert) {
+
+
+answer_t ask_question(char *question, check_func check, void *check_extra, convert_func convert, void *convert_extra) {
 	int buf_siz = 255;
 	char buf[buf_siz];
 	printf("%s\n", question);
 	read_string(buf, buf_siz);
-	while (!check(buf))
+	while (!check(buf, check_extra))
 	{
 		printf("Answer does not have correct format.\n");
 		printf("%s\n", question);
 		read_string(buf, buf_siz);
 	}
-	return convert(buf);
+	return convert(buf, convert_extra);
 }
 
+answer_t str_to_int(char *str, void *extra)
+{
+	return (answer_t) {.int_t = atoi(str)};
+}
+
+answer_t str_to_str(char *str, void *extra)
+{
+	return (answer_t) {.str_t = strdup(str)};
+}
 
 int ask_question_int(char *question) {
-	return ask_question(question, is_number, (convert_func) atoi).int_t;
+	return ask_question(question, is_number_, NULL, str_to_int, NULL).int_t;
 }
 
 char *ask_question_string(char *question) {
-	return ask_question(question, not_empty, (convert_func) strdup).str_t;
+	return ask_question(question, not_empty_, NULL, str_to_str, NULL).str_t;
 }
 
 int ask_question_u_int(char *question)	{
-	return ask_question(question, is_pos_number, (convert_func) atoi).int_t;
+	return ask_question(question, is_pos_number_, NULL, str_to_int, NULL).int_t;
 }

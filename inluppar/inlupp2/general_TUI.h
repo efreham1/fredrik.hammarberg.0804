@@ -12,10 +12,10 @@ union answer
 
 };
 
-typedef bool(*check_func)(char *);
-typedef answer_t(*convert_func)(char *);
+typedef bool(*check_func)(char * str, void *extra);
+typedef answer_t(*convert_func)(char *str, void *extra);
 
-answer_t ask_question(char *question, check_func check, convert_func convert);
+answer_t ask_question(char *question, check_func check, void *check_extra, convert_func convert, void *convert_extra);
 
 char *ask_question_string(char *question);
 
@@ -26,3 +26,7 @@ bool not_empty(char *str);
 bool is_number(char *str);
 
 int ask_question_u_int(char *question);
+
+answer_t str_to_int(char *str, void *extra);
+
+answer_t str_to_str(char *str, void *extra);

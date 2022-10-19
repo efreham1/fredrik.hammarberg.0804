@@ -53,8 +53,8 @@ elem_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
-/// @return the adress of the value previously mapped from the key, address is NULL if key doesn't exist
-elem_t *ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
+/// @return the value previously mapped from the key
+elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief returns the number of key => value entries in the hash table
 /// @param ht hash table operated upon

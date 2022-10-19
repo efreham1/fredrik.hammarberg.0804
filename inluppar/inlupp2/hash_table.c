@@ -175,22 +175,27 @@ elem_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
 }
 
 // remove any mapping from key to a value
-elem_t *ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
+elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 {
     ht_entry_t *sentinel = get_sentinel(ht, key);
     ht_entry_t *prev_entry = find_previous_entry_for_key(ht, sentinel, key);
     ht_entry_t *curr_entry = prev_entry->next;
-
+    
     if (curr_entry != NULL && ht->compare_equal_keys(curr_entry->key, key)) // key found
     {
-        elem_t *data_ptr = &curr_entry->value;
+        elem_t data_ptr = curr_entry->value;
         destroy_entry(curr_entry, &prev_entry->next);
         ht->NO_entries--;
         return data_ptr;
     }
-    // else
-    return NULL; // didn't find key, do nothing and return NULL
+    else
+    {
+        assert(false);
+
+    }
 }
+
+
 
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
 {

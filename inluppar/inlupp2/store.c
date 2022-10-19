@@ -63,7 +63,6 @@ void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
     if (ioopm_hash_table_has_key(inventory->warehouse, (elem_t) { .ptr_v = name })) {
     printf("\n%s succesfully added to warehouse", name);
     }
-    
 }
 
 void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
@@ -183,7 +182,7 @@ void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
 int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
     ioopm_list_t *cart_merch = ioopm_cart_get_merch(cart);
-    ioopm_inventory_remove_merch_list(inventory, cart_merch);
+    //TODO remove from inventory
     ioopm_cart_clear(cart);
     return 0;
 }
@@ -221,8 +220,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
     bool admin_access = ioopm_ask_admin_access();
     while (admin_access)
     {   
-        int menu_choice = ioopm_ask_menu(admin_menu, admin_options);
-        switch (menu_choice)
+        switch (ioopm_ask_menu(admin_menu, admin_options))
         {
         case 1:
             TUI_inventory_add_merch(inventory);

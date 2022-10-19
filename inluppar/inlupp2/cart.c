@@ -20,7 +20,7 @@ bool eq_cart_merch(elem_t a, elem_t b)
 static cart_merch_t *create_merch(char *merch_name, int cost, int pieces)
 {
     cart_merch_t *merch = calloc(1, sizeof(cart_merch_t));
-    merch->name = strdup(merch_name);
+    merch->name = merch_name;
     merch->price = cost;
     merch->pcs = pieces;
     return merch;
