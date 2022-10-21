@@ -6,45 +6,48 @@
 #include "inventory.h"
 #include "iterator.h"
 
+void TUI_inventory_list_merch(ioopm_inventory_t *inventory);
+void TUI_cart_list_contents(ioopm_cart_t *cart);
 
 void TUI_cart_add(ioopm_cart_t *cart, ioopm_inventory_t *inventory)
 {
     char *merch_name;
     int cost;
     int pieces;
+    TUI_inventory_list_merch(inventory);
     ioopm_ask_cart_merch(inventory, &merch_name, &cost, &pieces);
     ioopm_cart_add(cart, merch_name, cost, pieces);
 }
 
 void TUI_cart_remove(ioopm_cart_t *cart)
 {
-    char *merch_name = ioopm_ask_merch_name(cart);
-    int No_merch = ioopm_ask_No_merch(cart, merch_name);
-    ioopm_cart_remove(cart, merch_name, No_merch);
-    while (ioopm_ask_question_bool("Would you like to remove more merchandise?"))
-    {
-        char *merch_name = ioopm_ask_merch_name(cart);
-        int No_merch = ioopm_ask_No_merch(cart, merch_name);
-        ioopm_cart_remove(cart, merch_name, No_merch);
-    }
+    TUI_cart_list_contents(cart);
+    char *merch_name = ioopm_ask_existing_cart_merch_name(cart);
+    ioopm_cart_remove(cart, merch_name);
 }
 
 void TUI_cart_get_cost(ioopm_cart_t *cart)
 {
     int cost = ioopm_cart_get_cost(cart);
-    printf("The cost of all the contents in your cart is %d.%d SEK", cost/100, cost%100);
+    printf("The cost of all the contents in your cart is %d.%d SEK\n", cost/100, cost%100);
 }
 
 void TUI_cart_list_contents(ioopm_cart_t *cart)
 {
     ioopm_list_t *all_merch = ioopm_cart_get_merch(cart);
+    if (ioopm_linked_list_is_empty(all_merch))
+    {
+        printf("\n___Cart is empty___\n\n");
+        return;
+    }
+    
     ioopm_list_iterator_t *merch_iterator = ioopm_list_iterator(all_merch);
     for (int i = 0; i < ioopm_linked_list_size(all_merch); i++)
     {
         cart_merch_t *current_merch = ioopm_iterator_current(merch_iterator).ptr_v;
         char *name = current_merch->name;
         int pcs = current_merch->pcs;
-        printf("%d. %s: %d pcs", i, name, pcs);
+        printf("%d) %s: %d pcs\n", i+1, name, pcs);
         ioopm_iterator_next(merch_iterator);
     }
 }
@@ -61,18 +64,26 @@ void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
     ioopm_inventory_add_merchandise(inventory, name, desc, price);
 
     if (ioopm_hash_table_has_key(inventory->warehouse, (elem_t) { .ptr_v = name })) {
-    printf("\n%s succesfully added to warehouse", name);
+    printf("%s succesfully added to warehouse\n", name);
     }
 }
 
 void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
     ioopm_list_t *merch_list = ioopm_inventory_get_merchandise_list(inventory);
+    if (ioopm_linked_list_is_empty(merch_list))
+    {
+        printf("\n__________The inventory is empty!__________\n\n");
+        return;
+    }
+    
     ioopm_list_iterator_t *iterator = ioopm_list_iterator(merch_list);
 
     int i = 1;
     while (true)
     {
-        printf("\n%d) %s", i, ((char *)ioopm_iterator_current(iterator).ptr_v));
+        char *current_name = ioopm_iterator_current(iterator).ptr_v;
+        int current_price = ((inventory_merch_t *) ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = current_name})->ptr_v)->price;
+        printf("%d) %s %d.%d SEK\n", i, current_name, current_price/100, current_price%100);
         if (!ioopm_iterator_has_next(iterator)) break;
         ioopm_iterator_next(iterator);
         if (i%20)

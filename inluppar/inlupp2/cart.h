@@ -12,6 +12,12 @@ struct cart_merchandise
     int pcs;
 };
 
+struct cart
+{
+    ioopm_list_t *contents;
+    ioopm_list_t *names;
+    int cost;
+};
 
 /// @brief eq comparison for merchandise
 bool eq_cart_merch(elem_t a, elem_t b);
@@ -33,7 +39,7 @@ void ioopm_cart_add(ioopm_cart_t *cart, char *merch_name, int cost, int pieces);
 /// @param cart The cart where the merchandise will be removed from
 /// @param merch Type of merchandise to be removed
 /// @param No_merch Number of merchandise of said type to be removed
-void ioopm_cart_remove(ioopm_cart_t *cart, char *merch_name, int No_merch);
+void ioopm_cart_remove(ioopm_cart_t *cart, char *merch_name);
 
 /// @brief Get the cost of all merchandise in a cart
 /// @param cart The cart from where the cost will be calculated

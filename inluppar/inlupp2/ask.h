@@ -11,7 +11,7 @@ void ioopm_ask_cart_merch(ioopm_inventory_t *inventory, char **merch_name, int *
 /// @brief Ask for an existing merchandise's name
 /// @param cart The cart where the merchandise has to exist
 /// @return The retirived name
-char *ioopm_ask_merch_name(ioopm_cart_t *cart);
+char *ioopm_ask_existing_cart_merch_name(ioopm_cart_t *cart);
 
 /// @brief Ask for an existing merchandise's amount
 /// @param cart The cart where the merchandise has to exist

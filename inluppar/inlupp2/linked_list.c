@@ -172,6 +172,8 @@ void ioopm_linked_list_clear(ioopm_list_t *ll) {
         to_remove = to_remove->next;
         free(tmp);
     }
+    ll->size=0;
+    ll->head = NULL;
 }
 
 
@@ -211,8 +213,9 @@ ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *ll) {
     ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
     iter->head = ll->head;
     iter->previous = ll->head;
-    iter->current = ll->head->next;
-    iter->next = ll->head->next != NULL ? ll->head->next->next : NULL;
+    iter->current = ll->head;
+    iter->next = ll->head != NULL ? ll->head->next : NULL;
+    iter->list = ll;
     return iter;
 }
 
@@ -254,6 +257,7 @@ elem_t ioopm_iterator_remove(ioopm_list_iterator_t *iter) {
     }
     iter->current = new_current;
     iter->next = new_next;
+    iter->list->size--;
 
     return to_return;
 }

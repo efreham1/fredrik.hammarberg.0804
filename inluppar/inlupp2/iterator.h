@@ -21,6 +21,7 @@ struct iter {
     ll_entry_t *previous;
     ll_entry_t *current;
     ll_entry_t *next;
+    ioopm_list_t *list;
 };
 
 /// @brief Create an iterator for a given list
