@@ -24,6 +24,7 @@ void TUI_cart_remove(ioopm_cart_t *cart)
     TUI_cart_list_contents(cart);
     char *merch_name = ioopm_ask_existing_cart_merch_name(cart);
     ioopm_cart_remove(cart, merch_name);
+    free(merch_name);
 }
 
 void TUI_cart_get_cost(ioopm_cart_t *cart)
@@ -50,6 +51,8 @@ void TUI_cart_list_contents(ioopm_cart_t *cart)
         printf("%d) %s: %d pcs\n", i+1, name, pcs);
         ioopm_iterator_next(merch_iterator);
     }
+
+    ioopm_iterator_destroy(merch_iterator);
 }
 
 
@@ -86,10 +89,10 @@ void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
         printf("%d) %s %d.%d SEK\n", i, current_name, current_price/100, current_price%100);
         if (!ioopm_iterator_has_next(iterator)) break;
         ioopm_iterator_next(iterator);
-        if (i%20)
+        if (i%20==0)
         {
-            char answer = toupper(*(ioopm_ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n")));
-            if (answer != 'Y') break;
+            char *answer = ioopm_ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n");
+            if (toupper(*answer) != 'Y') break;
         }
         i++;
     }
@@ -104,17 +107,23 @@ void TUI_inventory_remove_merch(ioopm_inventory_t *inventory) {
 
     char *merch_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
     ioopm_inventory_remove_merchandise(inventory, merch_name);
+    free(merch_name);
 }
 
 
 void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
+    if (ioopm_hash_table_is_empty(inventory->warehouse))
+    {
+        return;
+    }
+    
     char *old_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
 
     char *new_name = NULL;
     char *new_desc = NULL;
     int new_price = 0;
-    char action = '\n';
+    char action = '\0';
 
     while (action != 'F') {
         char *choice = 
@@ -122,9 +131,10 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
             "Edit [n]ame\n"
             "Edit [d]escription\n"
             "Edit [p]rice\n"
-            "[F]inished editing\n"
-            ;
-        switch ((char)(toupper(*(ioopm_ask_question_string(choice)))))
+            "[F]inished editing";
+        char *str = ioopm_ask_question_string(choice);
+        action = toupper(*str);
+        switch (action)
         {
         case 'N':
             new_name = ioopm_ask_question_string("\nEnter new name:\n");
@@ -137,14 +147,16 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
             new_price = ioopm_ask_question_int("\nEnter new price:\n");
             break;
         case 'F':
-            printf("\nMerchandise has been successfully edited.");
+            printf("\nMerchandise has been successfully edited.\n");
             break;
         default:
             printf("\nInvalid input\n");
             break;
         }
+        free(str);
     }
     ioopm_inventory_edit_merchandise(inventory, old_name, new_name, new_desc, new_price);
+    free(old_name);
 }
 
 
@@ -186,7 +198,7 @@ void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
 
     int quantity = ioopm_ask_question_u_int("How much stock would you like to replenish with?");
 
-    ioopm_inventory_replenish_stock(inventory, merch_name, quantity, shelf);
+    ioopm_inventory_replenish_new_shelf_stock(inventory, merch_name, quantity, shelf);
 }
 
 
@@ -282,6 +294,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             break;
 
         case 13:
+            ioopm_linked_list_destroy(admin_options);
             return 0;
         }
     }

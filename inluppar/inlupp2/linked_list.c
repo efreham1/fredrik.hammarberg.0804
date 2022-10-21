@@ -154,6 +154,17 @@ bool ioopm_linked_list_contains(ioopm_list_t *ll, elem_t element) {
     return false;
 }
 
+int ioopm_linked_list_get_index(ioopm_list_t *ll, elem_t element) {
+    ll_entry_t *current = ll->head;
+    for (int i = 0; i < ll->size; ++i) {
+        if (ll->eq_fn(current->value, element)) {
+            return i;
+        }
+        current = current->next;
+    }
+    return -1;
+}
+
 
 size_t ioopm_linked_list_size(ioopm_list_t *ll) {
     return ll->size;
@@ -208,6 +219,19 @@ void ioopm_linked_list_apply_to_all(ioopm_list_t *ll, ioopm_apply_function_ll fu
     }
 }
 
+ioopm_list_t *ioopm_linked_list_copy(ioopm_list_t *old_ll)
+{
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(old_ll);
+    ioopm_list_t *new_list = ioopm_linked_list_create(old_ll->eq_fn);
+    for (int i = 0; i < ioopm_linked_list_size(old_ll); i++)
+    {
+        ioopm_linked_list_append(new_list, ioopm_iterator_current(iter));
+        ioopm_iterator_next(iter);
+    }
+    ioopm_iterator_destroy(iter);
+    return new_list;
+}
+
 
 ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *ll) {
     ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));
@@ -244,6 +268,11 @@ elem_t ioopm_iterator_next(ioopm_list_iterator_t *iter) {
 
 
 elem_t ioopm_iterator_remove(ioopm_list_iterator_t *iter) {
+
+    bool change_head = false;
+
+    if (iter->current==iter->head) change_head = true;
+
     iter->previous->next = iter->next;
     elem_t to_return = iter->current->value;
     free(iter->current);
@@ -259,7 +288,15 @@ elem_t ioopm_iterator_remove(ioopm_list_iterator_t *iter) {
     iter->next = new_next;
     iter->list->size--;
 
+    if (change_head)
+    {
+        iter->head = iter->current;
+        iter->list->head = iter->current;
+    }
+    
+
     return to_return;
+
 }
 
 

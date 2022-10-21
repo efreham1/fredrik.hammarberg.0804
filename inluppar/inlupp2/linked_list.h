@@ -104,3 +104,14 @@ bool ioopm_linked_list_any(ioopm_list_t *list, ioopm_predicate_ll prop, void *ex
 /// @param fun the function to be applied
 /// @param extra an additional argument (may be NULL) that will be passed to all internal calls of fun
 void ioopm_linked_list_apply_to_all(ioopm_list_t *list, ioopm_apply_function_ll fun, void *extra);
+
+/// @brief gets the first index for an element in a linked list
+/// @param ll the linked list
+/// @param element the element
+/// @return the first index of the element, if the element wasn't found returns -1
+int ioopm_linked_list_get_index(ioopm_list_t *ll, elem_t element);
+
+/// @brief creates a copy of a given linked list
+/// @param old_ll linked list to copy
+/// @return a copy of old_ll
+ioopm_list_t *ioopm_linked_list_copy(ioopm_list_t *old_ll);

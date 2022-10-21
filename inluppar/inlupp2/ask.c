@@ -25,16 +25,6 @@ char *ioopm_ask_existing_cart_merch_name(ioopm_cart_t *cart)
     return ask_question("Enter an existing name for a merchandise", is_existing_cart_merch, cart, str_to_str, NULL).str_t;
 }
 
-int ioopm_ask_No_merch(ioopm_cart_t *cart, char *merch_name)
-{
-    return 5;
-}
-
-bool ioopm_ask_question_bool(char *question)
-{
-    return true;
-}
-
 static bool is_menu_choice_list(elem_t value, void *extra)
 {
     int i = atoi(((char *) extra));
@@ -94,15 +84,15 @@ char *ioopm_ask_shelf()
 
 int ioopm_ask_question_u_int(char *question)
 {
-    return ioopm_ask_question_u_int(question);
+    return ask_question_u_int(question);
 }
 
 char *ioopm_ask_question_string(char *question)
 {
-    return ioopm_ask_question_string(question);
+    return ask_question_string(question);
 }
 
 int ioopm_ask_question_int(char *question)
 {
-    return ioopm_ask_question_int(question);
+    return ask_question_int(question);
 }

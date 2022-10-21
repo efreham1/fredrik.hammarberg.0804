@@ -10,6 +10,10 @@ store: $(OBJECTS) store.c
 test_store: $(OBJECTS) store_test.c
 	$(CC) $(FLAGS) $^ -lcunit -o $@
 
+test: test.c
+	$(CC) $(FLAGS) $^ -o $@
+	valgrind --leak-check=full ./test
+
 memtest_store: test_store
 	valgrind --leak-check=full ./test_store
 

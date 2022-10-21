@@ -1,6 +1,13 @@
 #include <CUnit/Basic.h>
 #include <stdlib.h>
 #include "cart.h"
+#include "inventory.h"
+
+bool eq_int(elem_t a, elem_t b)
+{
+  return a.int_v == b.int_v;
+}
+
 
 int init_suite_cart(void)
 {
@@ -16,7 +23,22 @@ int clean_suite_cart(void)
   return 0;
 }
 
+int init_suite_inventory(void)
+{
+  // Change this function if you want to do something *before* you
+  // run a test suite
+  return 0;
+}
+
+int clean_suite_inventory(void)
+{
+  // Change this function if you want to do something *after* you
+  // run a test suite
+  return 0;
+}
+
 // start of cart tests ==============================================================
+
 void cart_test_create_destroy(void)
 {
   ioopm_cart_t *cart = ioopm_cart_create();
@@ -29,6 +51,67 @@ void cart_test_add(void)
   
 }
 // end of cart tests ================================================================
+
+// start of inventory tests =========================================================
+void inventory_test_create_destroy(void) {
+  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  CU_ASSERT_PTR_NOT_NULL(inventory);
+  ioopm_inventory_save(inventory);
+}
+
+void inventory_test_add_remove(void) {
+  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
+  inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
+
+  CU_ASSERT_STRING_EQUAL(merch->name, "Car");
+  CU_ASSERT_STRING_EQUAL(merch->desc, "Vehicle");
+  CU_ASSERT_EQUAL(merch->price, 99999);
+
+  ioopm_inventory_remove_merchandise(inventory, "Car");
+  void *gone = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"});
+
+  CU_ASSERT_PTR_NULL(gone);
+
+  ioopm_inventory_save(inventory);
+}
+
+void inventory_test_edit(void) {
+  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
+  inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
+
+  ioopm_inventory_edit_merchandise(inventory, "Car", strdup("Boat"), strdup("Water vehicle"), 1000000);
+
+  merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Boat"})->ptr_v;
+
+  CU_ASSERT_STRING_EQUAL(merch->name, "Boat");
+  CU_ASSERT_STRING_EQUAL(merch->desc, "Water vehicle");
+  CU_ASSERT_EQUAL(merch->price, 1000000);
+
+  ioopm_inventory_save(inventory);
+}
+
+void inventory_test_replenish(void) {
+  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
+  inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
+
+  ioopm_inventory_replenish_new_shelf_stock(inventory, "Car", 12, strdup("A08"));
+  storage_location_t *storage_location = ((storage_location_t *)ioopm_linked_list_get(merch->storage_locations, 0).ptr_v);
+
+  CU_ASSERT_STRING_EQUAL(storage_location->shelf, "A08");
+  CU_ASSERT_EQUAL(storage_location->stock, 12);
+
+  ioopm_inventory_replenish_existing_shelf_stock(inventory, "Car", 12, "A08");
+
+  CU_ASSERT_EQUAL(storage_location->stock, 24);
+
+  ioopm_inventory_save(inventory);
+}
+
+// end of inventory tests ===========================================================
+
 int main()
 {
   // First we try to set up CUnit, and exit if we fail
@@ -38,7 +121,9 @@ int main()
   // We then create an empty test suite and specify the name and
   // the init and cleanup functions
   CU_pSuite suite_cart = CU_add_suite("Test for cart.c", init_suite_cart, clean_suite_cart);
-  if (suite_cart == NULL)
+  CU_pSuite suite_inventory = CU_add_suite("Test for inventory.c", init_suite_inventory, clean_suite_inventory);
+
+  if (suite_cart == NULL || suite_inventory == NULL)
   {
     // If the test suite could not be added, tear down CUnit and exit
     CU_cleanup_registry();
@@ -56,6 +141,15 @@ int main()
       (CU_add_test(suite_cart, "Test for create and destroy", cart_test_create_destroy) == NULL) ||
 
       (CU_add_test(suite_cart, "Test for adding a single element to an empty cart", cart_test_add) == NULL) ||
+
+    // inventory tests==================================================================================
+      (CU_add_test(suite_inventory, "Test for create and destroy", inventory_test_create_destroy) == NULL) ||
+
+      (CU_add_test(suite_inventory, "Test for adding and removing merch", inventory_test_add_remove) == NULL) ||
+
+      (CU_add_test(suite_inventory, "Test for editing merch", inventory_test_edit) == NULL) ||
+
+      (CU_add_test(suite_inventory, "Test for replenishing merch", inventory_test_replenish) == NULL) ||
 
       0)
   {

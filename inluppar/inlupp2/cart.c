@@ -16,6 +16,12 @@ bool eq_str(elem_t a, elem_t b)
     return strcmp(((char *) a.ptr_v), ((char *) b.ptr_v))==0;
 }
 
+void free_cart_merch(elem_t *value, void *extra)
+{
+    free(((cart_merch_t*) value->ptr_v)->name);
+    free(value->ptr_v);
+}
+
 static cart_merch_t *create_merch(char *merch_name, int cost, int pieces)
 {
     cart_merch_t *merch = calloc(1, sizeof(cart_merch_t));
@@ -52,43 +58,16 @@ void ioopm_cart_add(ioopm_cart_t *cart, char *merch_name, int cost, int pieces)
 
 void ioopm_cart_remove(ioopm_cart_t *cart, char *merch_name)
 {
-    ioopm_list_iterator_t *iter = ioopm_list_iterator(cart->contents);
-    int i = 0;
-    while (true)
-    {
-        bool breaking = false;
-        if (!ioopm_iterator_has_next(iter))
-        {
-            breaking = true;
-        }
-        cart_merch_t *current_merch = ioopm_iterator_current(iter).ptr_v;
-        if (strcmp(current_merch->name, merch_name)==0)
-        {
-            cart->cost += -current_merch->price * current_merch->pcs;
-            ioopm_iterator_remove(iter);
-            ioopm_linked_list_remove(cart->names, i);
-            break;
-        }
-        else
-        {
-            ioopm_iterator_next(iter);
-            i++;
-        }
-        
-        if (breaking) break;
-    }
-    
+    int idx = ioopm_linked_list_get_index(cart->names, (elem_t) {.ptr_v = merch_name});
+    ioopm_linked_list_remove(cart->names, idx);
+    elem_t merch = ioopm_linked_list_remove(cart->contents, idx);
+    cart->cost -= ((cart_merch_t *)merch.ptr_v)->price * ((cart_merch_t *)merch.ptr_v)->pcs;
+    free_cart_merch(&merch, NULL);
 }
 
 int ioopm_cart_get_cost(ioopm_cart_t *cart)
 {
     return cart->cost;
-}
-
-void free_cart_merch(elem_t *value, void *extra)
-{
-    free(((cart_merch_t*) value->ptr_v)->name);
-    free(value->ptr_v);
 }
 
 void ioopm_cart_clear(ioopm_cart_t *cart)

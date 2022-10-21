@@ -49,12 +49,14 @@ void free_merch(elem_t key, elem_t *value, void *extra)
     free(merch->desc);
     ioopm_linked_list_apply_to_all(merch->storage_locations, free_storage_locations, NULL);
     ioopm_linked_list_destroy(merch->storage_locations);
+    free(merch);
 }
 
 void ioopm_inventory_remove_merchandise(ioopm_inventory_t *inventory, char *merch_name) {
     elem_t key = { .ptr_v = merch_name };
     elem_t merch = ioopm_hash_table_remove(inventory->warehouse, key);
     free_merch(key, &merch, NULL);
+    ioopm_linked_list_remove(inventory->used_shelves,ioopm_linked_list_get_index(inventory->used_shelves, key));
 }
 
 
@@ -63,15 +65,16 @@ void ioopm_inventory_edit_merchandise(ioopm_inventory_t *inventory, char *merch_
     if (new_name || new_desc || new_price != 0) {
         char *key = merch_name;
 
-        char *name = new_name ? new_name : key;
-        char *desc = new_desc ? new_desc : merch->desc;
+        char *name = new_name ? new_name : strdup(key);
+        char *desc = new_desc ? new_desc : strdup(merch->desc);
         int price = new_price != 0 ? new_price : merch->price;
         int total_stock = merch->total_stock;
         ioopm_list_t *storage_locations = merch->storage_locations;
 
         inventory_merch_t *updated_merch = create_merchandise(name, desc, price);
         updated_merch->total_stock = total_stock;
-        updated_merch->storage_locations = storage_locations;
+        ioopm_linked_list_destroy(updated_merch->storage_locations);
+        updated_merch->storage_locations = ioopm_linked_list_copy(storage_locations);
 
         ioopm_inventory_remove_merchandise(inventory, key);
         ioopm_hash_table_insert(inventory->warehouse, (elem_t) { .ptr_v = name }, (elem_t) { .ptr_v = updated_merch });
@@ -81,17 +84,34 @@ void ioopm_inventory_edit_merchandise(ioopm_inventory_t *inventory, char *merch_
     }
 }
 
-// seg fault
-void ioopm_inventory_replenish_stock(ioopm_inventory_t *inventory, char *merch_name, int quantity, char *shelf) {
+
+void ioopm_inventory_replenish_existing_shelf_stock(ioopm_inventory_t *inventory, char *merch_name, int quantity, char *shelf) { 
     inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = merch_name})->ptr_v;
     ioopm_list_t *storage_locations = merch->storage_locations;
     ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
 
-    if (strcmp(((char *)((storage_location_t *)(ioopm_iterator_current(iterator).ptr_v))->shelf), shelf) == 0) {
-        // test if change to quantity is visible when listing stock
-        ((storage_location_t *)ioopm_iterator_current(iterator).ptr_v)->stock += quantity;
+    while ((strcmp(((char *)((storage_location_t *)(ioopm_iterator_current(iterator).ptr_v))->shelf), shelf) != 0)) {
+        ioopm_iterator_next(iterator);
     }
+
+    ((storage_location_t *)ioopm_iterator_current(iterator).ptr_v)->stock += quantity;
+    ioopm_iterator_destroy(iterator);
 }
+
+
+void ioopm_inventory_replenish_new_shelf_stock(ioopm_inventory_t *inventory, char *merch_name, int quantity, char *shelf) {
+    inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = merch_name})->ptr_v;
+    ioopm_list_t *storage_locations = merch->storage_locations;
+    
+    storage_location_t *new_shelf = calloc(1, sizeof(storage_location_t));
+    new_shelf->shelf = shelf;
+    new_shelf->stock = quantity;
+    
+    ioopm_linked_list_append(storage_locations, (elem_t) { .ptr_v = new_shelf });
+    ioopm_linked_list_append(inventory->used_shelves, (elem_t) {.ptr_v = shelf});
+}
+
+
 
 ioopm_list_t *ioopm_inventory_storage_locations_merch(ioopm_inventory_t *inventory, char *merch_name)
 {
@@ -121,21 +141,24 @@ static bool merch_compare_function(elem_t e1, elem_t e2) {
   return strcmp(str1, str2) == 0;
 }
 
-bool string_lt(elem_t e1, elem_t e2)
+static bool string_lt(elem_t e1, elem_t e2)
 {
   return (strcmp(e1.ptr_v, e2.ptr_v) < 0);
 }
 
 ioopm_inventory_t *ioopm_inventory_load()
 {
-ioopm_inventory_t *inventory = calloc(1, sizeof(ioopm_inventory_t));
-inventory->warehouse = ioopm_hash_table_create_spec(0.75, 50, string_sum_hash, string_compare_function, merch_compare_function, string_lt);
-inventory->used_shelves = ioopm_linked_list_create(string_compare_function);
+    ioopm_inventory_t *inventory = calloc(1, sizeof(ioopm_inventory_t));
+    inventory->warehouse = ioopm_hash_table_create_spec(0.75, 50, string_sum_hash, string_compare_function, merch_compare_function, string_lt);
+    inventory->used_shelves = ioopm_linked_list_create(string_compare_function);
 
-return inventory;
+    return inventory;
 }
 
 void ioopm_inventory_save(ioopm_inventory_t *inventory)
 {
-// free hash table/linked list and all their contents
+    ioopm_hash_table_apply_to_all(inventory->warehouse, free_merch, NULL);
+    ioopm_hash_table_destroy(inventory->warehouse);
+    ioopm_linked_list_destroy(inventory->used_shelves);
+    free(inventory);
 }
