@@ -120,14 +120,14 @@ int ioopm_hash_table_number_of_buckets(ioopm_hash_table_t *ht);
 
 /// @brief save the hashtable on a binary file
 /// @param ht the hash table to be saved
-/// @param file_name the binary file to save the has table to
-void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, char *file_name);
+/// @param f an opened binary file to save the has table to
+void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, FILE *f);
 
 /// @brief load a hash table from a file
-/// @param file_name the name of the file which the hash table is stored on
+/// @param f an opened binary file which the hash table is stored on
 /// @param hash_function the hash function that will hash the keys
 /// @param compare_eq_keys an equals function that will compare the keys
 /// @param compare_eq_values an equals function that will compare the values
 /// @param compare_lt_keys a less than function that will compare the keys
 /// @return the created hash table
-ioopm_hash_table_t *ioopm_hash_table_load_from_file(char *file_name, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys);
+ioopm_hash_table_t *ioopm_hash_table_load_from_file(FILE *f, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys);

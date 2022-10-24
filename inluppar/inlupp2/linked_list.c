@@ -3,19 +3,10 @@
 #include "data_structure.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "linked_list_internal.h"
 
 
-struct list {
-    ll_entry_t *head;
-    ll_entry_t *tail;
-    size_t size;
-    ioopm_eq_function eq_fn;
-};
 
-struct entry_ll {
-    elem_t value;
-    ll_entry_t *next;
-};
 
 static ll_entry_t *create_link(elem_t value, ll_entry_t *next) {
     ll_entry_t *link = calloc(1, sizeof(ll_entry_t));
@@ -232,13 +223,45 @@ ioopm_list_t *ioopm_linked_list_copy(ioopm_list_t *old_ll)
     return new_list;
 }
 
-long int ioopm_linked_list_save_to_file(ioopm_list_t *ll, char *file_name, long int start)
+void ioopm_linked_list_save_to_file(ioopm_list_t *ll, FILE *f)
 {
-
+    fwrite(ll, sizeof(ioopm_list_t), 1, f);
+    ll_entry_t *curr_entry = ll->head;
+    while (curr_entry != NULL)
+    {
+        fwrite(curr_entry, sizeof(ll_entry_t), 1, f);
+        curr_entry = curr_entry->next;
+    }
 }
 
-ioopm_list_t *ioopm_linked_list_load_from_file(char *file_name, ioopm_eq_function eq_fn, long int start, long int *end)
+ioopm_list_t *ioopm_linked_list_load_from_file(FILE *f, ioopm_eq_function eq_fn)
 {
+    ioopm_list_t *ll = calloc(1, sizeof(ioopm_list_t));
+    fread(ll, sizeof(ioopm_list_t), 1, f);
+    if (ll->head != NULL)
+    {
+        ll_entry_t *head = calloc(1, sizeof(ll_entry_t));
+        fread(head, sizeof(ll_entry_t), 1, f);
+        ll->head = head;
+        ll_entry_t *prev_entry = ll->head;
+        ll_entry_t *curr_entry = head->next;
+        while (curr_entry != NULL)
+        {
+            curr_entry = calloc(sizeof(ll_entry_t), 1);
+            fread(curr_entry, sizeof(ll_entry_t), 1, f);
+            prev_entry->next = curr_entry;
+            prev_entry = curr_entry;
+            curr_entry = curr_entry->next;
+        }
+        ll->tail = prev_entry;
+        ll->eq_fn = eq_fn;
+        return ll;
+    }
+    else
+    {
+        return ll;
+    }
+    
     
 }
 

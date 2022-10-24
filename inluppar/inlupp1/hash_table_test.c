@@ -1079,9 +1079,13 @@ void test_save_and_load()
   {
     ioopm_hash_table_insert(ht, (elem_t){.int_v = keys1[i]}, (elem_t){.ptr_v = values1[i]});
   }
-  ioopm_hash_table_save_to_file(ht, "ht.bin");
+  FILE *f = fopen("ht.bin", "wb");
+  ioopm_hash_table_save_to_file(ht, f);
+  fclose(f);
   ioopm_hash_table_destroy(ht);
-  ioopm_hash_table_t *ht2 = ioopm_hash_table_load_from_file("ht.bin", simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
+  FILE *g = fopen("ht.bin", "rb");
+  ioopm_hash_table_t *ht2 = ioopm_hash_table_load_from_file(g, simple_hash_int, compare_eq_int, compare_eq_string, compare_lt_int);
+  fclose(g);
   for (int i = 0; i < 7; i++)
   {
     char *str = ioopm_hash_table_lookup(ht2, (elem_t){.int_v = keys1[i]})->ptr_v;

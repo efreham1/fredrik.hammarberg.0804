@@ -360,10 +360,8 @@ int ioopm_hash_table_number_of_buckets(ioopm_hash_table_t *ht)
     return ht->number_of_buckets;
 }
 
-void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, char *file_name)
+void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, FILE *f)
 {
-    FILE *f = fopen(file_name, "wb");
-
     fwrite(ht, sizeof(ioopm_hash_table_t), 1, f);
     fwrite(ht->buckets, sizeof(ht_entry_t), ht->number_of_buckets, f);
     for (int i = 0; i < ht->number_of_buckets; i++)
@@ -375,18 +373,12 @@ void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, char *file_name)
             current_entry = current_entry->next;
         }
     }
-    fclose(f);
 }
 
-ioopm_hash_table_t *ioopm_hash_table_load_from_file(char *file_name, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys)
+ioopm_hash_table_t *ioopm_hash_table_load_from_file(FILE *f, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys)
 {
-    FILE *f = fopen(file_name, "rb");
     ioopm_hash_table_t *ht = calloc(1, sizeof(ioopm_hash_table_t));
     fread(ht, sizeof(ioopm_hash_table_t), 1, f);
-    ht->h_fnc = hash_function;
-    ht->compare_equal_keys = compare_eq_key;
-    ht->compare_equal_values = compare_eq_values;
-    ht->compare_lessthan_keys = compare_lt_keys;
     ht->buckets = calloc(ht->number_of_buckets, sizeof(ht_entry_t));
     fread(ht->buckets, sizeof(ht_entry_t), ht->number_of_buckets, f);
     for (int i = 0; i < ht->number_of_buckets; i++)
@@ -402,6 +394,11 @@ ioopm_hash_table_t *ioopm_hash_table_load_from_file(char *file_name, ioopm_hash_
             current_entry = current_entry->next;
         }
     }
-    fclose(f);
+
+    ht->h_fnc = hash_function;
+    ht->compare_equal_keys = compare_eq_key;
+    ht->compare_equal_values = compare_eq_values;
+    ht->compare_lessthan_keys = compare_lt_keys;
+
     return ht;
 }

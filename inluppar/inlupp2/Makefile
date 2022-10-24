@@ -1,7 +1,7 @@
 CC=gcc 
 FLAGS=-Wall -g
 OBJECTS= hash_table.o linked_list.o cart.o inventory.o undo.o ask.o general_TUI.o
-%.o: %.c %.h data_structure.h iterator.h
+%.o: %.c %.h data_structure.h iterator.h hash_table_internal.h linked_list_internal.h
 	$(CC) $(FLAGS) $< -c
 
 store: $(OBJECTS) store.c
