@@ -17,6 +17,9 @@ test: test.c
 memtest_store: test_store
 	valgrind --leak-check=full ./test_store
 
+memcheck_store: store
+	valgrind --leak-check=full ./store
+
 clean:
 	rm -f *.o
 	rm -f *.gcda

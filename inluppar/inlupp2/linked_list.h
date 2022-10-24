@@ -115,3 +115,18 @@ int ioopm_linked_list_get_index(ioopm_list_t *ll, elem_t element);
 /// @param old_ll linked list to copy
 /// @return a copy of old_ll
 ioopm_list_t *ioopm_linked_list_copy(ioopm_list_t *old_ll);
+
+/// @brief save a linked list to a binary file
+/// @param ll the linked list to be saved
+/// @param file_name the name of the file to save the linked list to
+/// @param start where in the file the linked list should start
+/// @return where in the file the linked list ends
+long int ioopm_linked_list_save_to_file(ioopm_list_t *ll, char *file_name, long int start);
+
+/// @brief load a linked list from a binary file
+/// @param file_name the name of the binary contatining the linked list
+/// @param eq_fn pointer to function that check values equality
+/// @param start where in the file the linked list starts
+/// @param end where in the file the linked list ended
+/// @return the loaded linked list
+ioopm_list_t *ioopm_linked_list_load_from_file(char *file_name, ioopm_eq_function eq_fn, long int start, long int *end);

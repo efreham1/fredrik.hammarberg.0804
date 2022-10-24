@@ -37,6 +37,7 @@ struct merch {
 struct inventory {
     ioopm_hash_table_t *warehouse;
     ioopm_list_t *used_shelves;
+    int password;
 };
 
 /// @brief add merchandise to warehouse 

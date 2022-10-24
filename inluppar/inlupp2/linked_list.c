@@ -232,6 +232,16 @@ ioopm_list_t *ioopm_linked_list_copy(ioopm_list_t *old_ll)
     return new_list;
 }
 
+long int ioopm_linked_list_save_to_file(ioopm_list_t *ll, char *file_name, long int start)
+{
+
+}
+
+ioopm_list_t *ioopm_linked_list_load_from_file(char *file_name, ioopm_eq_function eq_fn, long int start, long int *end)
+{
+    
+}
+
 
 ioopm_list_iterator_t *ioopm_list_iterator(ioopm_list_t *ll) {
     ioopm_list_iterator_t *iter = calloc(1, sizeof(ioopm_list_iterator_t));

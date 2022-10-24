@@ -8,7 +8,7 @@ test_ht: $(OBJECTS) hash_table_test.c
 	$(CC) $(FLAGS) $^ -lcunit -lm -o $@
 
 mem_test_ht: test_ht
-	valgrind ./test_ht
+	valgrind --leak-check=full ./test_ht
 
 test_ll: $(OBJECTS) linked_list_test.c
 	$(CC) $(FLAGS) $^ -lcunit -lm -o $@

@@ -35,13 +35,15 @@ bool ioopm_ask_user_access();
 
 /// @brief See if the user wants and can have admin access
 /// @return True if admin access is granted
-bool ioopm_ask_admin_access();
+bool ioopm_ask_admin_access(int password);
 
 void ioopm_ask_new_inventory_merch(ioopm_hash_table_t *warehouse, char **name, char **desc, int *price);
 
 char *ioopm_ask_existing_inventory_merch(ioopm_hash_table_t *warehouse);
 
-char *ioopm_ask_shelf();
+char *ioopm_ask_new_shelf(ioopm_list_t *used_shelves);
+
+char *ioopm_ask_old_shelf(ioopm_list_t *used_shelves);
 
 int ioopm_ask_question_u_int(char *question);
 

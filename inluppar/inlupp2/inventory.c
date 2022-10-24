@@ -1,6 +1,8 @@
 #include "inventory.h"
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
+#include "general_TUI.h"
 
 
 static bool string_compare_function(elem_t e1, elem_t e2) {
@@ -95,6 +97,7 @@ void ioopm_inventory_replenish_existing_shelf_stock(ioopm_inventory_t *inventory
     }
 
     ((storage_location_t *)ioopm_iterator_current(iterator).ptr_v)->stock += quantity;
+    merch->total_stock += quantity;
     ioopm_iterator_destroy(iterator);
 }
 
@@ -109,6 +112,7 @@ void ioopm_inventory_replenish_new_shelf_stock(ioopm_inventory_t *inventory, cha
     
     ioopm_linked_list_append(storage_locations, (elem_t) { .ptr_v = new_shelf });
     ioopm_linked_list_append(inventory->used_shelves, (elem_t) {.ptr_v = shelf});
+    merch->total_stock += quantity;
 }
 
 
@@ -146,17 +150,39 @@ static bool string_lt(elem_t e1, elem_t e2)
   return (strcmp(e1.ptr_v, e2.ptr_v) < 0);
 }
 
+static int get_password(void)
+{
+    FILE *f = fopen("password.txt", "r");
+    
+    char *buf = NULL;
+    size_t len = 0;
+    getline(&buf, &len, f);
+    assert(is_number(buf));
+
+    fclose(f);
+
+    int password = atoi(buf);
+    free(buf);
+    return password;
+}
+
 ioopm_inventory_t *ioopm_inventory_load()
 {
     ioopm_inventory_t *inventory = calloc(1, sizeof(ioopm_inventory_t));
     inventory->warehouse = ioopm_hash_table_create_spec(0.75, 50, string_sum_hash, string_compare_function, merch_compare_function, string_lt);
     inventory->used_shelves = ioopm_linked_list_create(string_compare_function);
+    inventory->password = get_password();
 
     return inventory;
 }
 
 void ioopm_inventory_save(ioopm_inventory_t *inventory)
 {
+    FILE *f = fopen("inventory.txt", "wb");
+    
+    
+
+
     ioopm_hash_table_apply_to_all(inventory->warehouse, free_merch, NULL);
     ioopm_hash_table_destroy(inventory->warehouse);
     ioopm_linked_list_destroy(inventory->used_shelves);

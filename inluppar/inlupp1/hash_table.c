@@ -1,5 +1,6 @@
 #include "hash_table.h"
 #include <math.h>
+#include <stdio.h>
 
 struct entry_ht
 {
@@ -175,22 +176,27 @@ elem_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key)
 }
 
 // remove any mapping from key to a value
-elem_t *ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
+elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key)
 {
     ht_entry_t *sentinel = get_sentinel(ht, key);
     ht_entry_t *prev_entry = find_previous_entry_for_key(ht, sentinel, key);
     ht_entry_t *curr_entry = prev_entry->next;
-
+    
     if (curr_entry != NULL && ht->compare_equal_keys(curr_entry->key, key)) // key found
     {
-        elem_t *data_ptr = &curr_entry->value;
+        elem_t data_ptr = curr_entry->value;
         destroy_entry(curr_entry, &prev_entry->next);
         ht->NO_entries--;
         return data_ptr;
     }
-    // else
-    return NULL; // didn't find key, do nothing and return NULL
+    else
+    {
+        assert(false);
+
+    }
 }
+
+
 
 size_t ioopm_hash_table_size(ioopm_hash_table_t *ht)
 {
@@ -352,4 +358,50 @@ bool ioopm_hash_table_has_value(ioopm_hash_table_t *ht, elem_t value)
 int ioopm_hash_table_number_of_buckets(ioopm_hash_table_t *ht)
 {
     return ht->number_of_buckets;
+}
+
+void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, char *file_name)
+{
+    FILE *f = fopen(file_name, "wb");
+
+    fwrite(ht, sizeof(ioopm_hash_table_t), 1, f);
+    fwrite(ht->buckets, sizeof(ht_entry_t), ht->number_of_buckets, f);
+    for (int i = 0; i < ht->number_of_buckets; i++)
+    {
+        ht_entry_t *current_entry = ht->buckets[i].next;
+        while (current_entry != NULL)
+        {
+            fwrite(current_entry, sizeof(ht_entry_t), 1, f);
+            current_entry = current_entry->next;
+        }
+    }
+    fclose(f);
+}
+
+ioopm_hash_table_t *ioopm_hash_table_load_from_file(char *file_name, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys)
+{
+    FILE *f = fopen(file_name, "rb");
+    ioopm_hash_table_t *ht = calloc(1, sizeof(ioopm_hash_table_t));
+    fread(ht, sizeof(ioopm_hash_table_t), 1, f);
+    ht->h_fnc = hash_function;
+    ht->compare_equal_keys = compare_eq_key;
+    ht->compare_equal_values = compare_eq_values;
+    ht->compare_lessthan_keys = compare_lt_keys;
+    ht->buckets = calloc(ht->number_of_buckets, sizeof(ht_entry_t));
+    fread(ht->buckets, sizeof(ht_entry_t), ht->number_of_buckets, f);
+    for (int i = 0; i < ht->number_of_buckets; i++)
+    {
+        ht_entry_t *prev_entry = get_sentinel_bucket(ht, i);
+        ht_entry_t *current_entry = ht->buckets[i].next;
+        while (current_entry != NULL)
+        {
+            current_entry = calloc(1, sizeof(ht_entry_t));
+            fread(current_entry, sizeof(ht_entry_t), 1, f);
+            prev_entry->next = current_entry;
+            prev_entry = current_entry;
+            current_entry = current_entry->next;
+        }
+    }
+    fclose(f);
+    return ht;
 }

@@ -53,8 +53,8 @@ elem_t *ioopm_hash_table_lookup(ioopm_hash_table_t *ht, elem_t key);
 /// @brief remove any mapping from key to a value
 /// @param ht hash table operated upon
 /// @param key key to remove
-/// @return the value previously mapped from the key
-elem_t ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
+/// @return the adress of the value previously mapped from the key, address is NULL if key doesn't exist
+elem_t *ioopm_hash_table_remove(ioopm_hash_table_t *ht, elem_t key);
 
 /// @brief returns the number of key => value entries in the hash table
 /// @param ht hash table operated upon
@@ -117,17 +117,3 @@ void ioopm_hash_table_apply_to_all(ioopm_hash_table_t *ht, ioopm_apply_function_
 /// @param ht the hash table
 /// @return the number of buckets in the hash table
 int ioopm_hash_table_number_of_buckets(ioopm_hash_table_t *ht);
-
-/// @brief save the hashtable on a binary file
-/// @param ht the hash table to be saved
-/// @param file_name the binary file to save the has table to
-void ioopm_hash_table_save_to_file(ioopm_hash_table_t *ht, char *file_name);
-
-/// @brief load a hash table from a file
-/// @param file_name the name of the file which the hash table is stored on
-/// @param hash_function the hash function that will hash the keys
-/// @param compare_eq_keys an equals function that will compare the keys
-/// @param compare_eq_values an equals function that will compare the values
-/// @param compare_lt_keys a less than function that will compare the keys
-/// @return the created hash table
-ioopm_hash_table_t *ioopm_hash_table_load_from_file(char *file_name, ioopm_hash_function hash_function, ioopm_eq_function compare_eq_key, ioopm_eq_function compare_eq_values, ioopm_lt_function compare_lt_keys);
