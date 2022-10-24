@@ -48,8 +48,85 @@ void cart_test_create_destroy(void)
 
 void cart_test_add(void)
 {
+  ioopm_cart_t *cart = ioopm_cart_create();
+  ioopm_cart_add(cart, strdup("test"), 123, 4);
+  cart_merch_t *merch = ioopm_linked_list_get(cart->contents, 0).ptr_v;
+  CU_ASSERT_STRING_EQUAL(merch->name, "test");
+  CU_ASSERT_EQUAL(merch->pcs, 4);
+  CU_ASSERT_EQUAL(merch->price, 123);
+  CU_ASSERT_EQUAL(cart->cost, 123*4);
+  CU_ASSERT_STRING_EQUAL((char *) ioopm_linked_list_get(cart->names, 0).ptr_v, "test");
+  ioopm_cart_destroy(cart);
+}
+
+void cart_test_add_multiple(void)
+{
+  ioopm_cart_t *cart = ioopm_cart_create();
+  char *names[6] = {"test1", "test2", "test3", "test4", "test5", "test6"};
+  int cost = 0;
+  for (int i = 0; i < 6; i++)
+  {
+    ioopm_cart_add(cart, strdup(names[i]), i, i+3);
+    cost += i*(i+3);
+  }
+  for (int i = 0; i < 6; i++)
+  {
+    cart_merch_t *merch = ioopm_linked_list_get(cart->contents, i).ptr_v;
+    CU_ASSERT_STRING_EQUAL(merch->name, names[i]);
+    CU_ASSERT_EQUAL(merch->pcs, i+3);
+    CU_ASSERT_EQUAL(merch->price, i);
+  }
+  CU_ASSERT_EQUAL(cart->cost, cost);
+  ioopm_cart_destroy(cart);
   
 }
+
+void cart_test_remove(void)
+{
+  ioopm_cart_t *cart = ioopm_cart_create();
+  char *names[6] = {"test1", "test2", "test3", "test4", "test5", "test6"};
+  for (int i = 0; i < 6; i++)
+  {
+    ioopm_cart_add(cart, strdup(names[i]), i, i+3);
+  }
+
+  ioopm_cart_remove(cart, "test2");
+  cart_merch_t *merch = ioopm_linked_list_get(cart->contents, 1).ptr_v;
+  CU_ASSERT_STRING_EQUAL(merch->name, "test3");
+  CU_ASSERT_FALSE(ioopm_linked_list_contains(cart->names, (elem_t) {.ptr_v = "test2"}));
+  ioopm_cart_destroy(cart);
+}
+
+void cart_test_clear(void)
+{
+  ioopm_cart_t *cart = ioopm_cart_create();
+  char *names[6] = {"test1", "test2", "test3", "test4", "test5", "test6"};
+  for (int i = 0; i < 6; i++)
+  {
+    ioopm_cart_add(cart, strdup(names[i]), i, i+3);
+  }
+  ioopm_cart_clear(cart);
+  CU_ASSERT(ioopm_linked_list_is_empty(cart->contents));
+  CU_ASSERT(ioopm_linked_list_is_empty(cart->names));
+  CU_ASSERT_EQUAL(cart->cost, 0);
+  int cost = 0;
+  for (int i = 5; i > -1; i--)
+  {
+    ioopm_cart_add(cart, strdup(names[i]), i, i+3);
+    cost += i*(i+3);
+  }
+  for (int i = 5; i > -1; i--)
+  {
+    cart_merch_t *merch = ioopm_linked_list_get(cart->contents, 5-i).ptr_v;
+    CU_ASSERT_STRING_EQUAL(merch->name, names[i]);
+    CU_ASSERT_EQUAL(merch->pcs, i+3);
+    CU_ASSERT_EQUAL(merch->price, i);
+  }
+  CU_ASSERT_EQUAL(cart->cost, cost);
+  ioopm_cart_clear(cart);
+  ioopm_cart_destroy(cart);
+}
+
 // end of cart tests ================================================================
 
 // start of inventory tests =========================================================
@@ -141,6 +218,11 @@ int main()
       (CU_add_test(suite_cart, "Test for create and destroy", cart_test_create_destroy) == NULL) ||
 
       (CU_add_test(suite_cart, "Test for adding a single element to an empty cart", cart_test_add) == NULL) ||
+      (CU_add_test(suite_cart, "Test for adding multiple elements to an empty cart", cart_test_add_multiple) == NULL) ||
+
+      (CU_add_test(suite_cart, "Test for removing a element in a cart", cart_test_remove) == NULL) ||
+
+      (CU_add_test(suite_cart, "Test for clearing a cart", cart_test_clear) == NULL) ||
 
     // inventory tests==================================================================================
       (CU_add_test(suite_inventory, "Test for create and destroy", inventory_test_create_destroy) == NULL) ||
