@@ -144,12 +144,15 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
         case 'D':
             new_desc = ioopm_ask_question_string("\nEnter new description:\n");
             break;
+
         case 'P':
             new_price = ioopm_ask_question_int("\nEnter new price:\n");
             break;
+
         case 'F':
             printf("\nMerchandise has been successfully edited.\n");
             break;
+            
         default:
             printf("\nInvalid input\n");
             break;
@@ -183,8 +186,6 @@ static void show_detailed_stock(ioopm_inventory_t *inventory, char *merch_name)
     {
         printf("\n%s is out of stock.\n", merch_name);
     }
-
-    ioopm_linked_list_destroy(storage_locations);
 
 }
 
@@ -237,12 +238,32 @@ void TUI_inventory_unstock(ioopm_inventory_t *inventory)
 }
 
 
-int do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
+void do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
 {
     ioopm_list_t *cart_merch = ioopm_cart_get_merch(cart);
-    //TODO remove from inventory
+    if (ioopm_linked_list_is_empty(cart_merch))
+    {
+        return;
+    }
+    ioopm_list_iterator_t *iterator = ioopm_list_iterator(cart_merch);
+
+    while (true) {
+        cart_merch_t *merch = ioopm_iterator_current(iterator).ptr_v;
+        ioopm_inventory_unstock(inventory, merch->name, merch->pcs, NULL);
+        printf("\nYou bought %d pcs of %s. \nPrice: %d.%d SEK\n", merch->pcs, merch->name, (merch->pcs * merch->price)/100, (merch->pcs * merch->price)%100);
+
+        if (!ioopm_iterator_has_next(iterator)) {
+            break;
+        }
+        else {
+            ioopm_iterator_next(iterator);
+        }
+    } 
+
+    ioopm_iterator_destroy(iterator);
+    printf("\nTotal price: %d.%d SEK\n", cart->cost/100, cart->cost%100);
     ioopm_cart_clear(cart);
-    return 0;
+    return;
 }
 
 bool int_eq_fun(elem_t a, elem_t b)
@@ -272,7 +293,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "15. Remove merchandise from stock.\n";
     
     ioopm_list_t *admin_options = ioopm_linked_list_create(int_eq_fun);
-    for (int i = 1; i < 15; i++)
+    for (int i = 1; i < 16; i++)
     {
         ioopm_linked_list_append(admin_options, (elem_t) {.int_v = i});
     }

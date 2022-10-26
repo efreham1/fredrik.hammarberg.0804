@@ -7,9 +7,9 @@
 
 /*
  * @file inventory.h
- * @author Joel Holmberg, Fredrik Hammarberg
- * @date 19 Oct 2022
- * @brief Simple webstore backend for managing stock, merchandise and storage location in a warehouse.
+ * @author Fredrik Hammarberg, Joel Holmberg
+ * @date 26 Oct 2022
+ * @brief part of simple webstore backend for managing stock, merchandise and storage location in an inventory.
  *
  * Header file provides definitions and documentation for all the functions that 
  * creates/operates on/destroys merchandise and stock.
@@ -76,12 +76,24 @@ void ioopm_inventory_replenish_existing_shelf_stock(ioopm_inventory_t *inventory
 /// @param quantity amount to restock merchandise with
 void ioopm_inventory_replenish_new_shelf_stock(ioopm_inventory_t *inventory, char *merch_name, int quantity, char *shelf);
 
+/// @brief gets every storage location of given merch 
+/// @param inventory containing the sought merch
+/// @param merch_name to retrieve storage locations of
+/// @return a linked list containing all storage locations of given merch
 ioopm_list_t *ioopm_inventory_storage_locations_merch(ioopm_inventory_t *inventory, char *merch_name);
 
+/// @brief gets amount of existing stock for a given merch
+/// @param inventory containing the sought merch
+/// @param merch_name to retrieve stock of
+/// @return amount of availible stock of given merch
 int ioopm_inventory_get_stock(ioopm_inventory_t *inventory, char *merch_name);
 
+/// @brief loads an invetory from a binary file
+/// @return the inventory stored on the binary file
 ioopm_inventory_t *ioopm_inventory_load();
 
+/// @brief saves an existing invetory to binary file
+/// @param inventory to be loaded to binary file
 void ioopm_inventory_save(ioopm_inventory_t *inventory);
 
 void ioopm_inventory_unstock(ioopm_inventory_t *inventory, char *merch_name, int amount, void *shelf);

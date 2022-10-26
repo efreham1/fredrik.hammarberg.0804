@@ -323,5 +323,59 @@ ioopm_inventory_t *ioopm_inventory_load()
 
 void ioopm_inventory_unstock(ioopm_inventory_t *inventory, char *merch_name, int amount, void *shelf)
 {
-    
+    inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = merch_name})->ptr_v;
+    ioopm_list_t *storage_list = merch->storage_locations;
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(storage_list);
+    merch->total_stock -=amount;
+    if (shelf != NULL)
+    {
+        storage_location_t *str_loc;
+        while (true)
+        {
+            storage_location_t *cur_str_loc = ioopm_iterator_current(iter).ptr_v;
+            if(strcmp(cur_str_loc->shelf, shelf) == 0)
+            {
+                str_loc = cur_str_loc;
+                break;
+            }
+            if (!ioopm_iterator_has_next(iter))
+            {
+                break;
+            }
+            ioopm_iterator_next(iter);
+        }
+        
+        str_loc->stock -= amount;
+    }
+
+    else
+    {
+        while (amount > 0)
+        {
+            storage_location_t *cur_str_loc = ioopm_iterator_current(iter).ptr_v;
+
+            if (cur_str_loc->stock > amount)
+            {
+                cur_str_loc->stock -= amount;
+                amount = 0;
+            }
+            else
+            {
+                amount -= cur_str_loc->stock;
+                cur_str_loc->stock = 0;
+            }
+            
+            ioopm_iterator_next(iter);
+            
+            if (cur_str_loc->stock <= 0)
+            {
+                ioopm_linked_list_remove(inventory->used_shelves, ioopm_linked_list_get_index(inventory->used_shelves, (elem_t) {.ptr_v = cur_str_loc->shelf}));
+                free(cur_str_loc->shelf);
+                free(cur_str_loc);
+                ioopm_linked_list_remove(storage_list, 0);
+            }
+        }
+    }
+    ioopm_iterator_destroy(iter);
+
 }

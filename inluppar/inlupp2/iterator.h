@@ -18,7 +18,6 @@ typedef struct iter ioopm_list_iterator_t;
 
 struct iter {
     ll_entry_t *head;
-    ll_entry_t *previous;
     ll_entry_t *current;
     ll_entry_t *next;
     ioopm_list_t *list;

@@ -7,13 +7,21 @@ bool is_valid_merch(char *str, void *extra)
     return ioopm_hash_table_has_key(((ioopm_inventory_t *) extra)->warehouse, (elem_t) {.ptr_v = str});
 }
 
+bool is_less_than_stock(char *str, void *extra)
+{
+    int *stock = extra;
+    if (!is_number(str)) return false;
+    int amount = str_to_int(str, NULL).int_t;
+    return amount <= *stock && amount > 0;
+}
+
 void ioopm_ask_cart_merch(ioopm_inventory_t *inventory, char **merch_name, int *cost, int *pieces)
 {
     char *question = "Please enter the name of the merchandise you would like to add to your cart";
     *merch_name = ask_question(question, is_valid_merch, inventory, str_to_str, NULL).str_t;
-    *cost = ((inventory_merch_t *) ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = *merch_name})->ptr_v)->price;
-    printf("How many %s would you like to add to your cart?", *merch_name);
-    *pieces = ask_question_u_int("");
+    inventory_merch_t *inv_merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = *merch_name})->ptr_v;
+    *cost = inv_merch->price;
+    *pieces = ask_question("Please enter how many of the merchandise you'd like to add.", is_less_than_stock, &inv_merch->total_stock, str_to_int, NULL).int_t;
 }
 
 bool is_existing_cart_merch(char *str, void *extra)
@@ -137,5 +145,23 @@ int ioopm_ask_question_int(char *question)
 
 int ioopm_ask_No_stock(ioopm_inventory_t *inventory, char *merch_name, char *shelf)
 {
-
+    inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = merch_name})->ptr_v;
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(merch->storage_locations);
+    int stock = 0;
+    while (true)
+    {
+        storage_location_t *cur_str_loc = ioopm_iterator_current(iter).ptr_v;
+        if(strcmp(cur_str_loc->shelf, shelf) == 0)
+        {
+            stock = cur_str_loc->stock;
+            break;
+        }
+        if (!ioopm_iterator_has_next(iter))
+        {
+            break;
+        }
+        ioopm_iterator_next(iter);
+    }
+    ioopm_iterator_destroy(iter);
+    return ask_question("How many items would you like to unstock?", is_less_than_stock, &stock, str_to_int, NULL).int_t;
 }
