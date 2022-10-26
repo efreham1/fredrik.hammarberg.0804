@@ -83,3 +83,5 @@ int ioopm_inventory_get_stock(ioopm_inventory_t *inventory, char *merch_name);
 ioopm_inventory_t *ioopm_inventory_load();
 
 void ioopm_inventory_save(ioopm_inventory_t *inventory);
+
+void ioopm_inventory_unstock(ioopm_inventory_t *inventory, char *merch_name, int amount, void *shelf);

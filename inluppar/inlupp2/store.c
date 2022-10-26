@@ -160,34 +160,43 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
     free(old_name);
 }
 
+static void show_detailed_stock(ioopm_inventory_t *inventory, char *merch_name)
+{
+    ioopm_list_t *storage_locations = ioopm_inventory_storage_locations_merch(inventory, merch_name);
+
+    if (!ioopm_linked_list_is_empty(storage_locations)) {
+
+        ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
+
+        printf("\nTotal stock of %s: %d\n\nStock per shelf:\n", merch_name, ioopm_inventory_get_stock(inventory, merch_name));
+
+        while (true)
+        {
+            storage_location_t storage_location = *(storage_location_t *)ioopm_iterator_current(iterator).ptr_v;
+            printf("%s) %d\n", storage_location.shelf, storage_location.stock);
+            if (!ioopm_iterator_has_next(iterator)) break;
+            ioopm_iterator_next(iterator);
+        }
+        ioopm_iterator_destroy(iterator);
+    }
+    else
+    {
+        printf("\n%s is out of stock.\n", merch_name);
+    }
+
+    ioopm_linked_list_destroy(storage_locations);
+
+}
+
 
 void TUI_inventory_show_stock(ioopm_inventory_t *inventory) {
     TUI_inventory_list_merch(inventory);
     if (ioopm_hash_table_is_empty(inventory->warehouse)) return;
     char *merch_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
 
-        ioopm_list_t *storage_locations = ioopm_inventory_storage_locations_merch(inventory, merch_name);
-
-        if (!ioopm_linked_list_is_empty(storage_locations)) {
-
-            ioopm_list_iterator_t *iterator = ioopm_list_iterator(storage_locations);
-
-            printf("\nTotal stock of %s: %d\n\nStock per shelf:\n", merch_name, ioopm_inventory_get_stock(inventory, merch_name));
-
-            while (true)
-            {
-                storage_location_t storage_location = *(storage_location_t *)ioopm_iterator_current(iterator).ptr_v;
-                printf("%s) %d\n", storage_location.shelf, storage_location.stock);
-                if (!ioopm_iterator_has_next(iterator)) break;
-                ioopm_iterator_next(iterator);
-            }
-            
-        }
-        else
-        {
-            printf("\n%s is out of stock.\n", merch_name);
-        }
-        free(merch_name);
+    show_detailed_stock(inventory, merch_name);
+    
+    free(merch_name);
 }
 
 
@@ -213,6 +222,18 @@ void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
         free(shelf);
     }
     free(new_or_old);
+}
+
+void TUI_inventory_unstock(ioopm_inventory_t *inventory)
+{
+    char *merch_name = ioopm_ask_existing_inventory_merch(inventory->warehouse);
+    show_detailed_stock(inventory, merch_name);
+    printf("Which shelf would you like to remove %s from?\n", merch_name);
+    char *shelf = ioopm_ask_old_shelf(inventory->used_shelves);
+    int amount = ioopm_ask_No_stock(inventory, merch_name, shelf);
+    ioopm_inventory_unstock(inventory, merch_name, amount, shelf);
+    free(shelf);
+    free(merch_name);
 }
 
 
@@ -247,14 +268,15 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "11. CLear the cart's contents.\n"
         "12. Checkout your cart.\n"
         "13. Exit the menu.\n"
-        "14. Show detailed stock of merchandise.\n";
+        "14. Show detailed stock of merchandise.\n"
+        "15. Remove merchandise from stock.\n";
     
     ioopm_list_t *admin_options = ioopm_linked_list_create(int_eq_fun);
     for (int i = 1; i < 15; i++)
     {
         ioopm_linked_list_append(admin_options, (elem_t) {.int_v = i});
     }
-    
+      
     bool admin_access = ioopm_ask_admin_access(inventory->password);
     while (admin_access)
     {   
@@ -311,8 +333,13 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         case 13:
             ioopm_linked_list_destroy(admin_options);
             return 0;
+
         case 14:
             TUI_inventory_show_stock(inventory);
+            break;
+
+        case 15:
+            TUI_inventory_unstock(inventory);
             break;
         }
     }

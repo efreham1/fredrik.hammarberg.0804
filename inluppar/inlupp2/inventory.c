@@ -320,3 +320,8 @@ ioopm_inventory_t *ioopm_inventory_load()
 
     return inventory;
 }
+
+void ioopm_inventory_unstock(ioopm_inventory_t *inventory, char *merch_name, int amount, void *shelf)
+{
+    
+}

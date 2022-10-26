@@ -50,3 +50,5 @@ int ioopm_ask_question_u_int(char *question);
 char *ioopm_ask_question_string(char *question);
 
 int ioopm_ask_question_int(char *question);
+
+int ioopm_ask_No_stock(ioopm_inventory_t *inventory, char *merch_name, char *shelf);

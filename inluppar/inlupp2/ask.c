@@ -134,3 +134,8 @@ int ioopm_ask_question_int(char *question)
 {
     return ask_question_int(question);
 }
+
+int ioopm_ask_No_stock(ioopm_inventory_t *inventory, char *merch_name, char *shelf)
+{
+
+}
