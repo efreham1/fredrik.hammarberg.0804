@@ -1,6 +1,27 @@
 {
     "configurations": [
         {
+            "type": "java",
+            "name": "Launch beefheart",
+            "request": "launch",
+            "mainClass": "beefheart",
+            "projectName": "fredrik.hammarberg.0804_9f3b5955"
+        },
+        {
+            "type": "java",
+            "name": "Launch MyDieTest",
+            "request": "launch",
+            "mainClass": "MyDieTest",
+            "projectName": "fredrik.hammarberg.0804_9f3b5955"
+        },
+        {
+            "type": "java",
+            "name": "Launch Die",
+            "request": "launch",
+            "mainClass": "Die",
+            "projectName": "fredrik.hammarberg.0804_9f3b5955"
+        },
+        {
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
