@@ -1,5 +1,4 @@
 #include "cart.h"
-#include "undo.h"
 #include <string.h>
 
 bool eq_cart_merch(elem_t a, elem_t b)

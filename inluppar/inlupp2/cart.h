@@ -50,7 +50,7 @@ int ioopm_cart_get_cost(ioopm_cart_t *cart);
 /// @param cart The cart to be cleared
 void ioopm_cart_clear(ioopm_cart_t *cart);
 
-/// @brief Get a hash table of all merchandise in a cart
+/// @brief Get a linked list of all merchandise in a cart
 /// @param cart The cart to get the merchandise from
 /// @return A hash table of all the merchandise
 ioopm_list_t *ioopm_cart_get_merch(ioopm_cart_t *cart);

@@ -31,6 +31,7 @@ struct merch {
     char *desc;
     int price;
     int total_stock;
+    int theoretical_stock;
     ioopm_list_t *storage_locations; 
 };
 
@@ -90,10 +91,23 @@ int ioopm_inventory_get_stock(ioopm_inventory_t *inventory, char *merch_name);
 
 /// @brief loads an invetory from a binary file
 /// @return the inventory stored on the binary file
-ioopm_inventory_t *ioopm_inventory_load();
+ioopm_inventory_t *ioopm_inventory_load(char *file_name);
 
 /// @brief saves an existing invetory to binary file
 /// @param inventory to be loaded to binary file
-void ioopm_inventory_save(ioopm_inventory_t *inventory);
+void ioopm_inventory_save(ioopm_inventory_t *inventory, char *file_name);
 
+/// @brief unstocks an amount of stock of a merch from one or more shelves
+/// @param inventory the inventory where the merch exists
+/// @param merch_name the name of the merch
+/// @param amount the amount to unstock
+/// @param shelf the name of the shelf, if NULL unstocks from first shelf
 void ioopm_inventory_unstock(ioopm_inventory_t *inventory, char *merch_name, int amount, void *shelf);
+
+/// @brief creates a new empty inventory
+/// @return the created inventory
+ioopm_inventory_t *ioopm_inventory_create();
+
+/// @brief destroys an inventory and frees its resources
+/// @param inventory the inventory to be destroyed
+void ioopm_inventory_destroy(ioopm_inventory_t *inventory);

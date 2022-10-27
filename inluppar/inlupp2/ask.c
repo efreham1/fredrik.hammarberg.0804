@@ -21,7 +21,7 @@ void ioopm_ask_cart_merch(ioopm_inventory_t *inventory, char **merch_name, int *
     *merch_name = ask_question(question, is_valid_merch, inventory, str_to_str, NULL).str_t;
     inventory_merch_t *inv_merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = *merch_name})->ptr_v;
     *cost = inv_merch->price;
-    *pieces = ask_question("Please enter how many of the merchandise you'd like to add.", is_less_than_stock, &inv_merch->total_stock, str_to_int, NULL).int_t;
+    *pieces = ask_question("Please enter how many of the merchandise you'd like to add.", is_less_than_stock, &inv_merch->theoretical_stock, str_to_int, NULL).int_t;
 }
 
 bool is_existing_cart_merch(char *str, void *extra)
@@ -164,4 +164,20 @@ int ioopm_ask_No_stock(ioopm_inventory_t *inventory, char *merch_name, char *she
     }
     ioopm_iterator_destroy(iter);
     return ask_question("How many items would you like to unstock?", is_less_than_stock, &stock, str_to_int, NULL).int_t;
+}
+
+bool is_valid_cart(char *str, void *extra)
+{
+    ioopm_list_t *cart_list = extra;
+    if (!is_number(str)) return false;
+    int idx = atoi(str) -1;
+    if (idx<0 || idx >= ioopm_linked_list_size(cart_list)) return false;
+    if (ioopm_linked_list_get(cart_list, idx).ptr_v == NULL) return false;
+    return true;
+}
+
+ioopm_cart_t *ask_cart_number(ioopm_list_t *cart_list)
+{
+    int idx = ask_question("Which cart-number would you like to use?", is_valid_cart, cart_list, str_to_int, NULL).int_t - 1;
+    return ioopm_linked_list_get(cart_list, idx).ptr_v;
 }

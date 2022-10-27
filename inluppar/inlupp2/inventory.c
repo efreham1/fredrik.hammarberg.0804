@@ -100,6 +100,7 @@ void ioopm_inventory_replenish_existing_shelf_stock(ioopm_inventory_t *inventory
 
     ((storage_location_t *)ioopm_iterator_current(iterator).ptr_v)->stock += quantity;
     merch->total_stock += quantity;
+    merch->theoretical_stock += quantity;
     ioopm_iterator_destroy(iterator);
 }
 
@@ -113,8 +114,9 @@ void ioopm_inventory_replenish_new_shelf_stock(ioopm_inventory_t *inventory, cha
     new_shelf->stock = quantity;
     
     ioopm_linked_list_append(storage_locations, (elem_t) { .ptr_v = new_shelf });
-    ioopm_linked_list_append(inventory->used_shelves, (elem_t) {.ptr_v = shelf});
+    ioopm_linked_list_append(inventory->used_shelves, (elem_t) {.ptr_v = strdup(shelf)});
     merch->total_stock += quantity;
+    merch->theoretical_stock += quantity;
 }
 
 
@@ -236,9 +238,9 @@ inventory_merch_t *load_merch_from_file(FILE *f)
     return merch;
 }
 
-void ioopm_inventory_save(ioopm_inventory_t *inventory)
+void ioopm_inventory_save(ioopm_inventory_t *inventory, char *file_name)
 {
-    FILE *f = fopen("inventory.bin", "wb");
+    FILE *f = fopen(file_name, "wb");
 
     ioopm_hash_table_save_to_file(inventory->warehouse, f);
 
@@ -264,15 +266,12 @@ void ioopm_inventory_save(ioopm_inventory_t *inventory)
 
     fclose(f);
 
-    ioopm_hash_table_apply_to_all(inventory->warehouse, free_merch, NULL);
-    ioopm_hash_table_destroy(inventory->warehouse);
-    ioopm_linked_list_destroy(inventory->used_shelves);
-    free(inventory);
+    ioopm_inventory_destroy(inventory);
 }
 
-ioopm_inventory_t *ioopm_inventory_load()
+ioopm_inventory_t *ioopm_inventory_load(char *file_name)
 {
-    FILE *f = fopen("inventory.bin", "rb");
+    FILE *f = fopen(file_name, "rb");
 
     fseek(f, 0, SEEK_END);
     int size = ftell(f);
@@ -281,12 +280,7 @@ ioopm_inventory_t *ioopm_inventory_load()
 
     if (is_empty)
     {
-        ioopm_inventory_t *inventory = calloc(1, sizeof(ioopm_inventory_t));
-        inventory->warehouse = ioopm_hash_table_create_spec(0.75, 50, string_sum_hash, string_compare_function, merch_compare_function, string_lt);
-        inventory->used_shelves = ioopm_linked_list_create(string_compare_function);
-        inventory->password = get_password();
-
-        return inventory;
+        return ioopm_inventory_create();
     }
     
 
@@ -317,6 +311,7 @@ ioopm_inventory_t *ioopm_inventory_load()
     }
 
     inventory->password = get_password();
+    fclose(f);
 
     return inventory;
 }
@@ -378,4 +373,28 @@ void ioopm_inventory_unstock(ioopm_inventory_t *inventory, char *merch_name, int
     }
     ioopm_iterator_destroy(iter);
 
+}
+
+ioopm_inventory_t *ioopm_inventory_create()
+{
+    ioopm_inventory_t *inventory = calloc(1, sizeof(ioopm_inventory_t));
+    inventory->warehouse = ioopm_hash_table_create_spec(0.75, 50, string_sum_hash, string_compare_function, merch_compare_function, string_lt);
+    inventory->used_shelves = ioopm_linked_list_create(string_compare_function);
+    inventory->password = get_password();
+
+    return inventory;
+}
+
+void free_ptr(elem_t *value, void *extra)
+{
+    free(value->ptr_v);
+}
+
+void ioopm_inventory_destroy(ioopm_inventory_t *inventory)
+{
+    ioopm_hash_table_apply_to_all(inventory->warehouse, free_merch, NULL);
+    ioopm_hash_table_destroy(inventory->warehouse);
+    ioopm_linked_list_apply_to_all(inventory->used_shelves, free_ptr, NULL);
+    ioopm_linked_list_destroy(inventory->used_shelves);
+    free(inventory);
 }

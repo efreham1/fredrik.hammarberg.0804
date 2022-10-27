@@ -1,39 +1,55 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "ask.h"
-#include "undo.h"
 #include "cart.h"
 #include "inventory.h"
 #include "iterator.h"
 
 void TUI_inventory_list_merch(ioopm_inventory_t *inventory);
 void TUI_cart_list_contents(ioopm_cart_t *cart);
+void TUI_inventory_list_merch_theoretical_stock(ioopm_inventory_t *inventory);
 
-void TUI_cart_add(ioopm_cart_t *cart, ioopm_inventory_t *inventory)
+bool cart_eq_fun(elem_t a, elem_t b)
 {
+    return a.ptr_v == b.ptr_v;
+}
+
+void TUI_cart_add(ioopm_list_t * cart_list, ioopm_inventory_t *inventory)
+{
+    ioopm_cart_t *cart = ask_cart_number(cart_list);
     char *merch_name;
     int cost;
     int pieces;
-    TUI_inventory_list_merch(inventory);
+    TUI_inventory_list_merch_theoretical_stock(inventory);
     ioopm_ask_cart_merch(inventory, &merch_name, &cost, &pieces);
     ioopm_cart_add(cart, merch_name, cost, pieces);
+    inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = merch_name})->ptr_v;
+    merch->theoretical_stock -= pieces;
 }
 
-void TUI_cart_remove(ioopm_cart_t *cart)
+void TUI_cart_remove(ioopm_list_t * cart_list)
 {
+    ioopm_cart_t *cart = ask_cart_number(cart_list);
     TUI_cart_list_contents(cart);
     char *merch_name = ioopm_ask_existing_cart_merch_name(cart);
     ioopm_cart_remove(cart, merch_name);
     free(merch_name);
 }
 
-void TUI_cart_get_cost(ioopm_cart_t *cart)
+void TUI_cart_get_cost(ioopm_list_t * cart_list)
 {
+    ioopm_cart_t *cart = ask_cart_number(cart_list);
     int cost = ioopm_cart_get_cost(cart);
     printf("The cost of all the contents in your cart is %d.%d SEK\n", cost/100, cost%100);
 }
 
-void TUI_cart_list_contents(ioopm_cart_t *cart)
+void TUI_cart_list_list_contents(ioopm_list_t *cart_list)
+{
+    ioopm_cart_t *cart = ask_cart_number(cart_list);
+    TUI_cart_list_contents(cart);
+}
+
+void TUI_cart_list_contents(ioopm_cart_t * cart)
 {
     ioopm_list_t *all_merch = ioopm_cart_get_merch(cart);
     if (ioopm_linked_list_is_empty(all_merch))
@@ -71,6 +87,42 @@ void TUI_inventory_add_merch(ioopm_inventory_t *inventory) {
     }
 }
 
+void TUI_inventory_list_merch_theoretical_stock(ioopm_inventory_t *inventory) {
+    ioopm_list_t *merch_list = ioopm_inventory_get_merchandise_list(inventory);
+    if (ioopm_linked_list_is_empty(merch_list))
+    {
+        printf("\n__________The inventory is empty!__________\n\n");
+        return;
+    }
+    
+    ioopm_list_iterator_t *iterator = ioopm_list_iterator(merch_list);
+
+    int i = 1;
+    while (true)
+    {
+        char *current_name = ioopm_iterator_current(iterator).ptr_v;
+        inventory_merch_t *current_merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = current_name})->ptr_v;
+        int current_price = current_merch->price;
+        printf("%d) %s %d.%d SEK  %d in stock\n", i, current_name, current_price/100, current_price%100, current_merch->theoretical_stock);
+        if (!ioopm_iterator_has_next(iterator)) break;
+        ioopm_iterator_next(iterator);
+        if (i%20==0)
+        {
+            char *answer = ioopm_ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n");
+            if (toupper(*answer) != 'Y')
+            {
+                free(answer);
+                break;
+            }
+            free(answer);
+        }
+        i++;
+    }
+
+    ioopm_linked_list_destroy(merch_list);
+    ioopm_iterator_destroy(iterator);
+}
+
 void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
     ioopm_list_t *merch_list = ioopm_inventory_get_merchandise_list(inventory);
     if (ioopm_linked_list_is_empty(merch_list))
@@ -93,7 +145,12 @@ void TUI_inventory_list_merch(ioopm_inventory_t *inventory) {
         if (i%20==0)
         {
             char *answer = ioopm_ask_question_string("\nDo you wish to keep printing merchandise? [y/n]\n");
-            if (toupper(*answer) != 'Y') break;
+            if (toupper(*answer) != 'Y')
+            {
+                free(answer);
+                break;
+            }
+            free(answer);
         }
         i++;
     }
@@ -208,7 +265,7 @@ void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
 
     char *new_or_old = ioopm_ask_question_string("Would you like to add merchandise to a new shelf?");
 
-    if (toupper(*new_or_old) == 'Y')
+    if (toupper(*new_or_old) != 'N')
     {
         char *shelf = ioopm_ask_new_shelf(inventory->used_shelves);
         int amount = ioopm_ask_question_u_int("How many of the merchandise would you like to add?");
@@ -219,10 +276,10 @@ void TUI_inventory_replenish_stock(ioopm_inventory_t *inventory) {
         char *shelf = ioopm_ask_old_shelf(inventory->used_shelves);
         int amount = ioopm_ask_question_u_int("How many of the merchandise would you like to add?");
         ioopm_inventory_replenish_existing_shelf_stock(inventory, merch_name, amount, shelf);
-        free(merch_name);
         free(shelf);
     }
     free(new_or_old);
+    free(merch_name);
 }
 
 void TUI_inventory_unstock(ioopm_inventory_t *inventory)
@@ -238,32 +295,66 @@ void TUI_inventory_unstock(ioopm_inventory_t *inventory)
 }
 
 
-void do_checkout(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
+void do_checkout(ioopm_inventory_t *inventory, ioopm_list_t * cart_list)
 {
+    ioopm_cart_t *cart = ask_cart_number(cart_list);
+
     ioopm_list_t *cart_merch = ioopm_cart_get_merch(cart);
-    if (ioopm_linked_list_is_empty(cart_merch))
+    if (!ioopm_linked_list_is_empty(cart_merch))
     {
-        return;
+        ioopm_list_iterator_t *iterator = ioopm_list_iterator(cart_merch);
+
+        while (true) {
+            cart_merch_t *merch = ioopm_iterator_current(iterator).ptr_v;
+            ioopm_inventory_unstock(inventory, merch->name, merch->pcs, NULL);
+            printf("\nYou bought %d pcs of %s. \nPrice: %d.%d SEK\n", merch->pcs, merch->name, (merch->pcs * merch->price)/100, (merch->pcs * merch->price)%100);
+
+            if (!ioopm_iterator_has_next(iterator)) {
+                break;
+            }
+            else {
+                ioopm_iterator_next(iterator);
+            }
+        } 
+
+        ioopm_iterator_destroy(iterator);
+        printf("\nTotal price: %d.%d SEK\n", cart->cost/100, cart->cost%100);
+        ioopm_cart_clear(cart);
     }
-    ioopm_list_iterator_t *iterator = ioopm_list_iterator(cart_merch);
-
-    while (true) {
-        cart_merch_t *merch = ioopm_iterator_current(iterator).ptr_v;
-        ioopm_inventory_unstock(inventory, merch->name, merch->pcs, NULL);
-        printf("\nYou bought %d pcs of %s. \nPrice: %d.%d SEK\n", merch->pcs, merch->name, (merch->pcs * merch->price)/100, (merch->pcs * merch->price)%100);
-
-        if (!ioopm_iterator_has_next(iterator)) {
-            break;
-        }
-        else {
-            ioopm_iterator_next(iterator);
-        }
-    } 
-
-    ioopm_iterator_destroy(iterator);
-    printf("\nTotal price: %d.%d SEK\n", cart->cost/100, cart->cost%100);
-    ioopm_cart_clear(cart);
+    int idx = ioopm_linked_list_get_index(cart_list, (elem_t) {.ptr_v = cart});
+    ioopm_linked_list_remove(cart_list, idx);
+    ioopm_linked_list_insert(cart_list, idx, (elem_t) {.ptr_v = NULL});
+    ioopm_cart_destroy(cart);
     return;
+}
+
+void add_cart(ioopm_list_t *cart_list)
+{
+    ioopm_cart_t *cart = ioopm_cart_create();
+    ioopm_linked_list_append(cart_list, (elem_t) {.ptr_v = cart});
+}
+
+void clear_and_return_cart(ioopm_cart_t *cart, ioopm_inventory_t *inventory)
+{
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(cart->contents);
+
+    for (int i = 0; i < ioopm_linked_list_size(cart->contents); i++)
+    {
+        cart_merch_t *cart_merch = ioopm_iterator_current(iter).ptr_v;
+        inventory_merch_t *inventory_merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = cart_merch->name})->ptr_v;
+        inventory_merch->theoretical_stock += cart_merch->pcs;
+        ioopm_iterator_next(iter);
+    }
+    
+
+    ioopm_cart_clear(cart);
+    ioopm_iterator_destroy(iter);
+}
+
+void TUI_cart_clear(ioopm_list_t *cart_list, ioopm_inventory_t *inventory)
+{
+    ioopm_cart_t *cart = ask_cart_number(cart_list);
+    clear_and_return_cart(cart, inventory);
 }
 
 bool int_eq_fun(elem_t a, elem_t b)
@@ -271,7 +362,7 @@ bool int_eq_fun(elem_t a, elem_t b)
     return a.int_v == b.int_v;
 }
 
-int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
+int event_loop(ioopm_inventory_t *inventory, ioopm_list_t *cart_list)
 {
     char *admin_menu =
         "-----------------Admin menu-----------------\n"
@@ -281,7 +372,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "3. Remove merchandise from the inventory.\n"
         "4. Edit merchandise in the inventory.\n"
         "5. Replenish merchandise in the inventory.\n"
-        "6. Undo the previous action.\n"
+        "6. Remove merchandise from stock.\n"
         "7. Add merchandise to your cart.\n"
         "8. Remove merchandise from your cart.\n"
         "9. Get the cost of your cart's contents.\n"
@@ -290,7 +381,7 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         "12. Checkout your cart.\n"
         "13. Exit the menu.\n"
         "14. Show detailed stock of merchandise.\n"
-        "15. Remove merchandise from stock.\n";
+        "15. Create a new cart.\n";
     
     ioopm_list_t *admin_options = ioopm_linked_list_create(int_eq_fun);
     for (int i = 1; i < 16; i++)
@@ -322,48 +413,49 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
         case 5:
             TUI_inventory_replenish_stock(inventory);
             break;
-
+        
         case 6:
-            ioopm_undo_undo(inventory, cart);
+            TUI_inventory_unstock(inventory);
             break;
 
         case 7:
-            TUI_cart_add(cart, inventory);
+            TUI_cart_add(cart_list, inventory);
             break;
 
         case 8:
-            TUI_cart_remove(cart);
+            TUI_cart_remove(cart_list);
             break;
 
         case 9:
-            TUI_cart_get_cost(cart);
+            TUI_cart_get_cost(cart_list);
             break;
 
         case 10:
-            TUI_cart_list_contents(cart);
+            TUI_cart_list_list_contents(cart_list);
             break;
 
         case 11:
-            ioopm_cart_clear(cart);
+            TUI_cart_clear(cart_list, inventory);
             break;
 
         case 12:
-            do_checkout(inventory, cart);
+            do_checkout(inventory, cart_list);
             break;
 
         case 13:
-            ioopm_linked_list_destroy(admin_options);
-            return 0;
+            admin_access = false;
+            break;
 
         case 14:
             TUI_inventory_show_stock(inventory);
             break;
-
         case 15:
-            TUI_inventory_unstock(inventory);
+            add_cart(cart_list);
             break;
         }
     }
+    ioopm_linked_list_destroy(admin_options);
+
 /*
     char *user_menu =
         "------------------User menu------------------\n"
@@ -420,17 +512,34 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_cart_t *cart)
             return 0;
         }
     } */
-    return 1;
+    return 0;
+}
+
+void destroy_carts(ioopm_list_t *cart_list, ioopm_inventory_t *inventory)
+{
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(cart_list);
+    for (int i = 0; i < ioopm_linked_list_size(cart_list); i++)
+    {
+        void *curr_ptr = ioopm_iterator_current(iter).ptr_v;
+        if (curr_ptr != NULL)
+        {
+            clear_and_return_cart((ioopm_cart_t *) curr_ptr, inventory);
+            ioopm_cart_destroy((ioopm_cart_t *) curr_ptr);
+        }
+        ioopm_iterator_next(iter);
+    }
+    ioopm_iterator_destroy(iter);
+    ioopm_linked_list_destroy(cart_list);
 }
 
 int main(void)
 {
-    ioopm_inventory_t *inventory = ioopm_inventory_load();
-    ioopm_cart_t *cart = ioopm_cart_create();
+    ioopm_inventory_t *inventory = ioopm_inventory_load("inventory.bin");
+    ioopm_list_t *cart_list = ioopm_linked_list_create(cart_eq_fun);
 
-    if (event_loop(inventory, cart)==1) return 1;
+    if (event_loop(inventory, cart_list)==1) return 1;
 
-    ioopm_inventory_save(inventory);
-    ioopm_cart_destroy(cart);
+    destroy_carts(cart_list, inventory);
+    ioopm_inventory_save(inventory, "inventory.bin");
     return 0; 
 }

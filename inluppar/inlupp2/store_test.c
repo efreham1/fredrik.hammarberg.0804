@@ -131,13 +131,13 @@ void cart_test_clear(void)
 
 // start of inventory tests =========================================================
 void inventory_test_create_destroy(void) {
-  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_t *inventory = ioopm_inventory_create();
   CU_ASSERT_PTR_NOT_NULL(inventory);
-  ioopm_inventory_save(inventory);
+  ioopm_inventory_destroy(inventory);
 }
 
 void inventory_test_add_remove(void) {
-  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_t *inventory = ioopm_inventory_create();
   ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
   inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
 
@@ -150,11 +150,11 @@ void inventory_test_add_remove(void) {
 
   CU_ASSERT_PTR_NULL(gone);
 
-  ioopm_inventory_save(inventory);
+  ioopm_inventory_destroy(inventory);
 }
 
 void inventory_test_edit(void) {
-  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_t *inventory = ioopm_inventory_create();
   ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
   inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
 
@@ -166,11 +166,11 @@ void inventory_test_edit(void) {
   CU_ASSERT_STRING_EQUAL(merch->desc, "Water vehicle");
   CU_ASSERT_EQUAL(merch->price, 1000000);
 
-  ioopm_inventory_save(inventory);
+  ioopm_inventory_destroy(inventory);
 }
 
 void inventory_test_replenish(void) {
-  ioopm_inventory_t *inventory = ioopm_inventory_load();
+  ioopm_inventory_t *inventory = ioopm_inventory_create();
   ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
   inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
 
@@ -184,7 +184,40 @@ void inventory_test_replenish(void) {
 
   CU_ASSERT_EQUAL(storage_location->stock, 24);
 
-  ioopm_inventory_save(inventory);
+  ioopm_inventory_destroy(inventory);
+}
+
+void inventory_test_load_save()
+{
+  ioopm_inventory_t *inventory = ioopm_inventory_create();
+  ioopm_inventory_add_merchandise(inventory, strdup("Car"), strdup("Vehicle"), 99999);
+
+  ioopm_inventory_save(inventory, "inventory_test.bin");
+  inventory = ioopm_inventory_load("inventory_test.bin");
+
+  ioopm_inventory_replenish_new_shelf_stock(inventory, "Car", 12, strdup("A08"));
+
+  ioopm_inventory_save(inventory, "inventory_test.bin");
+  inventory = ioopm_inventory_load("inventory_test.bin");
+
+  inventory_merch_t *merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
+  storage_location_t *storage_location = ((storage_location_t *)ioopm_linked_list_get(merch->storage_locations, 0).ptr_v);
+  CU_ASSERT_STRING_EQUAL(storage_location->shelf, "A08");
+  CU_ASSERT_EQUAL(storage_location->stock, 12);
+
+  ioopm_inventory_save(inventory, "inventory_test.bin");
+  inventory = ioopm_inventory_load("inventory_test.bin");
+
+  ioopm_inventory_replenish_existing_shelf_stock(inventory, "Car", 12, "A08");
+
+  ioopm_inventory_save(inventory, "inventory_test.bin");
+  inventory = ioopm_inventory_load("inventory_test.bin");
+
+  merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = "Car"})->ptr_v;
+  storage_location = ((storage_location_t *)ioopm_linked_list_get(merch->storage_locations, 0).ptr_v);
+  CU_ASSERT_EQUAL(storage_location->stock, 24);
+
+  ioopm_inventory_destroy(inventory);
 }
 
 // end of inventory tests ===========================================================
@@ -232,6 +265,8 @@ int main()
       (CU_add_test(suite_inventory, "Test for editing merch", inventory_test_edit) == NULL) ||
 
       (CU_add_test(suite_inventory, "Test for replenishing merch", inventory_test_replenish) == NULL) ||
+
+      (CU_add_test(suite_inventory, "Test for loading and saving merch", inventory_test_load_save) == NULL) ||
 
       0)
   {
