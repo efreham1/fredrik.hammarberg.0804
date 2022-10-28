@@ -22,6 +22,10 @@ stock: store
 	gcc make_stock.c -o make_stock
 	./make_stock
 	./store < Stock.txt
+	
+inv_clear:
+	rm -f inventory.bin
+	touch inventory.bin
 
 clean:
 	rm -f *.o
@@ -31,4 +35,4 @@ clean:
 	rm -f *.out
 	rm -f store test_store make_stock
 
-.PHONY: clean stock
+.PHONY: clean stock inv_clear
