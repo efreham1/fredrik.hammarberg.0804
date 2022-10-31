@@ -2,6 +2,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Customer",
+            "request": "launch",
+            "mainClass": "Customer",
+            "projectName": "fredrik.hammarberg.0804_6b498d81"
+        },
+        {
+            "type": "java",
             "name": "Launch beefheart",
             "request": "launch",
             "mainClass": "beefheart",
