@@ -2,6 +2,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch Store",
+            "request": "launch",
+            "mainClass": "Store",
+            "projectName": "fredrik.hammarberg.0804_9f3b5955"
+        },
+        {
+            "type": "java",
+            "name": "Launch Simulation",
+            "request": "launch",
+            "mainClass": "Simulation",
+            "projectName": "fredrik.hammarberg.0804_9f3b5955"
+        },
+        {
+            "type": "java",
             "name": "Launch Customer",
             "request": "launch",
             "mainClass": "Customer",

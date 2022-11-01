@@ -23,11 +23,16 @@ public class Customer {
     }
 
     public boolean isDone(){
-        return this.items==0;
+        return this.items<1;
     }
 
     public int getAge(int current_time){
         return current_time-this.borntime;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + this.items + "]";
     }
 
     public static void main(String[] args){

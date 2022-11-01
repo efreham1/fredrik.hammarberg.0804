@@ -22,9 +22,7 @@ public class Register {
     public void step(){
         try {
             this.queue.first().serve();
-        } catch (Queue.QueueEmptyException e) {
-            return;
-        }
+        } catch (Queue.QueueEmptyException ignore) { }
     }
 
     public boolean hasCustomers(){
@@ -45,5 +43,24 @@ public class Register {
 
     public int getQueueLength(){
         return this.queue.length();
+    }
+
+    @Override
+    public String toString() {
+        if (this.open) {
+            String str = "";
+            try {
+                str += this.queue.first().toString();
+                for (int i = 1; i < this.getQueueLength(); i++) {
+                    str += "@";
+                }
+            } catch (Queue.QueueEmptyException e) {
+                str += "[ ]";
+            }
+            return str;
+        }
+        else {
+            return "X [ ]";
+        }
     }
 }
