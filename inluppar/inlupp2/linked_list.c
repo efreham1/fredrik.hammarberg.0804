@@ -49,6 +49,9 @@ void ioopm_linked_list_prepend(ioopm_list_t *ll, elem_t value) {
     ll_entry_t *new_head = create_link(value, ll->head);
     ll->head = new_head;
     ll->size++; 
+    if (ll->size == 1) {
+        ll->tail = ll->head;
+    }
 }
 
 
@@ -85,7 +88,11 @@ elem_t ioopm_linked_list_remove(ioopm_list_t *ll, int index) {
         free(ll->head);
         ll->head = new_head;
         ll->size--;
-        return removed_value;
+        if (ioopm_linked_list_is_empty(ll))
+        {
+            ll->tail = ll->head;
+        }
+        return removed_value;  
     }
     else if (index == ll->size -1) {
         ll_entry_t *new_tail = ll->head;

@@ -3,11 +3,7 @@
 
 bool eq_cart_merch(elem_t a, elem_t b)
 {
-    cart_merch_t *merch_a = a.ptr_v;
-    char *name_a = merch_a->name;
-    cart_merch_t *merch_b = b.ptr_v;
-    char *name_b = merch_b->name;
-    return strcmp(name_a, name_b)==0;
+    return a.ptr_v == b.ptr_v;
 }
 
 bool eq_str(elem_t a, elem_t b)

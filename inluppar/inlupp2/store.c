@@ -195,10 +195,19 @@ void TUI_inventory_edit_merch(ioopm_inventory_t *inventory) {
         switch (action)
         {
         case 'N':
+            if (new_name != NULL)
+            {
+                free(new_name);
+            }
+            
             new_name = ioopm_ask_question_string("\nEnter new name:\n");
             break;
         
         case 'D':
+            if (new_desc != NULL)
+            {
+                free(new_desc);
+            }
             new_desc = ioopm_ask_question_string("\nEnter new description:\n");
             break;
 
@@ -306,8 +315,16 @@ void do_checkout(ioopm_inventory_t *inventory, ioopm_list_t * cart_list)
 
         while (true) {
             cart_merch_t *merch = ioopm_iterator_current(iterator).ptr_v;
-            ioopm_inventory_unstock(inventory, merch->name, merch->pcs, NULL);
-            printf("\nYou bought %d pcs of %s. \nPrice: %d.%d SEK\n", merch->pcs, merch->name, (merch->pcs * merch->price)/100, (merch->pcs * merch->price)%100);
+            
+            if (!ioopm_hash_table_has_key(inventory->warehouse, (elem_t) {.ptr_v = merch->name}))
+            {
+                printf("\nSomething went wrong, %s wasn't checked out\n", merch->name);
+                ioopm_cart_remove(cart, merch->name);
+            }
+            else{
+                ioopm_inventory_unstock(inventory, merch->name, merch->pcs, NULL);
+                printf("\nYou bought %d pcs of %s. \nPrice: %d.%d SEK\n", merch->pcs, merch->name, (merch->pcs * merch->price)/100, (merch->pcs * merch->price)%100);
+            }
 
             if (!ioopm_iterator_has_next(iterator)) {
                 break;
@@ -341,8 +358,11 @@ void clear_and_return_cart(ioopm_cart_t *cart, ioopm_inventory_t *inventory)
     for (int i = 0; i < ioopm_linked_list_size(cart->contents); i++)
     {
         cart_merch_t *cart_merch = ioopm_iterator_current(iter).ptr_v;
+        if (ioopm_hash_table_has_key(inventory->warehouse, (elem_t) {.ptr_v = cart_merch->name}))
+        {
         inventory_merch_t *inventory_merch = ioopm_hash_table_lookup(inventory->warehouse, (elem_t) {.ptr_v = cart_merch->name})->ptr_v;
         inventory_merch->theoretical_stock += cart_merch->pcs;
+        }
         ioopm_iterator_next(iter);
     }
     
@@ -456,62 +476,6 @@ int event_loop(ioopm_inventory_t *inventory, ioopm_list_t *cart_list)
     }
     ioopm_linked_list_destroy(admin_options);
 
-/*
-    char *user_menu =
-        "------------------User menu------------------\n"
-        "Please chose an option by typing its number:\n"
-        "1. Add merchandise to your cart.\n"
-        "3. Remove merchandise from your cart.\n"
-        "4. Get the cost of your cart's contents.\n"
-        "5. List the cart's contents.\n"
-        "6. CLear the cart's contents.\n"
-        "7. Checkout your cart.\n"
-    
-    char* user_options = "123456789";
-
-    bool user_access = ioopm_ask_user_access();
-
-    while (user_access)
-    {
-        char menu_choice = ioopm_ask_menu(user_menu, user_options);
-        switch (menu_choice)
-        {
-        case 1:
-            TUI_cart_add(cart);
-            break;
-
-        case 2:
-            TUI_inventory_list_merch(inventory);
-            break;
-
-        case 3:
-            TUI_cart_remove(cart);
-            break;
-
-        case 4:
-            TUI_cart_get_cost(cart);
-            break;
-
-        case 5:
-            TUI_cart_list_contents(cart);
-            break;
-
-        case 6:
-            ioopm_cart_clear(cart);
-            break;
-
-        case 7:
-            do_checkout(inventory, cart);
-            break;
-        
-        case 8:
-            ioopm_undo_undo(inventory, cart);
-            break;
-
-        case 9:
-            return 0;
-        }
-    } */
     return 0;
 }
 

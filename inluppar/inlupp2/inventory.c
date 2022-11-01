@@ -56,11 +56,34 @@ void free_merch(elem_t key, elem_t *value, void *extra)
     free(merch);
 }
 
+void free_merch_not_st_loc(elem_t key, elem_t *value, void *extra)
+{
+    inventory_merch_t *merch = value->ptr_v;
+    free(merch->name);
+    free(merch->desc);
+    free(merch);
+}
+
 void ioopm_inventory_remove_merchandise(ioopm_inventory_t *inventory, char *merch_name) {
     elem_t key = { .ptr_v = merch_name };
     elem_t merch = ioopm_hash_table_remove(inventory->warehouse, key);
+    ioopm_list_t *storage_locations = ((inventory_merch_t *) merch.ptr_v)->storage_locations;
+    ioopm_list_iterator_t *iter = ioopm_list_iterator(storage_locations);
+    for (int i = 0; i < ioopm_linked_list_size(storage_locations); i++)
+    {
+        storage_location_t *st_loc = ioopm_iterator_current(iter).ptr_v;
+        free(ioopm_linked_list_remove(inventory->used_shelves,ioopm_linked_list_get_index(inventory->used_shelves,(elem_t) {.ptr_v = st_loc->shelf})).ptr_v);
+    }
+    
     free_merch(key, &merch, NULL);
-    ioopm_linked_list_remove(inventory->used_shelves,ioopm_linked_list_get_index(inventory->used_shelves, key));
+    
+    ioopm_iterator_destroy(iter);
+}
+
+void ioopm_inventory_remove_merchandise_not_st_loc(ioopm_inventory_t *inventory, char *merch_name) {
+    elem_t key = { .ptr_v = merch_name };
+    elem_t merch = ioopm_hash_table_remove(inventory->warehouse, key);
+    free_merch_not_st_loc(key, &merch, NULL);
 }
 
 
@@ -77,10 +100,11 @@ void ioopm_inventory_edit_merchandise(ioopm_inventory_t *inventory, char *merch_
 
         inventory_merch_t *updated_merch = create_merchandise(name, desc, price);
         updated_merch->total_stock = total_stock;
+        updated_merch->theoretical_stock = total_stock;
         ioopm_linked_list_destroy(updated_merch->storage_locations);
-        updated_merch->storage_locations = ioopm_linked_list_copy(storage_locations);
+        updated_merch->storage_locations = storage_locations;
 
-        ioopm_inventory_remove_merchandise(inventory, key);
+        ioopm_inventory_remove_merchandise_not_st_loc(inventory, key);
         ioopm_hash_table_insert(inventory->warehouse, (elem_t) { .ptr_v = name }, (elem_t) { .ptr_v = updated_merch });
     }
     else {
