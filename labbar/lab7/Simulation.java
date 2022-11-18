@@ -40,6 +40,9 @@ public class Simulation {
     }
 
     public float averageWaitTime(){
+        if (totalCustomersServed == 0) {
+            return 0;
+        }
         return this.averageWait/this.totalCustomersServed;
     }
 

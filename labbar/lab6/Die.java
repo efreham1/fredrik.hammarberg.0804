@@ -17,8 +17,8 @@ public class Die {
     }
 
     public int roll() {
-    this.value = (int) (Math.random() * numberOfSides) + 1;
-    return this.get();
+        this.value = (int) (Math.random() * numberOfSides) + 1;
+        return this.get();
     }
 
     public int get() {
