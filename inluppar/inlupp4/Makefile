@@ -13,9 +13,13 @@ run:
 clean:
 	rm -rf classes
 
-test:
+UnitTest_ast:
 	javac -d classes -cp $(JUNIT_PATH):classes -sourcepath src AstUnitTests.java
 	java -jar $(JUNIT_PATH) -cp classes -c AstUnitTests
+
+IntegrationTest_ast:
+	javac -d classes -cp $(JUNIT_PATH):classes -sourcepath src AstIntegrationTests.java
+	java -jar $(JUNIT_PATH) -cp classes -c AstIntegrationTests
 
 docs:
 	javadoc -d doc -classpath classes -sourcepath src org.ioopm.calculator -subpackages org.ioopm.calculator

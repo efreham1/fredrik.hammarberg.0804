@@ -1,4 +1,4 @@
-package org.ioopm.calculator.ast;
+package org.ioopm.calculator;
 
 import java.util.HashMap;
 

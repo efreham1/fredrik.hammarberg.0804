@@ -4,9 +4,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
+import org.ioopm.calculator.Constants;
 import org.ioopm.calculator.ast.*;
 
 
@@ -93,7 +92,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testVariableEval() throws IllegalExpressionException {
+    void testVariableEval() throws IllegalExpressionException, DivisionByZeroException {
         Variable v = new Variable("x");
         Constant c = new Constant(1);
         Environment vars = new Environment();
@@ -117,10 +116,26 @@ public class AstUnitTests {
     }
 
     @Test
-    void testAdditionEval() throws IllegalExpressionException {
+    void testAdditionEval() throws IllegalExpressionException, DivisionByZeroException {
         Addition a = new Addition(new Constant(1), new Constant(1));
         Environment vars = new Environment();
         assertEquals(new Constant(2), a.eval(vars));
+    }
+
+    @Test
+    void testAdditionEquals() throws IllegalExpressionException, DivisionByZeroException {
+        Addition a = new Addition(new Constant(32), new Constant(55));
+        Addition b = new Addition(new Constant(32), new Constant(55));
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(a));
+    }
+
+    @Test
+    void testAdditionEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+        Addition a = new Addition(new Constant(32), new Constant(55));
+        Addition b = new Addition(new Constant(23), new Constant(55));
+        assertFalse(a.equals(b));
+        assertFalse(b.equals(a));
     }
 
     // Subtraction -------------------------------------------------------
@@ -138,12 +153,27 @@ public class AstUnitTests {
     }
 
     @Test
-    void testSubtractionEval() throws IllegalExpressionException{
+    void testSubtractionEval() throws IllegalExpressionException, DivisionByZeroException{
         Subtraction s = new Subtraction(new Constant(1), new Constant(1));
         Environment vars = new Environment();
         assertEquals(new Constant(0), s.eval(vars));
     }
 
+    @Test
+    void testSubtractionEquals() throws IllegalExpressionException, DivisionByZeroException {
+        Subtraction a = new Subtraction(new Constant(32), new Constant(55));
+        Subtraction b = new Subtraction(new Constant(32), new Constant(55));
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(a));
+    }
+
+    @Test
+    void testSubtractionEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+        Subtraction a = new Subtraction(new Constant(32), new Constant(55));
+        Subtraction b = new Subtraction(new Constant(23), new Constant(55));
+        assertFalse(a.equals(b));
+        assertFalse(b.equals(a));
+    }
     // Multiplication ----------------------------------------------------------
 
     @Test
@@ -158,10 +188,26 @@ public class AstUnitTests {
     }
 
     @Test
-    void testMultiplicationEval() throws IllegalExpressionException{
+    void testMultiplicationEval() throws IllegalExpressionException, DivisionByZeroException{
         Multiplication m = new Multiplication(new Constant(2), new Constant(3));
         Environment vars = new Environment();
         assertEquals(new Constant(6), m.eval(vars));
+    }
+
+    @Test
+    void testMultiplicationEquals() throws IllegalExpressionException, DivisionByZeroException {
+        Multiplication a = new Multiplication(new Constant(32), new Constant(55));
+        Multiplication b = new Multiplication(new Constant(32), new Constant(55));
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(a));
+    }
+
+    @Test
+    void testMultiplicationEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+        Multiplication a = new Multiplication(new Constant(32), new Constant(55));
+        Multiplication b = new Multiplication(new Constant(23), new Constant(55));
+        assertFalse(a.equals(b));
+        assertFalse(b.equals(a));
     }
 
     // Division ---------------------------------------------------
@@ -179,10 +225,40 @@ public class AstUnitTests {
     }
 
     @Test
-    void testDivisionEval() throws IllegalExpressionException{
+    void testDivisionEval() throws IllegalExpressionException, DivisionByZeroException{
         Division s = new Division(new Constant(5), new Constant(2));
         Environment vars = new Environment();
         assertEquals(new Constant(2.5), s.eval(vars));
+    }
+
+    @Test
+    void testDivisionByZero() throws IllegalExpressionException{
+        Division s = new Division(new Constant(5), new Constant(0));
+        Environment vars = new Environment();
+        try {
+            s.eval(vars);
+        }
+        catch (DivisionByZeroException e) {
+            assertTrue(true);
+            return;
+        }
+        assertTrue(false);
+    }
+
+    @Test
+    void testDivisionEquals() throws IllegalExpressionException, DivisionByZeroException {
+        Division a = new Division(new Constant(32), new Constant(55));
+        Division b = new Division(new Constant(32), new Constant(55));
+        assertTrue(a.equals(b));
+        assertTrue(b.equals(a));
+    }
+
+    @Test
+    void testDivisionEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+        Division a = new Division(new Constant(32), new Constant(55));
+        Division b = new Division(new Constant(23), new Constant(55));
+        assertFalse(a.equals(b));
+        assertFalse(b.equals(a));
     }
 
     // Sin -------------------------------------------------------
@@ -190,7 +266,7 @@ public class AstUnitTests {
     @Test
     void testSinGetName() {
         Sin s = new Sin(new Constant(0));
-        assertEquals("sin", s.getName());
+        assertEquals("Sin", s.getName());
     }
 
     @Test
@@ -200,10 +276,26 @@ public class AstUnitTests {
     }
 
     @Test
-    void testSinEval() throws IllegalExpressionException{
+    void testSinEval() throws IllegalExpressionException, DivisionByZeroException{
         Sin s = new Sin(new Constant(0));
         Environment vars = new Environment();
         assertEquals(new Constant(0), s.eval(vars));
+    }
+
+    @Test
+    void testSinEquals() {
+        Sin c1 = new Sin(new Constant(1));
+        Sin c2 = new Sin(new Constant(1));
+        assertTrue(c1.equals(c2));
+        assertTrue(c2.equals(c1));
+    }
+
+    @Test
+    void testSinEqualsFail() {
+        Sin c1 = new Sin(new Constant(1));
+        Sin c2 = new Sin(new Constant(2));
+        assertFalse(c1.equals(c2));
+        assertFalse(c2.equals(c1));
     }
     
     // Cos ---------------------------------------------
@@ -211,7 +303,7 @@ public class AstUnitTests {
     @Test
     void testCosGetName() {
         Cos cos = new Cos(new Constant(0));
-        assertEquals("cos", cos.getName());
+        assertEquals("Cos", cos.getName());
     }
 
     @Test
@@ -221,10 +313,26 @@ public class AstUnitTests {
     }
 
     @Test
-    void testCosEval() throws IllegalExpressionException{
+    void testCosEval() throws IllegalExpressionException, DivisionByZeroException{
         Cos cos = new Cos(new Constant(0));
         Environment vars = new Environment();
         assertEquals(new Constant(1), cos.eval(vars));
+    }
+
+    @Test
+    void testCosEquals() {
+        Cos c1 = new Cos(new Constant(1));
+        Cos c2 = new Cos(new Constant(1));
+        assertTrue(c1.equals(c2));
+        assertTrue(c2.equals(c1));
+    }
+
+    @Test
+    void testCosEqualsFail() {
+        Cos c1 = new Cos(new Constant(1));
+        Cos c2 = new Cos(new Constant(2));
+        assertFalse(c1.equals(c2));
+        assertFalse(c2.equals(c1));
     }
     
     // Exp -----------------------------------------------
@@ -232,7 +340,7 @@ public class AstUnitTests {
     @Test
     void testExpGetName() {
         Exp exp = new Exp(new Constant(0));
-        assertEquals("exp", exp.getName());
+        assertEquals("Exp", exp.getName());
     }
 
     @Test
@@ -242,10 +350,26 @@ public class AstUnitTests {
     }
 
     @Test
-    void testExpEval() throws IllegalExpressionException{
+    void testExpEval() throws IllegalExpressionException, DivisionByZeroException{
         Exp exp = new Exp(new Constant(0));
         Environment vars = new Environment();
         assertEquals(new Constant(1), exp.eval(vars));
+    }
+
+    @Test
+    void testExpEquals() {
+        Exp c1 = new Exp(new Constant(1));
+        Exp c2 = new Exp(new Constant(1));
+        assertTrue(c1.equals(c2));
+        assertTrue(c2.equals(c1));
+    }
+
+    @Test
+    void testExpEqualsFail() {
+        Exp c1 = new Exp(new Constant(1));
+        Exp c2 = new Exp(new Constant(2));
+        assertFalse(c1.equals(c2));
+        assertFalse(c2.equals(c1));
     }
     
     // Log --------------------------------------------------
@@ -253,7 +377,7 @@ public class AstUnitTests {
     @Test
     void testLogGetName() {
         Log log = new Log(new Constant(0));
-        assertEquals("log", log.getName());
+        assertEquals("Log", log.getName());
     }
 
     @Test
@@ -263,10 +387,40 @@ public class AstUnitTests {
     }
 
     @Test
-    void testLogEval() throws IllegalExpressionException{
+    void testLogEval() throws IllegalExpressionException, DivisionByZeroException{
         Log log = new Log(new Constant(1));
         Environment vars = new Environment();
         assertEquals(new Constant(0), log.eval(vars));
+    }
+
+    @Test
+    void testLogInvalidArgument() throws DivisionByZeroException {
+        Log log = new Log(new Constant(-1.2));
+        Environment vars = new Environment();
+        try {
+            log.eval(vars);
+        }
+        catch (IllegalExpressionException e) {
+            assertTrue(true);
+            return;
+        }
+        assertTrue(false);
+    }
+
+    @Test
+    void testLogEquals() {
+        Log c1 = new Log(new Constant(1));
+        Log c2 = new Log(new Constant(1));
+        assertTrue(c1.equals(c2));
+        assertTrue(c2.equals(c1));
+    }
+
+    @Test
+    void testLogEqualsFail() {
+        Log c1 = new Log(new Constant(1));
+        Log c2 = new Log(new Constant(2));
+        assertFalse(c1.equals(c2));
+        assertFalse(c2.equals(c1));
     }
     
     // Negation -------------------------------------------
@@ -292,17 +446,33 @@ public class AstUnitTests {
     }
 
     @Test
-    void testNegationEval() throws IllegalExpressionException {
+    void testNegationEval() throws IllegalExpressionException, DivisionByZeroException {
         Negation neg = new Negation(new Constant(1));
         Environment vars = new Environment();
         assertEquals(new Constant (-1), neg.eval(vars));
     }
 
     @Test
-    void testDoubleNegation() throws IllegalExpressionException {
+    void testDoubleNegation() throws IllegalExpressionException, DivisionByZeroException {
         Negation neg = new Negation(new Negation(new Constant(1)));
         Environment vars = new Environment();
         assertEquals(new Constant(1), neg.eval(vars));
+    }
+
+    @Test
+    void testNegationEquals() {
+        Negation c1 = new Negation(new Constant(1));
+        Negation c2 = new Negation(new Constant(1));
+        assertTrue(c1.equals(c2));
+        assertTrue(c2.equals(c1));
+    }
+
+    @Test
+    void testNegationEqualsFail() {
+        Negation c1 = new Negation(new Constant(1));
+        Negation c2 = new Negation(new Constant(2));
+        assertFalse(c1.equals(c2));
+        assertFalse(c2.equals(c1));
     }
     
     // NamedConstant and Constants --------------------------------
@@ -320,7 +490,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testNamedConstantReassignment() {
+    void testNamedConstantReassignment() throws DivisionByZeroException {
         NamedConstant nc = new NamedConstant("x", 4);
         Constant c = new Constant(1);
         Environment vars = new Environment();
@@ -334,6 +504,25 @@ public class AstUnitTests {
             return;
         }
         assertTrue(false);
+    }
+
+    @Test
+    void testNamedConstantEquals() {
+        NamedConstant c1 = new NamedConstant("a", 5);
+        NamedConstant c2 = new NamedConstant("a", 5);
+        assertTrue(c1.equals(c2));
+        assertTrue(c2.equals(c1));
+    }
+
+    @Test
+    void testNamedConstantEqualsFail() {
+        NamedConstant c1 = new NamedConstant("a", 5);
+        NamedConstant c2 = new NamedConstant("a", 6);
+        assertFalse(c1.equals(c2));
+        assertFalse(c2.equals(c1));
+        NamedConstant c3 = new NamedConstant("b", 5);
+        assertFalse(c1.equals(c3));
+        assertFalse(c3.equals(c1));
     }
 
     // ---------------------------------------------------

@@ -3,7 +3,7 @@ package org.ioopm.calculator.ast;
 /**
 * Indicates division by zero was attempted
 */
-public class DivisionByZeroException extends RuntimeException {
+public class DivisionByZeroException extends Exception {
     public DivisionByZeroException() {
         super();
     }

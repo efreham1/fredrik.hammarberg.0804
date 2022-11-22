@@ -27,8 +27,8 @@ public class Log extends Unary {
     public SymbolicExpression eval(Environment vars) throws IllegalExpressionException, DivisionByZeroException{
         SymbolicExpression arg = this.arg.eval(vars);
         if (arg.isConstant()) {
-            if (arg.getValue()==0){
-                throw new IllegalExpressionException("The Logarithm of zero is not defined");
+            if (arg.getValue()<=0){
+                throw new IllegalExpressionException("The Logarithm of a number blow or equal to zero is undefined");
             }
             return new Constant(Math.log(arg.getValue()));
         } else {
