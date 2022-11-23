@@ -15,6 +15,7 @@ clean:
 
 test: UnitTest_ast IntegrationTest_ast ParserTests CalculatorTests
 
+
 UnitTest_ast:
 	javac -d classes -cp $(JUNIT_PATH):classes -sourcepath src AstUnitTests.java
 	java -jar $(JUNIT_PATH) -cp classes -c AstUnitTests
