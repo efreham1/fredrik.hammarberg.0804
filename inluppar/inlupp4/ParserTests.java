@@ -45,7 +45,7 @@ public class ParserTests {
         CalculatorParser cp = new CalculatorParser();
         
         try {
-            SymbolicExpression p1 = cp.parse("/");
+            cp.parse("/");
         } catch (SyntaxErrorException e) {
             assertTrue(true);
             return;
