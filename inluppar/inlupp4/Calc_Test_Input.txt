@@ -1,0 +1,21 @@
+++
+pi = 3
+3 = pi
+1+2
+3 = x
+2+x=y
+Clear
+9=h
+(3+2)/(2+3)=f
+f/h=t
+t+c=q
+- - - x
+Vars
+-Sin(pi/2)
+Exp(Log(8))
+(3=x)*(2=x) = x
+3=
+3==x
+3=(x)
+(3)=x
+Quit

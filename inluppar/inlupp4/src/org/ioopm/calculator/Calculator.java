@@ -3,6 +3,7 @@ package org.ioopm.calculator;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.parser.*;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
 * Command line calculator application
@@ -13,6 +14,7 @@ public class Calculator {
     public static void main(String[] args) {
         final CalculatorParser parser = new CalculatorParser();
         final Environment vars = new Environment();
+        Scanner sc = new Scanner(System.in);
 
         int count = 0; // number of expressions entered during a single session
         int successes = 0; // number of expressions successfully evaluated during a single session
@@ -21,9 +23,9 @@ public class Calculator {
         System.out.println("Welcome to the bestest calculator! GLHF");
         
         while(true) {
-            String input = System.console().readLine();
+            String input = sc.nextLine();
             try {
-                SymbolicExpression e = parser.parse(input, vars);
+                SymbolicExpression e = parser.parse(input);
                 if(e.isCommand()) {
                     if(e == Quit.instance()) {
                         break;

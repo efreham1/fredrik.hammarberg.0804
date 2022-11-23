@@ -13,6 +13,8 @@ run:
 clean:
 	rm -rf classes
 
+test: UnitTest_ast IntegrationTest_ast ParserTests CalculatorTests
+
 UnitTest_ast:
 	javac -d classes -cp $(JUNIT_PATH):classes -sourcepath src AstUnitTests.java
 	java -jar $(JUNIT_PATH) -cp classes -c AstUnitTests
@@ -21,7 +23,16 @@ IntegrationTest_ast:
 	javac -d classes -cp $(JUNIT_PATH):classes -sourcepath src AstIntegrationTests.java
 	java -jar $(JUNIT_PATH) -cp classes -c AstIntegrationTests
 
+ParserTests:
+	javac -d classes -cp $(JUNIT_PATH):classes -sourcepath src ParserTests.java
+	java -jar $(JUNIT_PATH) -cp classes -c ParserTests
+
+CalculatorTests:
+	java -cp classes org.ioopm.calculator.Calculator < Calc_Test_Input.txt > Calc_Test_Output.txt
+	diff Calc_Test_Output.txt Calc_Test_Expected_Output.txt
+
 docs:
 	javadoc -d doc -classpath classes -sourcepath src org.ioopm.calculator -subpackages org.ioopm.calculator
 
-.PHONY: all classes clean ast_test
+.PHONY: all classes clean ast_test ParserTests CalculatorTests UnitTest_ast\
+IntegrationTest_ast test

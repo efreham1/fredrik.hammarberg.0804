@@ -1,6 +1,6 @@
 package org.ioopm.calculator.parser;
 
-public class SyntaxErrorException extends RuntimeException {
+public class SyntaxErrorException extends Exception {
     public SyntaxErrorException() {
         super();
     }

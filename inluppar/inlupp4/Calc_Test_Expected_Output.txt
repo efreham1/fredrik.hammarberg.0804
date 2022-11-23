@@ -1,0 +1,27 @@
+
+Welcome to the bestest calculator! GLHF
+***Error: Expected number***
+***Error: Numbers cannot be used as a variable name***
+***Error: Cannot redefine named constant 'pi'***
+3
+3
+5
+9
+1
+0.1111111111111111
+0.1111111111111111 + c
+-x
+q: 0.1111111111111111 + c
+t: 0.1111111111111111
+f: 1
+h: 9
+-1
+7.999999999999998
+6
+***Error: Not a valid assignment of a variable***
+***Error: Not a valid assignment of a variable***
+***Error: Not a valid assignment of a variable***
+3
+Thanks for using this calculator!
+Number of entries done: 20
+Successfully evaluated: 10

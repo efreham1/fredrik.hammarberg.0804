@@ -5,9 +5,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.ioopm.calculator.Constants;
 import org.ioopm.calculator.ast.*;
-
 
 public class AstUnitTests {
     @BeforeAll
@@ -99,6 +99,40 @@ public class AstUnitTests {
         Assignment a1 = new Assignment(c,v);
         assertEquals(c, a1.eval(vars));
         assertEquals(c, v.eval(vars));
+    }
+
+    @Test
+    void testMultipleAssignments() throws IllegalExpressionException, DivisionByZeroException {
+        Variable v1 = new Variable("x");
+        Variable v2 = new Variable("y");
+        Variable v3 = new Variable("z");
+        Constant c = new Constant(1);
+        Environment vars = new Environment();
+        Assignment a1 = new Assignment(new Assignment(new Assignment(c, v3), v2),v1);
+        assertEquals(c, a1.eval(vars));
+        assertEquals(c, v1.eval(vars));
+        assertEquals(c, v2.eval(vars));
+        assertEquals(c, v3.eval(vars));
+    }
+
+    @Test
+    void testIllegalVariable() throws DivisionByZeroException {
+        Environment vars = new Environment();
+        Constant c = new Constant(1);
+        Assignment a1 = new Assignment(c, new Constant(5));
+        Assignment a2 = new Assignment(c, new NamedConstant("pi", 8));
+        try {
+            a1.eval(vars);
+        } catch (IllegalExpressionException e) {
+            assertTrue(true);
+            try {
+                a2.eval(vars);
+            } catch (IllegalExpressionException ee) {
+                assertTrue(true);
+                return;
+            }
+        }
+        assertFalse(false);
     }
 
     // Addition -----------------------------------------------------

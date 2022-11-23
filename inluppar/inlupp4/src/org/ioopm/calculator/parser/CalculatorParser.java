@@ -14,25 +14,29 @@ import java.util.*;
  */
 public class CalculatorParser {
     private StreamTokenizer st;
-    private Environment vars;
-    private static char MULTIPLY = '*';
-    private static char ADDITION = '+';
+    private static char ASSIGNMENT = '=';
     private static char SUBTRACTION = '-';
+    private static char ADDITION = '+';
     private static char DIVISION = '/';
-    private static String NEG = "Neg";
+    private static char MULTIPLY = '*';
     private static char NEGATION = '-';
+    private static String NEG = "Neg";
     private static String SIN = "Sin";
     private static String COS = "Cos";
     private static String LOG = "Log";
     private static String EXP = "Exp";
-    private static char ASSIGNMENT = '=';
 
     // unallowerdVars is used to check if variabel name that we
     // want to assign new meaning to is a valid name eg 3 = Quit
     // or 10 + x = L is not allowed
     private final ArrayList < String > unallowedVars = new ArrayList < String > (Arrays.asList("Quit",
         "Vars",
-        "Clear"));
+        "Clear",
+        "Sin",
+        "Cos",
+        "Exp",
+        "Log",
+        "Neg"));
 
     /**
      * Used to parse the inputted string by the Calculator program
@@ -41,9 +45,8 @@ public class CalculatorParser {
      * @return a SymbolicExpression to be evaluated
      * @throws IOException by nextToken() if it reads invalid input
      */
-    public SymbolicExpression parse(String inputString, Environment vars) throws IOException, IllegalExpressionException {
+    public SymbolicExpression parse(String inputString) throws IOException, IllegalExpressionException, SyntaxErrorException {
         this.st = new StreamTokenizer(new StringReader(inputString)); // reads from inputString via stringreader.
-        this.vars = vars;
         this.st.ordinaryChar('-');
         this.st.ordinaryChar('/');
         this.st.eolIsSignificant(true);
@@ -57,14 +60,14 @@ public class CalculatorParser {
      * @throws IOException by nextToken() if it reads invalid input
      * @throws SyntaxErrorException if the token parsed cannot be turned into a valid expression
      */
-    private SymbolicExpression statement() throws IOException, IllegalExpressionException {
+    private SymbolicExpression statement() throws IOException, IllegalExpressionException, SyntaxErrorException {
         SymbolicExpression result;
         this.st.nextToken(); //kollar på nästa token som ligger på strömmen
-        if (this.st.ttype == this.st.TT_EOF) {
+        if (this.st.ttype == StreamTokenizer.TT_EOF) {
             throw new SyntaxErrorException("Error: Expected an expression");
         }
 
-        if (this.st.ttype == this.st.TT_WORD) { // vilken typ det senaste tecken vi läste in hade.
+        if (this.st.ttype == StreamTokenizer.TT_WORD) { // vilken typ det senaste tecken vi läste in hade.
             if (this.st.sval.equals("Quit") || this.st.sval.equals("Vars") || this.st.sval.equals("Clear")) { // sval = string Variable
                 result = command();
             } else {
@@ -74,8 +77,8 @@ public class CalculatorParser {
             result = assignment(); // om inte == word, gå till assignment ändå (kan vara tt_number)
         }
 
-        if (this.st.nextToken() != this.st.TT_EOF) { // token should be an end of stream token if we are done
-            if (this.st.ttype == this.st.TT_WORD) {
+        if (this.st.nextToken() != StreamTokenizer.TT_EOF) { // token should be an end of stream token if we are done
+            if (this.st.ttype == StreamTokenizer.TT_WORD) {
                 throw new SyntaxErrorException("Error: Unexpected '" + this.st.sval + "'");
             } else {
                 throw new SyntaxErrorException("Error: Unexpected '" + String.valueOf((char) this.st.ttype) + "'");
@@ -83,7 +86,6 @@ public class CalculatorParser {
         }
         return result;
     }
-
 
     /**
      * Checks what kind of command that should be returned
@@ -100,7 +102,6 @@ public class CalculatorParser {
         }
     }
 
-
     /**
      * Checks wether the token read is an assignment between 2 expression and 
      * descend into the right hand side of '='
@@ -109,14 +110,14 @@ public class CalculatorParser {
      * @throws SyntaxErrorException if the token parsed cannot be turned into a valid expression,
      *         the variable on rhs of '=' is a number or invalid variable
      */
-    private SymbolicExpression assignment() throws IOException, IllegalExpressionException {
+    private SymbolicExpression assignment() throws IOException, IllegalExpressionException, SyntaxErrorException {
         SymbolicExpression result = expression();
         this.st.nextToken();
         while (this.st.ttype == ASSIGNMENT) {
             this.st.nextToken();
-            if (this.st.ttype == this.st.TT_NUMBER) {
+            if (this.st.ttype == StreamTokenizer.TT_NUMBER) {
                 throw new SyntaxErrorException("Error: Numbers cannot be used as a variable name");
-            } else if (this.st.ttype != this.st.TT_WORD) {
+            } else if (this.st.ttype != StreamTokenizer.TT_WORD) {
                 throw new SyntaxErrorException("Error: Not a valid assignment of a variable"); //this handles faulty inputs after the equal sign eg. 1 = (x etc
             } else {
                 if (this.st.sval.equals("ans")) {
@@ -137,7 +138,7 @@ public class CalculatorParser {
      * @throws IOException by nextToken() if it reads invalid input
      * @throws IllegalExpressionException if you try to redefine a string that isn't allowed
      */
-    private SymbolicExpression identifier() throws IOException, IllegalExpressionException{
+    private SymbolicExpression identifier() throws IOException, IllegalExpressionException, SyntaxErrorException{
         SymbolicExpression result;
 
         if (this.unallowedVars.contains(this.st.sval)) {
@@ -152,14 +153,13 @@ public class CalculatorParser {
         return result;
     }
 
-
     /**
      * Checks wether the token read is an addition or subtraction
      * and then continue on with the right hand side of operator
      * @return a SymbolicExpression to be evaluated
      * @throws IOException by nextToken() if it reads invalid input
      */
-    private SymbolicExpression expression() throws IOException, IllegalExpressionException {
+    private SymbolicExpression expression() throws IOException, IllegalExpressionException, SyntaxErrorException {
         SymbolicExpression result = term();
         this.st.nextToken();
         while (this.st.ttype == ADDITION || this.st.ttype == SUBTRACTION) {
@@ -183,7 +183,7 @@ public class CalculatorParser {
      * @return a SymbolicExpression to be evaluated
      * @throws IOException by nextToken() if it reads invalid input
      */
-    private SymbolicExpression term() throws IOException, IllegalExpressionException {
+    private SymbolicExpression term() throws IOException, IllegalExpressionException, SyntaxErrorException {
         SymbolicExpression result = primary();
         this.st.nextToken();
         while (this.st.ttype == MULTIPLY || this.st.ttype == DIVISION) {
@@ -212,7 +212,7 @@ public class CalculatorParser {
      * @throws SyntaxErrorException if the token parsed cannot be turned into a valid expression,
      *         missing right parantheses
      */
-    private SymbolicExpression primary() throws IOException, IllegalExpressionException {
+    private SymbolicExpression primary() throws IOException, IllegalExpressionException, SyntaxErrorException {
         SymbolicExpression result;
         if (this.st.ttype == '(') {
             this.st.nextToken();
@@ -223,7 +223,7 @@ public class CalculatorParser {
             }
         } else if (this.st.ttype == NEGATION) {
             result = unary();
-        } else if (this.st.ttype == this.st.TT_WORD) {
+        } else if (this.st.ttype == StreamTokenizer.TT_WORD) {
             if (st.sval.equals(SIN) ||
                 st.sval.equals(COS) ||
                 st.sval.equals(EXP) ||
@@ -247,7 +247,7 @@ public class CalculatorParser {
      * @return a SymbolicExpression to be evaluated
      * @throws IOException by nextToken() if it reads invalid input
      */
-    private SymbolicExpression unary() throws IOException, IllegalExpressionException {
+    private SymbolicExpression unary() throws IOException, IllegalExpressionException, SyntaxErrorException {
         SymbolicExpression result;
         int operationNeg = st.ttype;
         String operation = st.sval;
@@ -273,9 +273,9 @@ public class CalculatorParser {
      * @throws SyntaxErrorException if the token parsed cannot be turned into a valid expression,
      *         expected a number which is not present
      */
-    private SymbolicExpression number() throws IOException {
+    private SymbolicExpression number() throws IOException, SyntaxErrorException {
         this.st.nextToken();
-        if (this.st.ttype == this.st.TT_NUMBER) {
+        if (this.st.ttype == StreamTokenizer.TT_NUMBER) {
             return new Constant(this.st.nval);
         } else {
             throw new SyntaxErrorException("Error: Expected number");
