@@ -11,7 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: make the file
-      run: make all
+      run: make -C ./inluppar/inlupp4 all
     - name: run tests
-      run: make tests
+      run: make -C ./inluppar/inlupp4 tests
       
