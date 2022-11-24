@@ -129,7 +129,7 @@ public class AstIntegrationTests {
         Multiplication m = new Multiplication(
                                     new Cos(
                                         new Negation(
-                                            new Constant(3))),
+                                            new Constant(2))),
                                     new Addition(
                                         new Exp(
                                             new Constant(23)),
