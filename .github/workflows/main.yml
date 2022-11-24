@@ -10,7 +10,7 @@ jobs:
     
     steps:
     - name: go to correct dir
-      run: cd /fredrik.hammarberg.0804/inluppar/inlupp4/
+      run: cd ./fredrik.hammarberg.0804/inluppar/inlupp4/
     - name: make the file
       run: make
     - name: run tests
