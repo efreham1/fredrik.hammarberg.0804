@@ -10,10 +10,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
-    - name: go to correct dir
-      run: cd ./inluppar/inlupp4
     - name: make the file
-      run: echo test > test.txt
+      run: make all
     - name: run tests
       run: make tests
       
