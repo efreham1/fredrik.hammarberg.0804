@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+    - uses: actions/checkout@v2
     - name: go to correct dir
-      run: ls
+      run: cd ./inluppar/inlupp4
     - name: make the file
       run: make
     - name: run tests
