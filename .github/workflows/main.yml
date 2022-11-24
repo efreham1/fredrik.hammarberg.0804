@@ -13,5 +13,5 @@ jobs:
     - name: make the file
       run: make -C ./inluppar/inlupp4 all
     - name: run tests
-      run: make -C ./inluppar/inlupp4 tests
+      run: make -C ./inluppar/inlupp4 test
       
