@@ -1,4 +1,4 @@
-JUNIT_PATH = /home/fredrik/Local_reps/fredrik.hammarberg.0804/lib/junit-platform-console-standalone-1.9.1.jar
+JUNIT_PATH = ./lib/junit-platform-console-standalone-1.9.1.jar
 ## NOTE: You need to change JUNIT_PATH to your local JUnit path in order to run unit tests
 CAL_PATH   = ./src/org/ioopm/calculator
 AST_PATH   = $(CAL_PATH)/ast
