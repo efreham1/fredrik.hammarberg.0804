@@ -15,6 +15,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: make the file
       run: make -C ./inluppar/inlupp4 all
-    - name: run tests
-      run: make -C ./inluppar/inlupp4 test
-      
+    - name: run unit tests for AST
+      run: make -C ./inluppar/inlupp4 UnitTest_ast
+    - name: run integration tests for AST
+      run: make -C ./inluppar/inlupp4 IntegrationTest_ast
+    - name: run integration and unit tests for parser
+      run: make -C ./inluppar/inlupp4 ParserTests
+    - name: run integration tests for calculator
+      run: make -C ./inluppar/inlupp4 CalculatorTests
