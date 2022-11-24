@@ -22,7 +22,6 @@ h: 9
 ***Error: Not a valid assignment of a variable***
 ***Error: Not a valid assignment of a variable***
 3
-
 Thanks for using this calculator!
 Number of entries done: 20
 Successfully evaluated: 10
