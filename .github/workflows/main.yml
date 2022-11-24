@@ -13,7 +13,7 @@ jobs:
     - name: go to correct dir
       run: cd ./inluppar/inlupp4
     - name: make the file
-      run: make
+      run: make all
     - name: run tests
       run: make tests
       
