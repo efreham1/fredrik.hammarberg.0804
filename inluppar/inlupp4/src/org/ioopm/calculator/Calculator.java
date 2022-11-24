@@ -67,7 +67,7 @@ public class Calculator {
             }
             count++;
         }
-
+        sc.close();
         System.out.println("Thanks for using this calculator!\n" + "Number of entries done: " + count + "\nSuccessfully evaluated: " + successes);
     }
 }
