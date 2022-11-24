@@ -1,0 +1,16 @@
+on:
+  push:
+    branches:
+    - master
+    
+jobs:
+  run_tests:
+    name: run the tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: make the file
+      run: make
+    - name: run tests
+      run: make tests
+      
