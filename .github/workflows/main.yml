@@ -2,6 +2,7 @@ on:
   push:
     branches:
     - master
+    - Ticket-2
   pull_request:
     branches:
     - master
