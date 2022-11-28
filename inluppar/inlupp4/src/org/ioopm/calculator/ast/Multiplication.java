@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.Visitor;
+
 /**
 * Multiplication node
 */
@@ -11,6 +13,7 @@ public class Multiplication extends Binary {
     /**
     * @return String representation for the operation
     */
+    @Override
     public String getName() {
         return "*";
     }
@@ -20,26 +23,14 @@ public class Multiplication extends Binary {
     *
     * @return an int representing the priority of the operation
     */
+    @Override
     public int getPriority() {
         return 1;
     }
 
-    /**
-    * Reduces a SymbolicExpression as far as possible and evaluates it.
-    *
-    * If both the left hand side and the right hand side of the multiplication
-    * are constant values, their product is returned as a Constant
-    *
-    * @param vars The Environment in which the variables exist
-    * @return the product of lhs and rhs
-    */
-    public SymbolicExpression eval(Environment vars) throws IllegalExpressionException, DivisionByZeroException {
-        SymbolicExpression leftFactor = this.lhs.eval(vars);
-        SymbolicExpression rightFactor = this.rhs.eval(vars);
-        if(leftFactor.isConstant() && rightFactor.isConstant()) {
-            return new Constant(leftFactor.getValue() * rightFactor.getValue());
-        } else {
-            return new Multiplication(leftFactor, rightFactor);
-        }
-    }
+	@Override
+	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+		return v.visit(this);
+	}
+
 }

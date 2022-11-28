@@ -1,8 +1,7 @@
 package org.ioopm.calculator.ast;
 
-/**
-* Vars command node
-*/
+import org.ioopm.calculator.Visitor;
+
 public class Vars extends Command {
     private static final Vars theInstance = new Vars();
     
@@ -14,7 +13,8 @@ public class Vars extends Command {
         return theInstance;
     }
 
-    public SymbolicExpression eval(Environment vars) {
-        throw new RuntimeException("Commands may not be evaluated.");
+    @Override
+    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+        return v.visit(this);
     }
 }

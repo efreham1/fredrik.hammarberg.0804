@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.Visitor;
+
 /**
 * Named constant node
 */
@@ -15,10 +17,12 @@ public class NamedConstant extends Constant {
     /**
     * @return String representation of the named constant
     */
+    @Override
     public String toString() {
         return name;
     }
 
+    @Override
     public boolean equals(Object other) {
         if(other instanceof NamedConstant) {
             return equals((NamedConstant) other);
@@ -30,12 +34,8 @@ public class NamedConstant extends Constant {
         return this.getValue() == other.getValue() && this.name.equals(other.name);
     }
 
-    /**
-    * The value of the named constant
-    *
-    * @return the value of the constant as a Constant type
-    */
-    public Constant eval(Environment vars) {
-        return new Constant(this.getValue());
+    @Override
+    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException{
+        return v.visit(this);
     }
 }

@@ -1,4 +1,5 @@
 package org.ioopm.calculator.ast;
+import org.ioopm.calculator.Visitor;
 
 /**
 * Clear command node
@@ -14,7 +15,8 @@ public class Clear extends Command {
         return theInstance;
     }
 
-    public SymbolicExpression eval(Environment vars) {
-        throw new RuntimeException("Commands may not be evaluated.");
-    }
+    @Override
+    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+    return v.visit(this);
+}
 }

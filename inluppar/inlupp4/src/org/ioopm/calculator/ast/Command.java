@@ -8,10 +8,7 @@ public abstract class Command extends SymbolicExpression {
         super(name);
     }
 
-    public SymbolicExpression eval(Environment vars) {
-        throw new RuntimeException("eval() called on Command type.");
-    }
-
+    @Override
     public boolean isCommand() {
         return true;
     }

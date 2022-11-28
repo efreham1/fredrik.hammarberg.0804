@@ -1,8 +1,7 @@
 package org.ioopm.calculator.ast;
 
-/**
-* Subtraction node
-*/
+import org.ioopm.calculator.Visitor;
+
 public class Subtraction extends Binary {
     public Subtraction(SymbolicExpression leftTerm, SymbolicExpression rightTerm) {
         super("Subtraction", leftTerm, rightTerm);
@@ -13,6 +12,7 @@ public class Subtraction extends Binary {
     *
     * @return an int representing the priority of the operation
     */
+    @Override
     public int getPriority() {
         return 0;
     }
@@ -20,26 +20,13 @@ public class Subtraction extends Binary {
     /**
     * @return String representation for the operation
     */
+    @Override
     public String getName() {
         return "-";
     }
 
-    /**
-    * Reduces a SymbolicExpression as far as possible and evaluates it.
-    *
-    * If both the left hand side and the right hand side of the subtraction
-    * are constant values, the difference is returned as a Constant
-    *
-    * @param vars The Environment in which the variables exist
-    * @return the difference of lhs and rhs
-    */
-    public SymbolicExpression eval(Environment vars) throws IllegalExpressionException, DivisionByZeroException {
-        SymbolicExpression leftTerm = this.lhs.eval(vars);
-        SymbolicExpression rightTerm = this.rhs.eval(vars);
-        if(leftTerm.isConstant() && rightTerm.isConstant()) {
-            return new Constant(leftTerm.getValue() - rightTerm.getValue());
-        } else {
-            return new Subtraction(leftTerm, rightTerm);
-        }
+    @Override
+    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+        return v.visit(this);
     }
 }

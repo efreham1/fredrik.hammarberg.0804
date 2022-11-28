@@ -14,6 +14,7 @@ public class Calculator {
     public static void main(String[] args) {
         final CalculatorParser parser = new CalculatorParser();
         final Environment vars = new Environment();
+        final EvaluationVisitor ev = new EvaluationVisitor();
         Scanner sc = new Scanner(System.in);
 
         int count = 0; // number of expressions entered during a single session
@@ -42,7 +43,7 @@ public class Calculator {
                     }
                 } else {
                     try {
-                        String result = e.eval(vars).toString();
+                        String result = ev.evaluate(e,vars).toString();
                         System.out.println(result);
                         successes++;
                         try {
