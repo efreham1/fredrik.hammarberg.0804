@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.Visitor;
+
 /**
 * Root class of the abstract syntax tree for representing
 * mathematical expressions
@@ -62,11 +64,12 @@ public abstract class SymbolicExpression {
     }
 
     /**
-    * Reduces a SymbolicExpression as far as possible and evaluates it.
+    * Accepts a Visitor
     *
-    * @param vars The Environment in which the variables exist
+    * @param v The Visitor to be accepted
+    * @return The Visitors return
     */
-    public abstract SymbolicExpression eval(Environment vars) throws IllegalExpressionException, DivisionByZeroException;
+    public abstract SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException;
 
     /**
     * @return true if the SymbolicExpression is a command, otherwise false

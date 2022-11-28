@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import org.ioopm.calculator.Constants;
 import org.ioopm.calculator.ast.*;
+import org.ioopm.calculator.EvaluationVisitor;
 
 public class AstUnitTests {
     @BeforeAll
@@ -61,10 +62,11 @@ public class AstUnitTests {
     }
 
     @Test
-    void testConstantEval() throws IllegalExpressionException {
+    void testConstantEval() throws IllegalExpressionException, DivisionByZeroException{
         Constant c = new Constant(1);
         Environment vars = new Environment();
-        assertEquals(new Constant(1), c.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(1), ev.evaluate(c, vars));
     }
 
     // Variable and Assignment ----------------------------------
@@ -96,9 +98,10 @@ public class AstUnitTests {
         Variable v = new Variable("x");
         Constant c = new Constant(1);
         Environment vars = new Environment();
+        EvaluationVisitor ev = new EvaluationVisitor();
         Assignment a1 = new Assignment(c,v);
-        assertEquals(c, a1.eval(vars));
-        assertEquals(c, v.eval(vars));
+        assertEquals(c, ev.evaluate(a1,vars));
+        assertEquals(c, ev.evaluate(v,vars));
     }
 
     @Test
@@ -108,25 +111,27 @@ public class AstUnitTests {
         Variable v3 = new Variable("z");
         Constant c = new Constant(1);
         Environment vars = new Environment();
+        EvaluationVisitor ev = new EvaluationVisitor();
         Assignment a1 = new Assignment(new Assignment(new Assignment(c, v3), v2),v1);
-        assertEquals(c, a1.eval(vars));
-        assertEquals(c, v1.eval(vars));
-        assertEquals(c, v2.eval(vars));
-        assertEquals(c, v3.eval(vars));
+        assertEquals(c, ev.evaluate(a1,vars));
+        assertEquals(c, ev.evaluate(v1,vars));
+        assertEquals(c, ev.evaluate(v2,vars));
+        assertEquals(c, ev.evaluate(v3,vars));
     }
 
     @Test
     void testIllegalVariable() throws DivisionByZeroException {
         Environment vars = new Environment();
+        EvaluationVisitor ev = new EvaluationVisitor();
         Constant c = new Constant(1);
         Assignment a1 = new Assignment(c, new Constant(5));
         Assignment a2 = new Assignment(c, new NamedConstant("pi", 8));
         try {
-            a1.eval(vars);
+            ev.evaluate(a1,vars);
         } catch (IllegalExpressionException e) {
             assertTrue(true);
             try {
-                a2.eval(vars);
+                ev.evaluate(a2,vars);
             } catch (IllegalExpressionException ee) {
                 assertTrue(true);
                 return;
@@ -153,7 +158,8 @@ public class AstUnitTests {
     void testAdditionEval() throws IllegalExpressionException, DivisionByZeroException {
         Addition a = new Addition(new Constant(1), new Constant(1));
         Environment vars = new Environment();
-        assertEquals(new Constant(2), a.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(2), ev.evaluate(a,vars));
     }
 
     @Test
@@ -190,7 +196,8 @@ public class AstUnitTests {
     void testSubtractionEval() throws IllegalExpressionException, DivisionByZeroException{
         Subtraction s = new Subtraction(new Constant(1), new Constant(1));
         Environment vars = new Environment();
-        assertEquals(new Constant(0), s.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(0), ev.evaluate(s,vars));
     }
 
     @Test
@@ -225,7 +232,8 @@ public class AstUnitTests {
     void testMultiplicationEval() throws IllegalExpressionException, DivisionByZeroException{
         Multiplication m = new Multiplication(new Constant(2), new Constant(3));
         Environment vars = new Environment();
-        assertEquals(new Constant(6), m.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(6), ev.evaluate(m,vars));
     }
 
     @Test
@@ -262,15 +270,17 @@ public class AstUnitTests {
     void testDivisionEval() throws IllegalExpressionException, DivisionByZeroException{
         Division s = new Division(new Constant(5), new Constant(2));
         Environment vars = new Environment();
-        assertEquals(new Constant(2.5), s.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(2.5), ev.evaluate(s,vars));
     }
 
     @Test
     void testDivisionByZero() throws IllegalExpressionException{
         Division s = new Division(new Constant(5), new Constant(0));
         Environment vars = new Environment();
+        EvaluationVisitor ev = new EvaluationVisitor();
         try {
-            s.eval(vars);
+            ev.evaluate(s,vars);
         }
         catch (DivisionByZeroException e) {
             assertTrue(true);
@@ -313,7 +323,8 @@ public class AstUnitTests {
     void testSinEval() throws IllegalExpressionException, DivisionByZeroException{
         Sin s = new Sin(new Constant(0));
         Environment vars = new Environment();
-        assertEquals(new Constant(0), s.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(0), ev.evaluate(s,vars));
     }
 
     @Test
@@ -350,7 +361,8 @@ public class AstUnitTests {
     void testCosEval() throws IllegalExpressionException, DivisionByZeroException{
         Cos cos = new Cos(new Constant(0));
         Environment vars = new Environment();
-        assertEquals(new Constant(1), cos.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(1), ev.evaluate(cos,vars));
     }
 
     @Test
@@ -387,7 +399,8 @@ public class AstUnitTests {
     void testExpEval() throws IllegalExpressionException, DivisionByZeroException{
         Exp exp = new Exp(new Constant(0));
         Environment vars = new Environment();
-        assertEquals(new Constant(1), exp.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(1), ev.evaluate(exp,vars));
     }
 
     @Test
@@ -424,15 +437,17 @@ public class AstUnitTests {
     void testLogEval() throws IllegalExpressionException, DivisionByZeroException{
         Log log = new Log(new Constant(1));
         Environment vars = new Environment();
-        assertEquals(new Constant(0), log.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(0), ev.evaluate(log,vars));
     }
 
     @Test
     void testLogInvalidArgument() throws DivisionByZeroException {
         Log log = new Log(new Constant(-1.2));
         Environment vars = new Environment();
+        EvaluationVisitor ev = new EvaluationVisitor();
         try {
-            log.eval(vars);
+            ev.evaluate(log,vars);
         }
         catch (IllegalExpressionException e) {
             assertTrue(true);
@@ -483,14 +498,16 @@ public class AstUnitTests {
     void testNegationEval() throws IllegalExpressionException, DivisionByZeroException {
         Negation neg = new Negation(new Constant(1));
         Environment vars = new Environment();
-        assertEquals(new Constant (-1), neg.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant (-1), ev.evaluate(neg,vars));
     }
 
     @Test
     void testDoubleNegation() throws IllegalExpressionException, DivisionByZeroException {
         Negation neg = new Negation(new Negation(new Constant(1)));
         Environment vars = new Environment();
-        assertEquals(new Constant(1), neg.eval(vars));
+        EvaluationVisitor ev = new EvaluationVisitor();
+        assertEquals(new Constant(1), ev.evaluate(neg,vars));
     }
 
     @Test
@@ -528,10 +545,11 @@ public class AstUnitTests {
         NamedConstant nc = new NamedConstant("x", 4);
         Constant c = new Constant(1);
         Environment vars = new Environment();
+        EvaluationVisitor ev = new EvaluationVisitor();
         Assignment a1 = new Assignment(c, nc);
         try{
-            assertEquals(c, a1.eval(vars));
-            assertEquals(c, nc.eval(vars));
+            assertEquals(c, ev.evaluate(a1, vars));
+            assertEquals(c, ev.evaluate(nc, vars));
         }
         catch (IllegalExpressionException e) {
             assertTrue(true);

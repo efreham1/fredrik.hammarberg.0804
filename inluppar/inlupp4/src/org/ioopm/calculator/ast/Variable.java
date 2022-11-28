@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.Visitor;
+
 public class Variable extends Atom {
     private String identifier;
 
@@ -8,10 +10,12 @@ public class Variable extends Atom {
         this.identifier = identifier;
     }
 
+    @Override
     public String toString() {
         return identifier;
     }
 
+    @Override
     public boolean equals(Object other) {
         if(other instanceof Variable) {
             return equals((Variable) other);
@@ -28,8 +32,8 @@ public class Variable extends Atom {
         return identifier.hashCode();
     }
 
-    public SymbolicExpression eval(Environment vars) throws IllegalExpressionException {
-        SymbolicExpression value = vars.get(this);
-        return value == null ? this : value;
-    }
+	@Override
+	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+		return v.visit(this);
+	}
 }

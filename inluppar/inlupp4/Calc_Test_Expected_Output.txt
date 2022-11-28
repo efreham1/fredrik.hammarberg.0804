@@ -23,6 +23,9 @@ h: 9
 ***Error: Not a valid assignment of a variable***
 3
 5
+2.718281828459045
+0
+6.0221408569999995E23
 Thanks for using this calculator!
-Number of entries done: 21
-Successfully evaluated: 11
+Number of entries done: 24
+Successfully evaluated: 14

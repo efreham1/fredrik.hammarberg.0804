@@ -24,6 +24,7 @@ public abstract class Binary extends SymbolicExpression {
     * The string representation of the operation and it's arguments.
     * Subexpressions with a lower priority will be surrounded by parenthesis.
     */
+    @Override
     public String toString() {
         String result = "";
         if ( lhs.getPriority() < this.getPriority() ) {
@@ -40,6 +41,7 @@ public abstract class Binary extends SymbolicExpression {
         return result;
     }
 
+    @Override
     public boolean equals(Object other) {
         if(other instanceof Binary) {
             return equals((Binary) other);
@@ -51,5 +53,13 @@ public abstract class Binary extends SymbolicExpression {
         return this.getName().equals(other.getName())
                && this.lhs.equals(other.lhs)
                && this.rhs.equals(other.rhs);
+    }
+
+    public SymbolicExpression lhs(){
+        return lhs;
+    }
+    
+    public SymbolicExpression rhs(){
+        return rhs;
     }
 }

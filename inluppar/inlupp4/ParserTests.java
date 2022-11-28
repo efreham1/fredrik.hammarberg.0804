@@ -253,6 +253,17 @@ public class ParserTests {
         assertEquals(Quit.instance(), p1);
     }
 
+    @Test
+    void testNamedConstant() throws IOException, IllegalExpressionException, SyntaxErrorException{
+        CalculatorParser cp = new CalculatorParser();
+        SymbolicExpression p1 = cp.parse("pi");
+
+        SymbolicExpression p5 = cp.parse("po");
+        assertFalse(p5 instanceof NamedConstant);
+
+        assertTrue(p1 instanceof NamedConstant);
+    }
+
     // --------------- "Integration tests" -------------------
     @Test
     void testSinCos() throws IllegalExpressionException,IOException,SyntaxErrorException,DivisionByZeroException {
@@ -338,7 +349,7 @@ public class ParserTests {
                                 new Constant(24),
                                 new Sin(
                                     new Division(
-                                        new Constant(Constants.namedConstants.get("pi")),
+                                        new NamedConstant("pi", Constants.namedConstants.get("pi")),
                                         new Constant(2)))),
                             new Constant(2));
 

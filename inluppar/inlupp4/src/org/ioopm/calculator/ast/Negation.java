@@ -1,8 +1,7 @@
 package org.ioopm.calculator.ast;
 
-/**
-* Negation node
-*/
+import org.ioopm.calculator.Visitor;
+
 public class Negation extends Unary {    
     public Negation(SymbolicExpression arg) {
         super("Negation", arg);
@@ -11,10 +10,12 @@ public class Negation extends Unary {
     /**
     * @return String representation for the operation
     */
+    @Override
     public String getName() {
         return "-";
     }
 
+    @Override
     public String toString() {
         if(arg.getPriority() > 0) {
             return "-" + arg;
@@ -22,14 +23,8 @@ public class Negation extends Unary {
         return super.toString();
     }
 
-    public SymbolicExpression eval(Environment vars) throws IllegalExpressionException, DivisionByZeroException {
-        SymbolicExpression arg = this.arg.eval(vars);
-        if(arg.isConstant()) {
-            return new Constant(-arg.getValue());
-        } else if(arg instanceof Negation) {
-            return ((Negation) arg).arg;
-        } else {
-            return new Negation(arg);
-        }
+    @Override
+    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+        return v.visit(this);
     }
 }
