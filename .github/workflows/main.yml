@@ -2,7 +2,7 @@ on:
   push:
     branches:
     - master
-    - Ticket_2
+    - Ticket_3
   pull_request:
     branches:
     - master
