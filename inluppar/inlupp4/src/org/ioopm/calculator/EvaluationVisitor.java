@@ -34,13 +34,8 @@ public class EvaluationVisitor implements Visitor {
     @Override
     public SymbolicExpression visit(Assignment n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression left = n.lhs().accept(this);
-        if (n.rhs().isConstant()){
-            throw new IllegalExpressionException("Error: Cannot redefine named constant '" + n.rhs() + "'");
-        }
-        else {
-            env.put((Variable) n.rhs(), left);
-            return left;
-        }
+        env.put((Variable) n.rhs(), left);
+        return left;
     }
 
     @Override
