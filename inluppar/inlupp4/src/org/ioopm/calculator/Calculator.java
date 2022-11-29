@@ -15,6 +15,8 @@ public class Calculator {
         final CalculatorParser parser = new CalculatorParser();
         final Environment vars = new Environment();
         final EvaluationVisitor ev = new EvaluationVisitor();
+        final NamedConstantChecker ncc = new NamedConstantChecker();
+        final ReassignmentChecker rc = new ReassignmentChecker();
         Scanner sc = new Scanner(System.in);
 
         int count = 0; // number of expressions entered during a single session
@@ -34,25 +36,31 @@ public class Calculator {
                         vars.clear();
                     } else if (e == Vars.instance()) {
                         if(vars.size() != 0) {
-                            for(Variable variable : vars.keySet()) {
-                                System.out.println(variable.toString() + ": " + vars.get(variable).toString());
-                            }
+                            System.out.println("" + vars);
                         } else {
                             System.out.println("No variables stored");
                         }
                     }
                 } else {
                     try {
-                        String result = ev.evaluate(e,vars).toString();
-                        System.out.println(result);
-                        successes++;
                         try {
-                            Constants.namedConstants.put("Answer", Double.parseDouble(result));
+                            if(ncc.check(e) && rc.check(e)) {
+                                String result = ev.evaluate(e,vars).toString();
+                                System.out.println(result);
+                                successes++;
+                                try {
+                                    Constants.namedConstants.put("Answer", Double.parseDouble(result));
+                                }
+                                catch(NumberFormatException exception) {
+                                    successes--;
+                                }
+                            }
+                        } catch (DivisionByZeroException exception) {
+                            System.out.println("***"+ exception.getMessage() + "***");
                         }
-                        catch(NumberFormatException exception) {
-                            successes--;
-                        }
-                    } catch (DivisionByZeroException exception) {
+                    } catch (NamedConstantAssignmentException exception) {
+                        System.out.println("***"+ exception.getMessage() + "***");
+                    } catch (ReassignmentException exception) {
                         System.out.println("***"+ exception.getMessage() + "***");
                     }
                 }

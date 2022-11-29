@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.ioopm.calculator.Constants;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.EvaluationVisitor;
+import org.ioopm.calculator.NamedConstantAssignmentException;
+import org.ioopm.calculator.NamedConstantChecker;
+import org.ioopm.calculator.ReassignmentException;
 
 public class AstUnitTests {
     @BeforeAll
@@ -62,7 +65,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testConstantEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testConstantEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Constant c = new Constant(1);
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -94,7 +97,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testVariableEval() throws IllegalExpressionException, DivisionByZeroException {
+    void testVariableEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Variable v = new Variable("x");
         Constant c = new Constant(1);
         Environment vars = new Environment();
@@ -105,7 +108,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testMultipleAssignments() throws IllegalExpressionException, DivisionByZeroException {
+    void testMultipleAssignments() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Variable v1 = new Variable("x");
         Variable v2 = new Variable("y");
         Variable v3 = new Variable("z");
@@ -120,19 +123,18 @@ public class AstUnitTests {
     }
 
     @Test
-    void testIllegalVariable() throws DivisionByZeroException {
-        Environment vars = new Environment();
-        EvaluationVisitor ev = new EvaluationVisitor();
+    void testIllegalVariable() throws DivisionByZeroException, IllegalExpressionException, ReassignmentException {
+        NamedConstantChecker ncc = new NamedConstantChecker();
         Constant c = new Constant(1);
         Assignment a1 = new Assignment(c, new Constant(5));
         Assignment a2 = new Assignment(c, new NamedConstant("pi", 8));
         try {
-            ev.evaluate(a1,vars);
-        } catch (IllegalExpressionException e) {
+            ncc.check(a1);
+        } catch (NamedConstantAssignmentException e) {
             assertTrue(true);
             try {
-                ev.evaluate(a2,vars);
-            } catch (IllegalExpressionException ee) {
+                ncc.check(a2);
+            } catch (NamedConstantAssignmentException ee) {
                 assertTrue(true);
                 return;
             }
@@ -155,7 +157,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testAdditionEval() throws IllegalExpressionException, DivisionByZeroException {
+    void testAdditionEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Addition a = new Addition(new Constant(1), new Constant(1));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -163,7 +165,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testAdditionEquals() throws IllegalExpressionException, DivisionByZeroException {
+    void testAdditionEquals() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Addition a = new Addition(new Constant(32), new Constant(55));
         Addition b = new Addition(new Constant(32), new Constant(55));
         assertTrue(a.equals(b));
@@ -171,7 +173,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testAdditionEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+    void testAdditionEqualsFail() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Addition a = new Addition(new Constant(32), new Constant(55));
         Addition b = new Addition(new Constant(23), new Constant(55));
         assertFalse(a.equals(b));
@@ -193,7 +195,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testSubtractionEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testSubtractionEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Subtraction s = new Subtraction(new Constant(1), new Constant(1));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -201,7 +203,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testSubtractionEquals() throws IllegalExpressionException, DivisionByZeroException {
+    void testSubtractionEquals() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Subtraction a = new Subtraction(new Constant(32), new Constant(55));
         Subtraction b = new Subtraction(new Constant(32), new Constant(55));
         assertTrue(a.equals(b));
@@ -209,7 +211,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testSubtractionEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+    void testSubtractionEqualsFail() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Subtraction a = new Subtraction(new Constant(32), new Constant(55));
         Subtraction b = new Subtraction(new Constant(23), new Constant(55));
         assertFalse(a.equals(b));
@@ -229,7 +231,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testMultiplicationEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testMultiplicationEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Multiplication m = new Multiplication(new Constant(2), new Constant(3));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -237,7 +239,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testMultiplicationEquals() throws IllegalExpressionException, DivisionByZeroException {
+    void testMultiplicationEquals() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Multiplication a = new Multiplication(new Constant(32), new Constant(55));
         Multiplication b = new Multiplication(new Constant(32), new Constant(55));
         assertTrue(a.equals(b));
@@ -245,7 +247,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testMultiplicationEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+    void testMultiplicationEqualsFail() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Multiplication a = new Multiplication(new Constant(32), new Constant(55));
         Multiplication b = new Multiplication(new Constant(23), new Constant(55));
         assertFalse(a.equals(b));
@@ -267,7 +269,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testDivisionEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testDivisionEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Division s = new Division(new Constant(5), new Constant(2));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -275,7 +277,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testDivisionByZero() throws IllegalExpressionException{
+    void testDivisionByZero() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException{
         Division s = new Division(new Constant(5), new Constant(0));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -290,7 +292,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testDivisionEquals() throws IllegalExpressionException, DivisionByZeroException {
+    void testDivisionEquals() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Division a = new Division(new Constant(32), new Constant(55));
         Division b = new Division(new Constant(32), new Constant(55));
         assertTrue(a.equals(b));
@@ -298,7 +300,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testDivisionEqualsFail() throws IllegalExpressionException, DivisionByZeroException {
+    void testDivisionEqualsFail() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Division a = new Division(new Constant(32), new Constant(55));
         Division b = new Division(new Constant(23), new Constant(55));
         assertFalse(a.equals(b));
@@ -320,7 +322,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testSinEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testSinEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Sin s = new Sin(new Constant(0));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -358,7 +360,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testCosEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testCosEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Cos cos = new Cos(new Constant(0));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -396,7 +398,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testExpEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testExpEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Exp exp = new Exp(new Constant(0));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -434,7 +436,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testLogEval() throws IllegalExpressionException, DivisionByZeroException{
+    void testLogEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException{
         Log log = new Log(new Constant(1));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -442,7 +444,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testLogInvalidArgument() throws DivisionByZeroException {
+    void testLogInvalidArgument() throws DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
         Log log = new Log(new Constant(-1.2));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -495,7 +497,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testNegationEval() throws IllegalExpressionException, DivisionByZeroException {
+    void testNegationEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Negation neg = new Negation(new Constant(1));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -503,7 +505,7 @@ public class AstUnitTests {
     }
 
     @Test
-    void testDoubleNegation() throws IllegalExpressionException, DivisionByZeroException {
+    void testDoubleNegation() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, DivisionByZeroException {
         Negation neg = new Negation(new Negation(new Constant(1)));
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
@@ -541,17 +543,15 @@ public class AstUnitTests {
     }
 
     @Test
-    void testNamedConstantReassignment() throws DivisionByZeroException {
+    void testNamedConstantReassignment() throws DivisionByZeroException, ReassignmentException, IllegalExpressionException {
         NamedConstant nc = new NamedConstant("x", 4);
         Constant c = new Constant(1);
-        Environment vars = new Environment();
-        EvaluationVisitor ev = new EvaluationVisitor();
+        NamedConstantChecker ncc = new NamedConstantChecker();
         Assignment a1 = new Assignment(c, nc);
         try{
-            assertEquals(c, ev.evaluate(a1, vars));
-            assertEquals(c, ev.evaluate(nc, vars));
+            ncc.check(a1);
         }
-        catch (IllegalExpressionException e) {
+        catch (NamedConstantAssignmentException e) {
             assertTrue(true);
             return;
         }

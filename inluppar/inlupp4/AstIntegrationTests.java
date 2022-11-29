@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.ioopm.calculator.Constants;
 import org.ioopm.calculator.EvaluationVisitor;
 import org.ioopm.calculator.ast.*;
+import org.ioopm.calculator.NamedConstantAssignmentException;
+import org.ioopm.calculator.ReassignmentException;
 
 public class AstIntegrationTests {
     @BeforeAll
@@ -23,7 +25,7 @@ public class AstIntegrationTests {
     // ------------------ Unary integration tests -----------------------
 
     @Test
-    void testSinCos() throws DivisionByZeroException, IllegalExpressionException {
+    void testSinCos() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Sin s = new Sin(new Cos(new Constant(3.1415)));
@@ -32,7 +34,7 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testNegExpLog() throws DivisionByZeroException, IllegalExpressionException {
+    void testNegExpLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Negation n = new Negation(new Exp(new Log(new Constant(3))));
@@ -41,7 +43,7 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testExpNegLog() throws DivisionByZeroException, IllegalExpressionException {
+    void testExpNegLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         SymbolicExpression n = new Exp(new Negation(new Log(new Constant(3))));
@@ -52,7 +54,7 @@ public class AstIntegrationTests {
     // ------------------ Binary integration tests ----------------------
     
     @Test
-    void testAddDiv() throws DivisionByZeroException, IllegalExpressionException {
+    void testAddDiv() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Addition a = new Addition(new Division(new Constant(3),new Constant(2)),new Division(new Constant(1),new Constant(2)));
@@ -61,7 +63,7 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testSubMul() throws DivisionByZeroException, IllegalExpressionException {
+    void testSubMul() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Subtraction s = new Subtraction(new Multiplication(new Constant(3),new Constant(8)),new Multiplication(new Constant(9),new Constant(2)));
@@ -70,7 +72,7 @@ public class AstIntegrationTests {
     }
     
     @Test
-    void testAssAdd() throws DivisionByZeroException, IllegalExpressionException {
+    void testAssAdd() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
     Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
     Variable v = new Variable("x");
@@ -94,7 +96,7 @@ public class AstIntegrationTests {
     // ------------------ Mixed integration tests -----------------------
 
     @Test
-    void testSubVarDivAssAssSin() throws DivisionByZeroException, IllegalExpressionException {
+    void testSubVarDivAssAssSin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Subtraction s = new Subtraction(
@@ -117,7 +119,7 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void Assasssin() throws DivisionByZeroException, IllegalExpressionException {
+    void Assasssin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Assignment a = new Assignment(
@@ -133,7 +135,7 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testMulCosNegExpAddLog() throws DivisionByZeroException, IllegalExpressionException {
+    void testMulCosNegExpAddLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
         Environment vars = new Environment();
         EvaluationVisitor ev = new EvaluationVisitor();
         Multiplication m = new Multiplication(

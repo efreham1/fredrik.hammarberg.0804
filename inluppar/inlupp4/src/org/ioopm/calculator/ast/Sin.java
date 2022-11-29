@@ -1,6 +1,8 @@
 package org.ioopm.calculator.ast;
 
 import org.ioopm.calculator.Visitor;
+import org.ioopm.calculator.NamedConstantAssignmentException;
+import org.ioopm.calculator.ReassignmentException;
 
 /**
 * Sine node
@@ -19,7 +21,7 @@ public class Sin extends Unary {
     }
 
 	@Override
-	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, NamedConstantAssignmentException, ReassignmentException {
 		return v.visit(this);
 	}
 }
