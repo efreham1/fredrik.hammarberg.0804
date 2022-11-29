@@ -20,6 +20,7 @@ public class CalculatorParser {
     private static char DIVISION = '/';
     private static char MULTIPLY = '*';
     private static char NEGATION = '-';
+    private static char EQUAL = '=';
     private static String NEG = "Neg";
     private static String SIN = "Sin";
     private static String COS = "Cos";
@@ -37,7 +38,9 @@ public class CalculatorParser {
                     "Cos",
                     "Exp",
                     "Log",
-                    "Neg"));
+                    "Neg",
+                    "if",
+                    "else"));
 
     /**
      * Used to parse the inputted string by the Calculator program
@@ -154,6 +157,24 @@ public class CalculatorParser {
         return result;
     }
 
+    private SymbolicExpression logicOperator(SymbolicExpression id1, SymbolicExpression id2, String op) throws SyntaxErrorException{
+        SymbolicExpression result = null;
+        if (op.equals("<")){
+            result = new LessThan(id1, id2);
+        }else if (op.equals(">")){
+            result = new GreaterThan(id1, id2);
+        }else if (op.equals("==")){
+            result = new Equal(id1, id2);
+        }else if (op.equals(">=")){
+            result = new GreaterThanEqual(id1, id2);
+        }else if (op.equals("<=")){
+            result = new LessThanEqual(id1, id2);
+        }else {
+            throw new SyntaxErrorException("Undefined logic operator");
+        }
+        return result;
+    }
+
     /**
      * Checks wether the token read is an addition or subtraction
      * and then continue on with the right hand side of operator
@@ -161,19 +182,76 @@ public class CalculatorParser {
      * @throws IOException by nextToken() if it reads invalid input
      */
     private SymbolicExpression expression() throws IOException, IllegalExpressionException, SyntaxErrorException {
-        SymbolicExpression result = term();
-        this.st.nextToken();
-        while (this.st.ttype == ADDITION || this.st.ttype == SUBTRACTION) {
-            int operation = st.ttype;
+        SymbolicExpression result = null;
+        if (this.st.ttype == StreamTokenizer.TT_WORD && this.st.sval.equals("if")) {
             this.st.nextToken();
-            if (operation == ADDITION) {
-                result = new Addition(result, term());
-            } else {
-                result = new Subtraction(result, term());
+            SymbolicExpression identifier1 = null;
+            if (this.st.ttype == StreamTokenizer.TT_WORD){
+                identifier1 = identifier();
+            }
+            else {
+                throw new SyntaxErrorException("Error: Conditional identifier not a variable or named constant!");
             }
             this.st.nextToken();
+            String op = Character.toString(this.st.ttype);
+            this.st.nextToken();
+            if (this.st.ttype == EQUAL) {
+                op += "=";
+                this.st.nextToken();
+            }
+            SymbolicExpression identifier2 = null;
+            if (this.st.ttype == StreamTokenizer.TT_WORD){
+                identifier2 = identifier();
+            }
+            else {
+                throw new SyntaxErrorException("Error: Conditional identifier not a variable or named constant!");
+            }
+            this.st.nextToken();
+            SymbolicExpression scope1 = null;
+            if (this.st.ttype == '{') {
+                this.st.nextToken();
+                scope1 = scope();
+                /// This captures unbalanced scope parentheses!
+                if (this.st.nextToken() != '}') {
+                    throw new SyntaxErrorException("expected '}'");
+                }
+            } else {
+                throw new SyntaxErrorException("missing scope");
+            }
+            this.st.nextToken();
+            if (!(this.st.ttype == StreamTokenizer.TT_WORD && this.st.sval.equals("else"))){
+                throw new SyntaxErrorException("Error: Missing else-statement!");
+            }
+            this.st.nextToken();
+            SymbolicExpression scope2 = null;
+            if (this.st.ttype == '{') {
+                this.st.nextToken();
+                scope2 = scope();
+                /// This captures unbalanced scope parentheses!
+                if (this.st.nextToken() != '}') {
+                    throw new SyntaxErrorException("expected '}'");
+                }
+            } else {
+                throw new SyntaxErrorException("missing scope");
+            }
+            SymbolicExpression lOp = logicOperator(identifier1, identifier2, op);
+            result = new Conditional(lOp, scope1, scope2);
+
+        } else {
+            result = term();
+            this.st.nextToken();
+            while (this.st.ttype == ADDITION || this.st.ttype == SUBTRACTION) {
+                int operation = st.ttype;
+                this.st.nextToken();
+                if (operation == ADDITION) {
+                    result = new Addition(result, term());
+                } else {
+                    result = new Subtraction(result, term());
+                }
+                this.st.nextToken();
+            }
+            this.st.pushBack();
         }
-        this.st.pushBack();
         return result;
     }
 

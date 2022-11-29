@@ -280,6 +280,27 @@ public class ParserTests {
         assertEquals(p2, p3);
     }
 
+    @Test
+    void testConditional() throws IOException, IllegalExpressionException, SyntaxErrorException{
+        CalculatorParser cp = new CalculatorParser();
+        SymbolicExpression c =  new Conditional(
+                                    new LessThanEqual(
+                                        new Variable("x"),
+                                        new Variable("y")),
+                                    new Scope(new Constant(5)),
+                                    new Scope(new Constant(6)));
+        SymbolicExpression p1 = cp.parse("if x <= y {5} else {6}");
+        SymbolicExpression p2 = cp.parse(c +"");
+        SymbolicExpression p3 = cp.parse(p2 +"");
+
+        SymbolicExpression p5 = cp.parse("if x <= y {6} else {5}");
+        assertNotEquals(p5, c);
+
+        assertEquals(c, p1);
+        assertEquals(c, p2);
+        assertEquals(p2, p3);
+    }
+
     // --------------- "Integration tests" -------------------
     @Test
     void testSinCos() throws IllegalExpressionException,IOException,SyntaxErrorException,DivisionByZeroException {
@@ -358,7 +379,7 @@ public class ParserTests {
 
 
     @Test
-    void testSubVarDivSin() throws IllegalExpressionException, IOException, SyntaxErrorException {
+    void testSubScoVarDivSin() throws IllegalExpressionException, IOException, SyntaxErrorException {
         CalculatorParser cp = new CalculatorParser();
         SymbolicExpression s = new Subtraction(
                             new Scope(
@@ -371,7 +392,6 @@ public class ParserTests {
                             new Constant(2));
 
         SymbolicExpression p1 = cp.parse("{24/Sin(pi/2)}-2");
-        System.out.println(s);
         SymbolicExpression p2 = cp.parse(s+"");
         SymbolicExpression p3 = cp.parse(p2+"");
         

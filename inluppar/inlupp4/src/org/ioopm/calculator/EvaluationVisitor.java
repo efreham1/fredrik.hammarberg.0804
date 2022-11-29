@@ -167,4 +167,64 @@ public class EvaluationVisitor implements Visitor {
         env.popEnvironment();
 		return result;
 	}
+
+	@Override
+	public SymbolicExpression visit(Conditional n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		if (n.getConditionalOperator().accept(this).getValue() == 1) {
+            return n.getIfScope().accept(this);
+        } else {
+            return n.getElseScope().accept(this);
+        }
+	}
+
+	@Override
+	public SymbolicExpression visit(Equal n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		if (n.lhs().accept(this).getValue() == n.rhs().accept(this).getValue()) {
+            return new Constant(1);
+        } else {
+            return new Constant(0);
+        }
+	}
+
+	@Override
+	public SymbolicExpression visit(GreaterThan n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		if (n.lhs().accept(this).getValue() > n.rhs().accept(this).getValue()) {
+            return new Constant(1);
+        } else {
+            return new Constant(0);
+        }
+	}
+
+	@Override
+	public SymbolicExpression visit(GreaterThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		if (n.lhs().accept(this).getValue() >= n.rhs().accept(this).getValue()) {
+            return new Constant(1);
+        } else {
+            return new Constant(0);
+        }
+	}
+
+	@Override
+	public SymbolicExpression visit(LessThan n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		if (n.lhs().accept(this).getValue() < n.rhs().accept(this).getValue()) {
+            return new Constant(1);
+        } else {
+            return new Constant(0);
+        }
+	}
+
+	@Override
+	public SymbolicExpression visit(LessThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        if (n.lhs().accept(this).getValue() <= n.rhs().accept(this).getValue()) {
+            return new Constant(1);
+        } else {
+            return new Constant(0);
+        }
+	}
 }

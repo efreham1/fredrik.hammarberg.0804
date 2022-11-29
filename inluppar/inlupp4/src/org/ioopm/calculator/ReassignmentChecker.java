@@ -122,4 +122,42 @@ public class ReassignmentChecker implements Visitor {
 		varlist = tmp;
 		return n;
 	}
+
+	@Override
+	public SymbolicExpression visit(Conditional n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		n.getIfScope().accept(this);
+		n.getElseScope().accept(this);
+		return n;
+	}
+
+	@Override
+	public SymbolicExpression visit(Equal n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        return n;
+	}
+
+	@Override
+	public SymbolicExpression visit(GreaterThan n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        return n;
+	}
+
+	@Override
+	public SymbolicExpression visit(GreaterThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        return n;
+	}
+
+	@Override
+	public SymbolicExpression visit(LessThan n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        return n;
+	}
+
+	@Override
+	public SymbolicExpression visit(LessThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
+			NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        return n;
+	}
 }
