@@ -2,9 +2,9 @@ package org.ioopm.calculator;
 import org.ioopm.calculator.ast.*;
 
 public class EvaluationVisitor implements Visitor {
-    private Environment env = null;
+    private EnvironmentStack env = null;
 
-    public SymbolicExpression evaluate(SymbolicExpression topLevel, Environment env) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression evaluate(SymbolicExpression topLevel, EnvironmentStack env) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         this.env = env;
         return topLevel.accept(this);
     }
@@ -12,7 +12,7 @@ public class EvaluationVisitor implements Visitor {
     // This method gets called from Addition.accept(Visitor v) -- you should
     // be able to see from the eval() methods how these should behave (i.e., 
     // compare this method with your Addition::eval() and Symbolic.addition) 
-    public SymbolicExpression visit(Addition n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
+    public SymbolicExpression visit(Addition n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
         // Visit the left hand side and right hand side subexpressions
         SymbolicExpression left = n.lhs().accept(this);
         SymbolicExpression right = n.rhs().accept(this);
@@ -32,19 +32,19 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Assignment n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Assignment n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression left = n.lhs().accept(this);
         env.put((Variable) n.rhs(), left);
         return left;
     }
 
     @Override
-    public SymbolicExpression visit(Constant n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Constant n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         return n;
     }
 
     @Override
-    public SymbolicExpression visit(Cos n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Cos n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             return new Constant(Math.cos(arg.getValue()));
@@ -54,7 +54,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Division n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Division n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression numerator = n.lhs().accept(this);
         SymbolicExpression denominator = n.rhs().accept(this);
         if(numerator.isConstant() && denominator.isConstant()) {
@@ -68,7 +68,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Exp n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Exp n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             return new Constant(Math.exp(arg.getValue()));
@@ -78,7 +78,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Log n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Log n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             if (arg.getValue()<=0){
@@ -91,7 +91,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Multiplication n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Multiplication n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression leftFactor = n.lhs().accept(this);
         SymbolicExpression rightFactor = n.rhs().accept(this);
         if(leftFactor.isConstant() && rightFactor.isConstant()) {
@@ -102,12 +102,12 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(NamedConstant n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(NamedConstant n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         return new Constant(n.getValue());
     }
 
     @Override
-    public SymbolicExpression visit(Negation n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Negation n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if(arg.isConstant()) {
             return new Constant(-arg.getValue());
@@ -119,12 +119,12 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Quit n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Quit n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         throw new RuntimeException("Commands may not be evaluated.");
     }
 
     @Override
-    public SymbolicExpression visit(Sin n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Sin n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             return new Constant(Math.sin(arg.getValue()));
@@ -134,7 +134,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Subtraction n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Subtraction n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression leftTerm = n.lhs().accept(this);
         SymbolicExpression rightTerm = n.rhs().accept(this);
         if(leftTerm.isConstant() && rightTerm.isConstant()) {
@@ -145,18 +145,26 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Variable n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Variable n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         SymbolicExpression value = env.get(n);
         return value == null ? n : value;
     }
 
     @Override
-    public SymbolicExpression visit(Vars n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression visit(Vars n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
         throw new RuntimeException("Commands may not be evaluated.");
     }
 
 	@Override
-	public SymbolicExpression visit(Clear n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+	public SymbolicExpression visit(Clear n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException{
 		throw new RuntimeException("Commands may not be evaluated.");
+	}
+
+	@Override
+	public SymbolicExpression visit(Scope n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+		env.pushEnvironment();
+        SymbolicExpression result = n.arg().accept(this);
+        env.popEnvironment();
+		return result;
 	}
 }

@@ -71,7 +71,7 @@ public abstract class SymbolicExpression {
     * @param v The Visitor to be accepted
     * @return The Visitors return
     */
-    public abstract SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException;
+    public abstract SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException;
 
     /**
     * @return true if the SymbolicExpression is a command, otherwise false

@@ -222,6 +222,13 @@ public class CalculatorParser {
             if (this.st.nextToken() != ')') {
                 throw new SyntaxErrorException("expected ')'");
             }
+        } else if (this.st.ttype == '{') {
+            this.st.nextToken();
+            result = scope();
+            /// This captures unbalanced scope parentheses!
+            if (this.st.nextToken() != '}') {
+                throw new SyntaxErrorException("expected '}'");
+            }
         } else if (this.st.ttype == NEGATION) {
             result = unary();
         } else if (this.st.ttype == StreamTokenizer.TT_WORD) {
@@ -267,6 +274,9 @@ public class CalculatorParser {
         return result;
     }
 
+    private SymbolicExpression scope() throws IOException, IllegalExpressionException, SyntaxErrorException{
+        return new Scope(assignment());
+    }
     /**
      * Checks if the token read is a number - should always be a number in this method
      * @return a SymbolicExpression to be evaluated

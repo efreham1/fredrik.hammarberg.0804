@@ -28,6 +28,8 @@ t = 0.1111111111111111
 0
 6.0221408569999995E23
 ***Error, the variable x is reassigned.***
+10
+1
 Thanks for using this calculator!
-Number of entries done: 25
-Successfully evaluated: 14
+Number of entries done: 27
+Successfully evaluated: 16

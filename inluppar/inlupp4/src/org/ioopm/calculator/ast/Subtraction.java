@@ -28,7 +28,7 @@ public class Subtraction extends Binary {
     }
 
     @Override
-    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
+    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
         return v.visit(this);
     }
 }

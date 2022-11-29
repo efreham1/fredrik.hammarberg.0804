@@ -21,7 +21,7 @@ public class Sin extends Unary {
     }
 
 	@Override
-	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, NamedConstantAssignmentException, ReassignmentException {
+	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
 		return v.visit(this);
 	}
 }

@@ -25,8 +25,8 @@ public class AstIntegrationTests {
     // ------------------ Unary integration tests -----------------------
 
     @Test
-    void testSinCos() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testSinCos() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Sin s = new Sin(new Cos(new Constant(3.1415)));
         Constant c = (Constant) ev.evaluate(s,vars);
@@ -34,8 +34,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testNegExpLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testNegExpLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Negation n = new Negation(new Exp(new Log(new Constant(3))));
         Constant c = (Constant) ev.evaluate(n,vars);
@@ -43,8 +43,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testExpNegLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testExpNegLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         SymbolicExpression n = new Exp(new Negation(new Log(new Constant(3))));
         Constant c = (Constant) ev.evaluate(n,vars);
@@ -54,8 +54,8 @@ public class AstIntegrationTests {
     // ------------------ Binary integration tests ----------------------
     
     @Test
-    void testAddDiv() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testAddDiv() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Addition a = new Addition(new Division(new Constant(3),new Constant(2)),new Division(new Constant(1),new Constant(2)));
         Constant c = (Constant) ev.evaluate(a,vars);
@@ -63,8 +63,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testSubMul() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testSubMul() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Subtraction s = new Subtraction(new Multiplication(new Constant(3),new Constant(8)),new Multiplication(new Constant(9),new Constant(2)));
         Constant c = (Constant) ev.evaluate(s,vars);
@@ -72,8 +72,8 @@ public class AstIntegrationTests {
     }
     
     @Test
-    void testAssAdd() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-    Environment vars = new Environment();
+    void testAssAdd() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+    EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
     Variable v = new Variable("x");
     Constant c = new Constant(1);
@@ -96,8 +96,8 @@ public class AstIntegrationTests {
     // ------------------ Mixed integration tests -----------------------
 
     @Test
-    void testSubVarDivAssAssSin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testSubVarDivAssAssSin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Subtraction s = new Subtraction(
                             new Division(
@@ -119,8 +119,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void Assasssin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void Assasssin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Assignment a = new Assignment(
                                 new Assignment(
@@ -135,8 +135,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testMulCosNegExpAddLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testMulCosNegExpAddLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Multiplication m = new Multiplication(
                                     new Cos(

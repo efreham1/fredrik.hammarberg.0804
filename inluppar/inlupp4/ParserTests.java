@@ -264,6 +264,22 @@ public class ParserTests {
         assertTrue(p1 instanceof NamedConstant);
     }
 
+    @Test
+    void testScope() throws IOException, IllegalExpressionException, SyntaxErrorException{
+        CalculatorParser cp = new CalculatorParser();
+        SymbolicExpression c = new Scope( new Constant(7));
+        SymbolicExpression p1 = cp.parse("{7}");
+        SymbolicExpression p2 = cp.parse(c +"");
+        SymbolicExpression p3 = cp.parse(p2 +"");
+
+        SymbolicExpression p5 = cp.parse("(7)");
+        assertNotEquals(p5, c);
+
+        assertEquals(c, p1);
+        assertEquals(c, p2);
+        assertEquals(p2, p3);
+    }
+
     // --------------- "Integration tests" -------------------
     @Test
     void testSinCos() throws IllegalExpressionException,IOException,SyntaxErrorException,DivisionByZeroException {
@@ -345,20 +361,21 @@ public class ParserTests {
     void testSubVarDivSin() throws IllegalExpressionException, IOException, SyntaxErrorException {
         CalculatorParser cp = new CalculatorParser();
         SymbolicExpression s = new Subtraction(
-                            new Division(
-                                new Constant(24),
-                                new Sin(
-                                    new Division(
-                                        new NamedConstant("pi", Constants.namedConstants.get("pi")),
-                                        new Constant(2)))),
+                            new Scope(
+                                new Division(
+                                    new Constant(24),
+                                    new Sin(
+                                        new Division(
+                                            new NamedConstant("pi", Constants.namedConstants.get("pi")),
+                                            new Constant(2))))),
                             new Constant(2));
 
-        SymbolicExpression p1 = cp.parse("24/Sin(pi/2)-2");
+        SymbolicExpression p1 = cp.parse("{24/Sin(pi/2)}-2");
         System.out.println(s);
         SymbolicExpression p2 = cp.parse(s+"");
         SymbolicExpression p3 = cp.parse(p2+"");
         
-        SymbolicExpression p5 = cp.parse("24/(Sin(pi/2)-2)");
+        SymbolicExpression p5 = cp.parse("{24/(Sin(pi/2)-2)}");
 
         assertEquals(s, p1);
         assertEquals(s, p2);

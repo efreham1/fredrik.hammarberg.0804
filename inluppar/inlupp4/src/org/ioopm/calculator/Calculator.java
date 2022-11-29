@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Calculator {
     public static void main(String[] args) {
         final CalculatorParser parser = new CalculatorParser();
-        final Environment vars = new Environment();
+        final EnvironmentStack vars = new EnvironmentStack();
         final EvaluationVisitor ev = new EvaluationVisitor();
         final NamedConstantChecker ncc = new NamedConstantChecker();
         final ReassignmentChecker rc = new ReassignmentChecker();
@@ -33,10 +33,10 @@ public class Calculator {
                     if(e == Quit.instance()) {
                         break;
                     } else if (e == Clear.instance()) {
-                        vars.clear();
+                        vars.root().clear();
                     } else if (e == Vars.instance()) {
-                        if(vars.size() != 0) {
-                            System.out.println("" + vars);
+                        if(vars.root().size() != 0) {
+                            System.out.println("" + vars.root());
                         } else {
                             System.out.println("No variables stored");
                         }
@@ -72,6 +72,9 @@ public class Calculator {
                 System.out.println("***" + exception.getMessage() + "***");
             }
             catch (SyntaxErrorException exception) {
+                System.out.println("***"+ exception.getMessage() + "***");
+            }
+            catch (RootEnvironmentException exception) {
                 System.out.println("***"+ exception.getMessage() + "***");
             }
             count++;
