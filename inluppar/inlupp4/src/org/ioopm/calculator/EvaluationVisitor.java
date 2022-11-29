@@ -4,7 +4,7 @@ import org.ioopm.calculator.ast.*;
 public class EvaluationVisitor implements Visitor {
     private Environment env = null;
 
-    public SymbolicExpression evaluate(SymbolicExpression topLevel, Environment env) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression evaluate(SymbolicExpression topLevel, Environment env) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         this.env = env;
         return topLevel.accept(this);
     }
@@ -12,7 +12,7 @@ public class EvaluationVisitor implements Visitor {
     // This method gets called from Addition.accept(Visitor v) -- you should
     // be able to see from the eval() methods how these should behave (i.e., 
     // compare this method with your Addition::eval() and Symbolic.addition) 
-    public SymbolicExpression visit(Addition n) throws IllegalExpressionException, DivisionByZeroException {
+    public SymbolicExpression visit(Addition n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
         // Visit the left hand side and right hand side subexpressions
         SymbolicExpression left = n.lhs().accept(this);
         SymbolicExpression right = n.rhs().accept(this);
@@ -32,7 +32,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Assignment n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Assignment n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression left = n.lhs().accept(this);
         if (n.rhs().isConstant()){
             throw new IllegalExpressionException("Error: Cannot redefine named constant '" + n.rhs() + "'");
@@ -44,12 +44,12 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Constant n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Constant n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         return n;
     }
 
     @Override
-    public SymbolicExpression visit(Cos n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Cos n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             return new Constant(Math.cos(arg.getValue()));
@@ -59,7 +59,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Division n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Division n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression numerator = n.lhs().accept(this);
         SymbolicExpression denominator = n.rhs().accept(this);
         if(numerator.isConstant() && denominator.isConstant()) {
@@ -73,7 +73,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Exp n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Exp n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             return new Constant(Math.exp(arg.getValue()));
@@ -83,7 +83,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Log n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Log n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             if (arg.getValue()<=0){
@@ -96,7 +96,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Multiplication n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Multiplication n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression leftFactor = n.lhs().accept(this);
         SymbolicExpression rightFactor = n.rhs().accept(this);
         if(leftFactor.isConstant() && rightFactor.isConstant()) {
@@ -107,12 +107,12 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(NamedConstant n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(NamedConstant n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         return new Constant(n.getValue());
     }
 
     @Override
-    public SymbolicExpression visit(Negation n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Negation n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if(arg.isConstant()) {
             return new Constant(-arg.getValue());
@@ -124,12 +124,12 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Quit n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Quit n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         throw new RuntimeException("Commands may not be evaluated.");
     }
 
     @Override
-    public SymbolicExpression visit(Sin n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Sin n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression arg = n.arg().accept(this);
         if (arg.isConstant()) {
             return new Constant(Math.sin(arg.getValue()));
@@ -139,7 +139,7 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Subtraction n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Subtraction n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression leftTerm = n.lhs().accept(this);
         SymbolicExpression rightTerm = n.rhs().accept(this);
         if(leftTerm.isConstant() && rightTerm.isConstant()) {
@@ -150,18 +150,18 @@ public class EvaluationVisitor implements Visitor {
     }
 
     @Override
-    public SymbolicExpression visit(Variable n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Variable n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         SymbolicExpression value = env.get(n);
         return value == null ? n : value;
     }
 
     @Override
-    public SymbolicExpression visit(Vars n) throws IllegalExpressionException, DivisionByZeroException{
+    public SymbolicExpression visit(Vars n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
         throw new RuntimeException("Commands may not be evaluated.");
     }
 
 	@Override
-	public SymbolicExpression visit(Clear n) throws IllegalExpressionException, DivisionByZeroException{
+	public SymbolicExpression visit(Clear n) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
 		throw new RuntimeException("Commands may not be evaluated.");
 	}
 }

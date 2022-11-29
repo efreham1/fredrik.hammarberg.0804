@@ -22,4 +22,5 @@ Exp(Log(8))
 e
 e-e
 L
+(1=x) + (2=x)
 Quit

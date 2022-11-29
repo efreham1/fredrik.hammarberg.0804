@@ -1,6 +1,8 @@
 package org.ioopm.calculator.ast;
 
 import org.ioopm.calculator.Visitor;
+import org.ioopm.calculator.NamedConstantAssignmentException;
+import org.ioopm.calculator.ReassignmentException;
 
 public class Variable extends Atom implements Comparable<Variable>{
     private String identifier;
@@ -33,7 +35,7 @@ public class Variable extends Atom implements Comparable<Variable>{
     }
 
 	@Override
-	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
+	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
 		return v.visit(this);
 	}
 

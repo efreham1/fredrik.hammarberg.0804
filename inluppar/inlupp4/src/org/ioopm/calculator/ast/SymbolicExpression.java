@@ -1,5 +1,7 @@
 package org.ioopm.calculator.ast;
 
+import org.ioopm.calculator.NamedConstantAssignmentException;
+import org.ioopm.calculator.ReassignmentException;
 import org.ioopm.calculator.Visitor;
 
 /**
@@ -69,7 +71,7 @@ public abstract class SymbolicExpression {
     * @param v The Visitor to be accepted
     * @return The Visitors return
     */
-    public abstract SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException;
+    public abstract SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException;
 
     /**
     * @return true if the SymbolicExpression is a command, otherwise false
