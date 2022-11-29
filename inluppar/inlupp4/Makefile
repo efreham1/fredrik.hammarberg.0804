@@ -12,7 +12,7 @@ run:
 
 clean:
 	rm -rf classes
-	rm Calc_Test_Output.txt
+	rm -f Calc_Test_Output.txt
 
 test: UnitTest_ast IntegrationTest_ast ParserTests CalculatorTests
 

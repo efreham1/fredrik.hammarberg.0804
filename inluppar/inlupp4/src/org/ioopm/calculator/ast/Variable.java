@@ -2,7 +2,7 @@ package org.ioopm.calculator.ast;
 
 import org.ioopm.calculator.Visitor;
 
-public class Variable extends Atom {
+public class Variable extends Atom implements Comparable<Variable>{
     private String identifier;
 
     public Variable(String identifier) {
@@ -36,4 +36,9 @@ public class Variable extends Atom {
 	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException {
 		return v.visit(this);
 	}
+
+    @Override
+    public int compareTo(Variable o) {
+        return identifier.compareTo(o.identifier);
+    }
 }

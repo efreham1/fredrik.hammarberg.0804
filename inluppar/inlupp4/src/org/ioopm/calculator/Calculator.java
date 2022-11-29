@@ -34,9 +34,7 @@ public class Calculator {
                         vars.clear();
                     } else if (e == Vars.instance()) {
                         if(vars.size() != 0) {
-                            for(Variable variable : vars.keySet()) {
-                                System.out.println(variable.toString() + ": " + vars.get(variable).toString());
-                            }
+                            System.out.println("" + vars);
                         } else {
                             System.out.println("No variables stored");
                         }
