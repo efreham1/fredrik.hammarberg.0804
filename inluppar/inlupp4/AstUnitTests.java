@@ -543,17 +543,15 @@ public class AstUnitTests {
     }
 
     @Test
-    void testNamedConstantReassignment() throws DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
+    void testNamedConstantReassignment() throws DivisionByZeroException, ReassignmentException, IllegalExpressionException {
         NamedConstant nc = new NamedConstant("x", 4);
         Constant c = new Constant(1);
-        Environment vars = new Environment();
-        EvaluationVisitor ev = new EvaluationVisitor();
+        NamedConstantChecker ncc = new NamedConstantChecker();
         Assignment a1 = new Assignment(c, nc);
         try{
-            assertEquals(c, ev.evaluate(a1, vars));
-            assertEquals(c, ev.evaluate(nc, vars));
+            ncc.check(a1);
         }
-        catch (IllegalExpressionException e) {
+        catch (NamedConstantAssignmentException e) {
             assertTrue(true);
             return;
         }
