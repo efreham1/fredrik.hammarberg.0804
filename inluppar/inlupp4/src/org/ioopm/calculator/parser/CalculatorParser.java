@@ -29,14 +29,15 @@ public class CalculatorParser {
     // unallowerdVars is used to check if variabel name that we
     // want to assign new meaning to is a valid name eg 3 = Quit
     // or 10 + x = L is not allowed
-    private final ArrayList < String > unallowedVars = new ArrayList < String > (Arrays.asList("Quit",
-        "Vars",
-        "Clear",
-        "Sin",
-        "Cos",
-        "Exp",
-        "Log",
-        "Neg"));
+    private final ArrayList < String > unallowedVars = new ArrayList < String > 
+    (Arrays.asList( "Quit",
+                    "Vars",
+                    "Clear",
+                    "Sin",
+                    "Cos",
+                    "Exp",
+                    "Log",
+                    "Neg"));
 
     /**
      * Used to parse the inputted string by the Calculator program
