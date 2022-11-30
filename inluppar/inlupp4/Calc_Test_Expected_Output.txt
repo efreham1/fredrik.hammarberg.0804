@@ -18,7 +18,7 @@ q = 0.1111111111111111 + c
 t = 0.1111111111111111
 -1
 7.999999999999998
-6
+***Error, the variable x is reassigned.***
 ***Error: Not a valid assignment of a variable***
 ***Error: Not a valid assignment of a variable***
 ***Error: Not a valid assignment of a variable***
@@ -30,6 +30,13 @@ t = 0.1111111111111111
 ***Error, the variable x is reassigned.***
 10
 1
+1
+6
+***Error: Conditional identifier not a variable or named constant!***
+***Error: Variable in Conditional operator is non-constant***
+a + b
+3
+***Error: Variable in Conditional operator is non-constant***
 Thanks for using this calculator!
-Number of entries done: 27
-Successfully evaluated: 16
+Number of entries done: 35
+Successfully evaluated: 18

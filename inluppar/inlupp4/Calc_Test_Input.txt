@@ -25,4 +25,12 @@ L
 (1=x) + (2=x)
 (1 = x) + {(2 + x = x) + {3 + x = x}}
 x
+if f > h {0} else {1}
+if f<h {if t>f {1} else {6}} else {20}
+if
+Clear
+if x==y {1} else {0}
+a+b = x
+3=y
+if y>x {1} else {0}
 Quit

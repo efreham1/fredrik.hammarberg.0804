@@ -1,11 +1,13 @@
 package org.ioopm.calculator.ast;
+
 import org.ioopm.calculator.Visitor;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
 /**
-* Clear command node
-*/
+ * Clear command node
+ */
 public class Clear extends Command {
     private static final Clear theInstance = new Clear();
 
@@ -18,7 +20,9 @@ public class Clear extends Command {
     }
 
     @Override
-    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
-    return v.visit(this);
-}
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        return v.visit(this);
+    }
 }

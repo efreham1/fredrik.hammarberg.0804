@@ -2,6 +2,7 @@ package org.ioopm.calculator.ast;
 
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 import org.ioopm.calculator.Visitor;
 
 public class Assignment extends Binary {
@@ -10,15 +11,17 @@ public class Assignment extends Binary {
     }
 
     /**
-    * @return String representation for the operation
-    */
+     * @return String representation for the operation
+     */
     @Override
     public String getName() {
-        return "="; 
+        return "=";
     }
 
     @Override
-    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
         return v.visit(this);
     }
 }

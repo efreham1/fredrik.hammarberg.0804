@@ -3,10 +3,11 @@ package org.ioopm.calculator.ast;
 import org.ioopm.calculator.Visitor;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
 /**
-* Quit command node
-*/
+ * Quit command node
+ */
 public class Quit extends Command {
     private static final Quit theInstance = new Quit();
 
@@ -18,8 +19,10 @@ public class Quit extends Command {
         return theInstance;
     }
 
-	@Override
-	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
-		return v.visit(this);
-	}
+    @Override
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        return v.visit(this);
+    }
 }

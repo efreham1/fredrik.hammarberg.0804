@@ -3,6 +3,7 @@ package org.ioopm.calculator.ast;
 import org.ioopm.calculator.Visitor;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
 /**
  * Constant node
@@ -15,7 +16,7 @@ public class Constant extends Atom {
         super("Constant");
         this.value = value;
     }
-    
+
     @Override
     public boolean isConstant() {
         return true;
@@ -50,7 +51,9 @@ public class Constant extends Atom {
     }
 
     @Override
-    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException {
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
         return v.visit(this);
     }
 }

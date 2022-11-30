@@ -17,6 +17,7 @@ public class Calculator {
         final EvaluationVisitor ev = new EvaluationVisitor();
         final NamedConstantChecker ncc = new NamedConstantChecker();
         final ReassignmentChecker rc = new ReassignmentChecker();
+        final ConditionalVariableChecker cvc = new ConditionalVariableChecker();
         Scanner sc = new Scanner(System.in);
 
         int count = 0; // number of expressions entered during a single session
@@ -44,7 +45,7 @@ public class Calculator {
                 } else {
                     try {
                         try {
-                            if(ncc.check(e) && rc.check(e)) {
+                            if(ncc.check(e) && rc.check(e) && cvc.check(e, vars)) {
                                 String result = ev.evaluate(e,vars).toString();
                                 System.out.println(result);
                                 successes++;
@@ -61,6 +62,8 @@ public class Calculator {
                     } catch (NamedConstantAssignmentException exception) {
                         System.out.println("***"+ exception.getMessage() + "***");
                     } catch (ReassignmentException exception) {
+                        System.out.println("***"+ exception.getMessage() + "***");
+                    } catch (NonConstantVariableException exception) {
                         System.out.println("***"+ exception.getMessage() + "***");
                     }
                 }
