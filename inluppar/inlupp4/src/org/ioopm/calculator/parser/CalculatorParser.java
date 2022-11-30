@@ -190,7 +190,7 @@ public class CalculatorParser {
                 identifier1 = identifier();
             }
             else {
-                throw new SyntaxErrorException("Error: Conditional identifier not a variable or named constant!");
+                throw new SyntaxErrorException("Error: Conditional identifier not a variable!");
             }
             this.st.nextToken();
             String op = Character.toString(this.st.ttype);
