@@ -115,8 +115,8 @@ public class AstIntegrationTests {
         Constant c = (Constant) ev.evaluate(s,vars);
 
         assertEquals(22, c.getValue());
-        assertEquals(new Constant(24), vars.get(new Variable("x")));
-        assertEquals(new Constant(2), vars.get(new Variable("y")));
+        assertEquals(new Constant(24), vars.getVariable(new Variable("x")));
+        assertEquals(new Constant(2), vars.getVariable(new Variable("y")));
     }
 
     @Test
@@ -131,8 +131,8 @@ public class AstIntegrationTests {
                                 new Variable("y"));
         Constant c = (Constant) ev.evaluate(a,vars);
         assertEquals(0.9092974268256817, c.getValue());
-        assertEquals(0.9092974268256817, vars.get(new Variable("x")).getValue());
-        assertEquals(0.9092974268256817, vars.get(new Variable("y")).getValue());
+        assertEquals(0.9092974268256817, vars.getVariable(new Variable("x")).getValue());
+        assertEquals(0.9092974268256817, vars.getVariable(new Variable("y")).getValue());
     }
 
     @Test

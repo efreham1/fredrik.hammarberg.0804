@@ -16,6 +16,7 @@ f = 1
 h = 9
 q = 0.1111111111111111 + c
 t = 0.1111111111111111
+Functions: 
 -1
 7.999999999999998
 ***Error, the variable x is reassigned.***
@@ -32,11 +33,12 @@ t = 0.1111111111111111
 1
 1
 6
-***Error: Conditional identifier not a variable or named constant!***
+***Error: Conditional identifier not a variable!***
 ***Error: Variable in Conditional operator is non-constant***
 a + b
 3
 ***Error: Variable in Conditional operator is non-constant***
+3
 Thanks for using this calculator!
-Number of entries done: 35
-Successfully evaluated: 18
+Number of entries done: 32
+Successfully evaluated: 19

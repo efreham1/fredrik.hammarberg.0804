@@ -9,14 +9,14 @@ import org.ioopm.calculator.NonConstantVariableException;
  * Clear command node
  */
 public class Clear extends Command {
-    private static final Clear theInstance = new Clear();
+    private static final Clear singleton = new Clear();
 
     private Clear() {
         super("Clear");
     }
 
     public static Clear instance() {
-        return theInstance;
+        return singleton;
     }
 
     @Override

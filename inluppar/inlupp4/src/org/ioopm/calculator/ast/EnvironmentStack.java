@@ -7,20 +7,23 @@ import java.util.Stack;
  */
 public class EnvironmentStack extends Environment {
     private Stack<Environment> stack = new Stack<>();
-    private Environment root = new Environment();
 
     public EnvironmentStack() {
-        stack.push(root);
+        super(true);
+        stack.push(this);
     }
 
     @Override
-    public SymbolicExpression get(Object K) {
-        SymbolicExpression result = stack.peek().get(K);
+    public SymbolicExpression getVariable(Variable v) {
+        if (stack.peek().equals(this)){
+            return super.getVariable(v);
+        }
+        SymbolicExpression result = stack.peek().getVariable(v);
         if (result == null && stack.size() > 1) {
             Stack<Environment> reverseStack = new Stack<>();
             while (result == null && stack.size() > 1) {
                 reverseStack.push(stack.pop());
-                result = stack.peek().get(K);
+                result = stack.peek().getVariable(v);
             }
             while (reverseStack.size() > 0) {
                 stack.push(reverseStack.pop());
@@ -29,13 +32,33 @@ public class EnvironmentStack extends Environment {
         return result;
     }
 
+
     @Override
-    public SymbolicExpression put(Variable K, SymbolicExpression V) {
-        return stack.peek().put(K, V);
+    public SymbolicExpression putVariable(Variable v, SymbolicExpression se) {
+        if (stack.peek().equals(this)){
+            return super.putVariable(v, se);
+        }
+        if (this.contains(v.toString())){
+            this.remove(v.toString());
+        }
+        return stack.peek().putVariable(v, se);
     }
 
     public void pushEnvironment() {
-        stack.push(new Environment());
+        stack.push(new Environment(false));
+    }
+
+    @Override
+    public boolean contains(Variable v){
+        return stack.peek().contains(v);
+    }
+
+    @Override
+    public SymbolicExpression putFunction(String name, Function f) {
+        if (stack.size() != 1){
+            throw new RuntimeException("Functions can not be defined inside scopes");
+        }
+        return super.putFunction(name, f);
     }
 
     public void popEnvironment() throws RootEnvironmentException {
@@ -44,9 +67,5 @@ public class EnvironmentStack extends Environment {
         } else {
             stack.pop();
         }
-    }
-
-    public Environment root() {
-        return root;
     }
 }

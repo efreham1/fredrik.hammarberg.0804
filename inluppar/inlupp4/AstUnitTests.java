@@ -98,6 +98,13 @@ public class AstUnitTests {
     }
 
     @Test
+    void testEnvrionmentStack(){
+        EnvironmentStack env = new EnvironmentStack();
+        env.putVariable(new Variable("x"), new Constant(2));
+        env.getVariable(new Variable("x"));
+    }
+
+    @Test
     void testVariableEval() throws IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException, DivisionByZeroException {
         Variable v = new Variable("x");
         Constant c = new Constant(1);

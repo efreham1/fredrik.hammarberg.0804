@@ -142,8 +142,8 @@ public class ConditionalVariableChecker implements Visitor {
   @Override
   public SymbolicExpression visit(Equal n) throws IllegalExpressionException, DivisionByZeroException,
       NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-    SymbolicExpression lhs = env.get(n.lhs());
-    SymbolicExpression rhs = env.get(n.rhs());
+    SymbolicExpression lhs = env.getVariable((Variable) n.lhs());
+    SymbolicExpression rhs = env.getVariable((Variable) n.rhs());
     if (lhs != null && rhs != null && lhs.isConstant() && rhs.isConstant()) {
       return n;
     }
@@ -153,8 +153,8 @@ public class ConditionalVariableChecker implements Visitor {
   @Override
   public SymbolicExpression visit(GreaterThan n) throws IllegalExpressionException, DivisionByZeroException,
       NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-    SymbolicExpression lhs = env.get(n.lhs());
-    SymbolicExpression rhs = env.get(n.rhs());
+    SymbolicExpression lhs = env.getVariable((Variable)n.lhs());
+    SymbolicExpression rhs = env.getVariable((Variable) n.rhs());
     if (lhs != null && rhs != null && lhs.isConstant() && rhs.isConstant()) {
       return n;
     }
@@ -164,8 +164,8 @@ public class ConditionalVariableChecker implements Visitor {
   @Override
   public SymbolicExpression visit(GreaterThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
       NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-    SymbolicExpression lhs = env.get(n.lhs());
-    SymbolicExpression rhs = env.get(n.rhs());
+    SymbolicExpression lhs = env.getVariable((Variable) n.lhs());
+    SymbolicExpression rhs = env.getVariable((Variable) n.rhs());
     if (lhs != null && rhs != null && lhs.isConstant() && rhs.isConstant()) {
       return n;
     }
@@ -176,8 +176,8 @@ public class ConditionalVariableChecker implements Visitor {
   @Override
   public SymbolicExpression visit(LessThan n) throws IllegalExpressionException, DivisionByZeroException,
       NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-    SymbolicExpression lhs = env.get(n.lhs());
-    SymbolicExpression rhs = env.get(n.rhs());
+    SymbolicExpression lhs = env.getVariable((Variable) n.lhs());
+    SymbolicExpression rhs = env.getVariable((Variable) n.rhs());
     if (lhs != null && rhs != null && lhs.isConstant() && rhs.isConstant()) {
       return n;
     }
@@ -187,11 +187,39 @@ public class ConditionalVariableChecker implements Visitor {
   @Override
   public SymbolicExpression visit(LessThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
       NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-    SymbolicExpression lhs = env.get(n.lhs());
-    SymbolicExpression rhs = env.get(n.rhs());
+    SymbolicExpression lhs = env.getVariable((Variable) n.lhs());
+    SymbolicExpression rhs = env.getVariable((Variable) n.rhs());
     if (lhs != null && rhs != null && lhs.isConstant() && rhs.isConstant()) {
       return n;
     }
     throw new NonConstantVariableException("Error: Variable in Conditional operator is non-constant");
+  }
+
+  @Override
+  public SymbolicExpression visit(End n)
+      throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+      ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+    return n;
+  }
+
+  @Override
+  public SymbolicExpression visit(FunctionCall n)
+      throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+      ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+    return n;
+  }
+
+  @Override
+  public SymbolicExpression visit(FunctionDeclaration n)
+      throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+      ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+    return n;
+  }
+
+  @Override
+  public SymbolicExpression visit(Sequence n)
+      throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+      ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+    return n;
   }
 }

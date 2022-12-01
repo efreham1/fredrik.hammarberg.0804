@@ -6,14 +6,15 @@ import java.io.IOException;
 import java.util.Scanner;
 
 /**
-* Command line calculator application
-*
-* @author Johan Yrefors & Fredrik Hammarberg
-*/
+ * Command line calculator application
+ *
+ * @author Johan Yrefors & Fredrik Hammarberg
+ */
 public class Calculator {
+
     public static void main(String[] args) {
         final CalculatorParser parser = new CalculatorParser();
-        final EnvironmentStack vars = new EnvironmentStack();
+        final EnvironmentStack env = new EnvironmentStack();
         final EvaluationVisitor ev = new EvaluationVisitor();
         final NamedConstantChecker ncc = new NamedConstantChecker();
         final ReassignmentChecker rc = new ReassignmentChecker();
@@ -22,69 +23,93 @@ public class Calculator {
 
         int count = 0; // number of expressions entered during a single session
         int successes = 0; // number of expressions successfully evaluated during a single session
-
+        boolean inFunction = false;
+        String functionName = null;
         System.out.println("");
         System.out.println("Welcome to the bestest calculator! GLHF");
-        
-        while(true) {
+
+        while (true) {
             String input = sc.nextLine();
             try {
-                SymbolicExpression e = parser.parse(input);
-                if(e.isCommand()) {
-                    if(e == Quit.instance()) {
+                SymbolicExpression e = parser.parse(input, env);
+                if (inFunction) {
+                    if (e.isCommand() && e != End.instance()) {
+                        System.out.println("***Error: commands can not be used in function body!***");
+                    } else if (e.isCommand()) {
+                        inFunction = false;
+                        
+                    } else {
+                        env.getFunction(functionName).getFunctionBody().addStep(e);
+                    }
+                } else if (e.isCommand()) {
+                    count++;
+                    if (e == Quit.instance()) {
                         break;
                     } else if (e == Clear.instance()) {
-                        vars.root().clear();
+                        env.clear();
                     } else if (e == Vars.instance()) {
-                        if(vars.root().size() != 0) {
-                            System.out.println("" + vars.root());
+                        if (env.size() != 0) {
+                            System.out.println("" + env);
                         } else {
                             System.out.println("No variables stored");
                         }
+                    } else if (e == End.instance()) {
+                        System.out.println("***Error: end used outside of a function definition!***");
                     }
                 } else {
-                    try {
-                        try {
-                            if(ncc.check(e) && rc.check(e) && cvc.check(e, vars)) {
-                                String result = ev.evaluate(e,vars).toString();
-                                System.out.println(result);
-                                successes++;
-                                try {
-                                    Constants.namedConstants.put("Answer", Double.parseDouble(result));
-                                }
-                                catch(NumberFormatException exception) {
-                                    successes--;
-                                }
+                    count++;
+                    if (ncc.check(e) && rc.check(e) && cvc.check(e, env)) {
+                        if (parser.justParsedFunction()) {
+                            if (inFunction) {
+                                System.out.println("***Error: function decleared inside of a function definition!***");
+                            } else {
+                                inFunction = true;
+                                functionName = e.getName();
+                                env.putFunction(e.getName(),
+                                new Function((FunctionDeclaration) e, new Sequence()));
                             }
-                        } catch (DivisionByZeroException exception) {
-                            System.out.println("***"+ exception.getMessage() + "***");
+                        } else {
+                            String result = ev.evaluate(e, env).toString();
+                            System.out.println(result);
+                            successes++;
+                            Constants.namedConstants.put("Answer", Double.parseDouble(result));
+
                         }
-                    } catch (NamedConstantAssignmentException exception) {
-                        System.out.println("***"+ exception.getMessage() + "***");
-                    } catch (ReassignmentException exception) {
-                        System.out.println("***"+ exception.getMessage() + "***");
-                    } catch (NonConstantVariableException exception) {
-                        System.out.println("***"+ exception.getMessage() + "***");
                     }
                 }
-            }
-            catch (IOException exception) {
-                System.out.println("***"+ exception.getMessage() + "***");
-            }
-            catch (IllegalExpressionException exception) {
+            } catch (NumberFormatException exception) {
+                successes--;
+
+            } catch (DivisionByZeroException exception) {
                 System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (NamedConstantAssignmentException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (ReassignmentException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (NonConstantVariableException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (IOException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (IllegalExpressionException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (SyntaxErrorException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
+            } catch (RootEnvironmentException exception) {
+                System.out.println("***" + exception.getMessage() + "***");
+
             }
-            catch (SyntaxErrorException exception) {
-                System.out.println("***"+ exception.getMessage() + "***");
-            }
-            catch (RootEnvironmentException exception) {
-                System.out.println("***"+ exception.getMessage() + "***");
-            }
-            count++;
         }
 
         sc.close();
-        
-        System.out.println("Thanks for using this calculator!\n" + "Number of entries done: " + count + "\nSuccessfully evaluated: " + successes);
+
+        System.out.println("Thanks for using this calculator!\n" + "Number of entries done: " + count
+                + "\nSuccessfully evaluated: " + successes);
     }
 }

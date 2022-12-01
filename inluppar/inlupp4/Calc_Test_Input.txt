@@ -33,4 +33,20 @@ if x==y {1} else {0}
 a+b = x
 3=y
 if y>x {1} else {0}
+function sum(x, y)
+x+y
+end
+sum(1, 2)
+function factorial(n)
+n - 1 = m
+1 = t
+if n > t { factorial(m) * n } else { 1 }
+end
+factorial(3)
+function gcd(a, b)
+b - a = ba
+a - b = ab
+if a == b { a } else { if a < b { gcd(a, ba) } else { gcd (ab, b) } }
+end
+gcd(12, 6)
 Quit

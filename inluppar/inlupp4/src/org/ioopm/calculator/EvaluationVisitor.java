@@ -41,7 +41,8 @@ public class EvaluationVisitor implements Visitor {
             throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
             ReassignmentException, RootEnvironmentException, NonConstantVariableException {
         SymbolicExpression left = n.lhs().accept(this);
-        env.put((Variable) n.rhs(), left);
+        Variable v = (Variable) n.rhs();
+        env.putVariable(v, left);
         return left;
     }
 
@@ -177,7 +178,7 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(Variable n)
             throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
             ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-        SymbolicExpression value = env.get(n);
+        SymbolicExpression value = env.getVariable(n);
         return value == null ? n : value;
     }
 
@@ -269,5 +270,48 @@ public class EvaluationVisitor implements Visitor {
         } else {
             return new Constant(0);
         }
+    }
+
+    @Override
+    public SymbolicExpression visit(End n)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        throw new RuntimeException("Commands may not be evaluated.");
+    }
+
+    @Override
+    public SymbolicExpression visit(FunctionCall n)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        String functionName = n.getFunctionName();
+        FunctionDeclaration functionDeclaration = env.getFunction(functionName).getFDeclaration();
+        Sequence functionBody = env.getFunction(functionName).getFunctionBody();
+        env.pushEnvironment();
+        int i = 0;
+        SymbolicExpression result = null;
+        for (Variable var : functionDeclaration.getArguments()){
+            env.putVariable(var, n.getArguments().get(i++));
+        }
+        for (SymbolicExpression step : functionBody.getFunctionSteps()){
+            result = step.accept(this);
+        }
+        env.popEnvironment();
+        return result;
+    }
+
+    @Override
+    public SymbolicExpression visit(FunctionDeclaration n)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SymbolicExpression visit(Sequence n)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
