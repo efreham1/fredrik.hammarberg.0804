@@ -39,14 +39,13 @@ end
 sum(1, 2)
 function factorial(n)
 n - 1 = m
-1 = t
-if n > t { factorial(m) * n } else { 1 }
+if n > 1 { factorial(m) * n } else { 1 }
 end
-factorial(3)
+factorial(5)
 function gcd(a, b)
 b - a = ba
 a - b = ab
 if a == b { a } else { if a < b { gcd(a, ba) } else { gcd (ab, b) } }
 end
-gcd(12, 6)
+gcd(27, 48)
 Quit

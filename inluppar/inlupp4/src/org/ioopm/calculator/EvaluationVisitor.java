@@ -221,8 +221,13 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(Equal n) throws IllegalExpressionException, DivisionByZeroException,
             NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException,
             NonConstantVariableException {
-        if (n.lhs().accept(this).getValue() == n.rhs().accept(this).getValue()) {
-            return new Constant(1);
+                SymbolicExpression lhs = n.lhs().accept(this);
+                SymbolicExpression rhs = n.rhs().accept(this);
+                if (!(lhs.isConstant() && rhs.isConstant())){
+                    throw new IllegalExpressionException("Error: Identifiers in logic condition non-constant!");
+                }
+                if (lhs.getValue() == rhs.getValue()) {
+                    return new Constant(1);
         } else {
             return new Constant(0);
         }
@@ -232,8 +237,13 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(GreaterThan n) throws IllegalExpressionException, DivisionByZeroException,
             NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException,
             NonConstantVariableException {
-        if (n.lhs().accept(this).getValue() > n.rhs().accept(this).getValue()) {
-            return new Constant(1);
+                SymbolicExpression lhs = n.lhs().accept(this);
+                SymbolicExpression rhs = n.rhs().accept(this);
+                if (!(lhs.isConstant() && rhs.isConstant())){
+                    throw new IllegalExpressionException("Error: Identifiers in logic condition non-constant!");
+                }
+                if (lhs.getValue() > rhs.getValue()) {
+                    return new Constant(1);
         } else {
             return new Constant(0);
         }
@@ -243,8 +253,13 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(GreaterThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
             NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException,
             NonConstantVariableException {
-        if (n.lhs().accept(this).getValue() >= n.rhs().accept(this).getValue()) {
-            return new Constant(1);
+                SymbolicExpression lhs = n.lhs().accept(this);
+                SymbolicExpression rhs = n.rhs().accept(this);
+                if (!(lhs.isConstant() && rhs.isConstant())){
+                    throw new IllegalExpressionException("Error: Identifiers in logic condition non-constant!");
+                }
+                if (lhs.getValue() >= rhs.getValue()) {
+                    return new Constant(1);
         } else {
             return new Constant(0);
         }
@@ -254,8 +269,13 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(LessThan n) throws IllegalExpressionException, DivisionByZeroException,
             NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException,
             NonConstantVariableException {
-        if (n.lhs().accept(this).getValue() < n.rhs().accept(this).getValue()) {
-            return new Constant(1);
+                SymbolicExpression lhs = n.lhs().accept(this);
+                SymbolicExpression rhs = n.rhs().accept(this);
+                if (!(lhs.isConstant() && rhs.isConstant())){
+                    throw new IllegalExpressionException("Error: Identifiers in logic condition non-constant!");
+                }
+                if (lhs.getValue() < rhs.getValue()) {
+                    return new Constant(1);
         } else {
             return new Constant(0);
         }
@@ -265,7 +285,12 @@ public class EvaluationVisitor implements Visitor {
     public SymbolicExpression visit(LessThanEqual n) throws IllegalExpressionException, DivisionByZeroException,
             NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException,
             NonConstantVariableException {
-        if (n.lhs().accept(this).getValue() <= n.rhs().accept(this).getValue()) {
+        SymbolicExpression lhs = n.lhs().accept(this);
+        SymbolicExpression rhs = n.rhs().accept(this);
+        if (!(lhs.isConstant() && rhs.isConstant())){
+            throw new IllegalExpressionException("Error: Identifiers in logic condition non-constant!");
+        }
+        if (lhs.getValue() <= rhs.getValue()) {
             return new Constant(1);
         } else {
             return new Constant(0);
@@ -290,7 +315,7 @@ public class EvaluationVisitor implements Visitor {
         int i = 0;
         SymbolicExpression result = null;
         for (Variable var : functionDeclaration.getArguments()){
-            env.putVariable(var, n.getArguments().get(i++));
+            env.putVariable(var, n.getArguments().get(i++).accept(this));
         }
         for (SymbolicExpression step : functionBody.getFunctionSteps()){
             result = step.accept(this);

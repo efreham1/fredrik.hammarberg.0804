@@ -279,11 +279,17 @@ public class CalculatorParser {
         if (this.st.ttype == StreamTokenizer.TT_WORD && this.st.sval.equals("if")) {
             this.st.nextToken();
             SymbolicExpression variable1 = null;
-            if (this.st.ttype == StreamTokenizer.TT_WORD && !(this.unallowedVars.contains(this.st.sval))
-                    && !(Constants.namedConstants.containsKey(this.st.sval))) {
-                variable1 = new Variable(this.st.sval);
+            if (this.st.ttype == StreamTokenizer.TT_WORD && !(this.unallowedVars.contains(this.st.sval))) {
+                if (Constants.namedConstants.containsKey(this.st.sval)) {
+                    variable1 = new NamedConstant(this.st.sval, Constants.namedConstants.get(this.st.sval));
+                } else {
+                    variable1 = new Variable(this.st.sval);
+                }
+
+            } else if (this.st.ttype == StreamTokenizer.TT_NUMBER) {
+                variable1 = new Constant(this.st.nval);
             } else {
-                throw new SyntaxErrorException("Error: Conditional identifier not a variable!");
+                throw new SyntaxErrorException("Error: Conditional identifier not a variable, named constant or number!");
             }
             this.st.nextToken();
             String op = Character.toString(this.st.ttype);
@@ -293,11 +299,17 @@ public class CalculatorParser {
                 this.st.nextToken();
             }
             SymbolicExpression variable2 = null;
-            if (this.st.ttype == StreamTokenizer.TT_WORD && !(this.unallowedVars.contains(this.st.sval))
-                    && !(Constants.namedConstants.containsKey(this.st.sval))) {
-                variable2 = new Variable(this.st.sval);
+            if (this.st.ttype == StreamTokenizer.TT_WORD && !(this.unallowedVars.contains(this.st.sval))) {
+                if (Constants.namedConstants.containsKey(this.st.sval)) {
+                    variable2 = new NamedConstant(this.st.sval, Constants.namedConstants.get(this.st.sval));
+                } else {
+                    variable2 = new Variable(this.st.sval);
+                }
+
+            } else if (this.st.ttype == StreamTokenizer.TT_NUMBER) {
+                variable2 = new Constant(this.st.nval);
             } else {
-                throw new SyntaxErrorException("Error: Conditional identifier not a variable!");
+                throw new SyntaxErrorException("Error: Conditional identifier not a variable, named constant or number!");
             }
             this.st.nextToken();
             SymbolicExpression scope1 = null;

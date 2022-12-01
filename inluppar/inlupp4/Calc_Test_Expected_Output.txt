@@ -33,12 +33,14 @@ Functions:
 1
 1
 6
-***Error: Conditional identifier not a variable!***
+***Error: Conditional identifier not a variable, named constant or number!***
 ***Error: Variable in Conditional operator is non-constant***
 a + b
 3
 ***Error: Variable in Conditional operator is non-constant***
 3
+120
+3
 Thanks for using this calculator!
-Number of entries done: 32
-Successfully evaluated: 19
+Number of entries done: 36
+Successfully evaluated: 21
