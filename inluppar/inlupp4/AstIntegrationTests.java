@@ -11,6 +11,7 @@ import org.ioopm.calculator.EvaluationVisitor;
 import org.ioopm.calculator.ast.*;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
 public class AstIntegrationTests {
     @BeforeAll
@@ -25,8 +26,8 @@ public class AstIntegrationTests {
     // ------------------ Unary integration tests -----------------------
 
     @Test
-    void testSinCos() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testSinCos() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Sin s = new Sin(new Cos(new Constant(3.1415)));
         Constant c = (Constant) ev.evaluate(s,vars);
@@ -34,8 +35,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testNegExpLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testNegExpLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Negation n = new Negation(new Exp(new Log(new Constant(3))));
         Constant c = (Constant) ev.evaluate(n,vars);
@@ -43,8 +44,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testExpNegLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testExpNegLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         SymbolicExpression n = new Exp(new Negation(new Log(new Constant(3))));
         Constant c = (Constant) ev.evaluate(n,vars);
@@ -54,8 +55,8 @@ public class AstIntegrationTests {
     // ------------------ Binary integration tests ----------------------
     
     @Test
-    void testAddDiv() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testAddDiv() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Addition a = new Addition(new Division(new Constant(3),new Constant(2)),new Division(new Constant(1),new Constant(2)));
         Constant c = (Constant) ev.evaluate(a,vars);
@@ -63,8 +64,8 @@ public class AstIntegrationTests {
     }
 
     @Test
-    void testSubMul() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testSubMul() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Subtraction s = new Subtraction(new Multiplication(new Constant(3),new Constant(8)),new Multiplication(new Constant(9),new Constant(2)));
         Constant c = (Constant) ev.evaluate(s,vars);
@@ -72,8 +73,8 @@ public class AstIntegrationTests {
     }
     
     @Test
-    void testAssAdd() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-    Environment vars = new Environment();
+    void testAssAdd() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+    EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
     Variable v = new Variable("x");
     Constant c = new Constant(1);
@@ -96,8 +97,8 @@ public class AstIntegrationTests {
     // ------------------ Mixed integration tests -----------------------
 
     @Test
-    void testSubVarDivAssAssSin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testSubVarDivAssAssSin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Subtraction s = new Subtraction(
                             new Division(
@@ -114,13 +115,13 @@ public class AstIntegrationTests {
         Constant c = (Constant) ev.evaluate(s,vars);
 
         assertEquals(22, c.getValue());
-        assertEquals(new Constant(24), vars.get(new Variable("x")));
-        assertEquals(new Constant(2), vars.get(new Variable("y")));
+        assertEquals(new Constant(24), vars.getVariable(new Variable("x")));
+        assertEquals(new Constant(2), vars.getVariable(new Variable("y")));
     }
 
     @Test
-    void Assasssin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void Assasssin() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Assignment a = new Assignment(
                                 new Assignment(
@@ -130,13 +131,13 @@ public class AstIntegrationTests {
                                 new Variable("y"));
         Constant c = (Constant) ev.evaluate(a,vars);
         assertEquals(0.9092974268256817, c.getValue());
-        assertEquals(0.9092974268256817, vars.get(new Variable("x")).getValue());
-        assertEquals(0.9092974268256817, vars.get(new Variable("y")).getValue());
+        assertEquals(0.9092974268256817, vars.getVariable(new Variable("x")).getValue());
+        assertEquals(0.9092974268256817, vars.getVariable(new Variable("y")).getValue());
     }
 
     @Test
-    void testMulCosNegExpAddLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException {
-        Environment vars = new Environment();
+    void testMulCosNegExpAddLog() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
         EvaluationVisitor ev = new EvaluationVisitor();
         Multiplication m = new Multiplication(
                                     new Cos(
@@ -152,6 +153,25 @@ public class AstIntegrationTests {
         assertEquals(-4.0552691271554427E9, c.getValue());
     }
 
+    @Test
+    void testConditional() throws DivisionByZeroException, IllegalExpressionException, NamedConstantAssignmentException, ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        EnvironmentStack vars = new EnvironmentStack();
+        EvaluationVisitor ev = new EvaluationVisitor();
+        SymbolicExpression se = new Conditional(
+                new LessThan(
+                    new Constant(2),
+                    new Constant(4)),
+                new Scope(
+                    new Addition(
+                        new Constant(3),
+                        new Constant(8))),
+                new Scope(
+                    new Subtraction(
+                        new Constant(3),
+                        new Constant(8))));
+        SymbolicExpression result = ev.evaluate(se, vars);
+        assertEquals(11, result.getValue());
+    }
 
     // ---------------------------------------------------
 

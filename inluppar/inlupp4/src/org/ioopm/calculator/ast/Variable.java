@@ -3,8 +3,9 @@ package org.ioopm.calculator.ast;
 import org.ioopm.calculator.Visitor;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
-public class Variable extends Atom implements Comparable<Variable>{
+public class Variable extends Atom implements Comparable<Variable> {
     private String identifier;
 
     public Variable(String identifier) {
@@ -19,7 +20,7 @@ public class Variable extends Atom implements Comparable<Variable>{
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof Variable) {
+        if (other instanceof Variable) {
             return equals((Variable) other);
         }
         return false;
@@ -34,10 +35,12 @@ public class Variable extends Atom implements Comparable<Variable>{
         return identifier.hashCode();
     }
 
-	@Override
-	public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
-		return v.visit(this);
-	}
+    @Override
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        return v.visit(this);
+    }
 
     @Override
     public int compareTo(Variable o) {

@@ -3,10 +3,11 @@ package org.ioopm.calculator.ast;
 import org.ioopm.calculator.Visitor;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
 public class Vars extends Command {
     private static final Vars theInstance = new Vars();
-    
+
     private Vars() {
         super("Vars");
     }
@@ -16,7 +17,9 @@ public class Vars extends Command {
     }
 
     @Override
-    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException {
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
         return v.visit(this);
     }
 }

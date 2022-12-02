@@ -1,33 +1,47 @@
 
-Welcome to the bestest calculator! GLHF
-***Error: Expected number***
-***Error: Numbers cannot be used as a variable name***
-***Error, assignment to constant: 3 = pi***
-3
-3
-5
-9
-1
-0.1111111111111111
-0.1111111111111111 + c
--x
-Variables: 
+Welcome to the omegalulz interpreter! GLHF
+?> ***Error: Expected number***
+?> ***Error: Numbers cannot be used as a variable name***
+?> ***Error, assignment to constant: 3 = pi***
+?> 3
+?> 3
+?> 5
+?> ?> 9
+?> 1
+?> 0.1111111111111111
+?> 0.1111111111111111 + c
+?> -x
+?> Variables: 
 f = 1
 h = 9
 q = 0.1111111111111111 + c
 t = 0.1111111111111111
--1
-7.999999999999998
-6
-***Error: Not a valid assignment of a variable***
-***Error: Not a valid assignment of a variable***
-***Error: Not a valid assignment of a variable***
-3
-5
-2.718281828459045
-0
-6.0221408569999995E23
-***Error, the variable x is reassigned.***
-Thanks for using this calculator!
-Number of entries done: 25
-Successfully evaluated: 14
+Functions: 
+No functions stored
+?> -1
+?> 7.999999999999998
+?> ***Error, the variable x is reassigned.***
+?> ***Error: Not a valid assignment of a variable***
+?> ***Error: Not a valid assignment of a variable***
+?> ***Error: Not a valid assignment of a variable***
+?> 3
+?> 5
+?> 2.718281828459045
+?> 0
+?> 6.0221408569999995E23
+?> ***Error, the variable x is reassigned.***
+?> 10
+?> 1
+?> 1
+?> 6
+?> ***Error: Conditional identifier not a variable, named constant or number!***
+?> ?> ***Error: Variable in Conditional operator is non-constant***
+?> a + b
+?> 3
+?> ***Error: Variable in Conditional operator is non-constant***
+?> r1f>r2f>?> 3
+?> r1f>r2f>r3f>?> 120
+?> r1f>r2f>r3f>r4f>?> 3
+?> Thanks for using this calculator!
+Number of entries done: 36
+Successfully evaluated: 21

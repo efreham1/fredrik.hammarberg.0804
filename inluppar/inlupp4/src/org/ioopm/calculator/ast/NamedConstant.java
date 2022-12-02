@@ -3,22 +3,23 @@ package org.ioopm.calculator.ast;
 import org.ioopm.calculator.Visitor;
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 
 /**
-* Named constant node
-*/
+ * Named constant node
+ */
 public class NamedConstant extends Constant {
-    /**The name of the constant*/
+    /** The name of the constant */
     private String name;
 
-    public NamedConstant(String name, double value){
+    public NamedConstant(String name, double value) {
         super(value);
         this.name = name;
     }
 
     /**
-    * @return String representation of the named constant
-    */
+     * @return String representation of the named constant
+     */
     @Override
     public String toString() {
         return name;
@@ -26,7 +27,7 @@ public class NamedConstant extends Constant {
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof NamedConstant) {
+        if (other instanceof NamedConstant) {
             return equals((NamedConstant) other);
         }
         return false;
@@ -37,7 +38,9 @@ public class NamedConstant extends Constant {
     }
 
     @Override
-    public SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException{
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
         return v.visit(this);
     }
 }

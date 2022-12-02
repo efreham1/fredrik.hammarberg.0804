@@ -2,14 +2,15 @@ package org.ioopm.calculator.ast;
 
 import org.ioopm.calculator.NamedConstantAssignmentException;
 import org.ioopm.calculator.ReassignmentException;
+import org.ioopm.calculator.NonConstantVariableException;
 import org.ioopm.calculator.Visitor;
 
 /**
-* Root class of the abstract syntax tree for representing
-* mathematical expressions
-*
-* @author Johan Yrefors & Fredrik Hammarberg
-*/
+ * Root class of the abstract syntax tree for representing
+ * mathematical expressions
+ *
+ * @author Johan Yrefors & Fredrik Hammarberg
+ */
 public abstract class SymbolicExpression {
     private String name;
     private String[] subExpressions;
@@ -23,8 +24,8 @@ public abstract class SymbolicExpression {
     }
 
     /**
-    * @return String representation of the expression
-    */
+     * @return String representation of the expression
+     */
     public String toString(String msg) {
         StringBuilder sb = new StringBuilder();
         sb.append(this.name);
@@ -40,23 +41,24 @@ public abstract class SymbolicExpression {
     }
 
     /**
-    * @return true if the SymbolicExpression is constant, otherwise false
-    */
+     * @return true if the SymbolicExpression is constant, otherwise false
+     */
     public boolean isConstant() {
         return false;
     }
 
     /**
-    * @return The name of the Symbolic expression
-    */
+     * @return The name of the Symbolic expression
+     */
     public String getName() {
         throw new RuntimeException("getName() called on expression with no operator.");
     }
 
     /**
-    * Get the priority of the operation (lowest (0) - highest (3))
-    * @return an int representing the priority of the operation
-    */
+     * Get the priority of the operation (lowest (0) - highest (3))
+     * 
+     * @return an int representing the priority of the operation
+     */
     public int getPriority() {
         return 3;
     }
@@ -66,16 +68,18 @@ public abstract class SymbolicExpression {
     }
 
     /**
-    * Accepts a Visitor
-    *
-    * @param v The Visitor to be accepted
-    * @return The Visitors return
-    */
-    public abstract SymbolicExpression accept(Visitor v) throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException, ReassignmentException;
+     * Accepts a Visitor
+     *
+     * @param v The Visitor to be accepted
+     * @return The Visitors return
+     */
+    public abstract SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException;
 
     /**
-    * @return true if the SymbolicExpression is a command, otherwise false
-    */
+     * @return true if the SymbolicExpression is a command, otherwise false
+     */
     public boolean isCommand() {
         return false;
     }
