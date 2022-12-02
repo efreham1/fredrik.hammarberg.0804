@@ -10,9 +10,9 @@ import org.ioopm.calculator.Visitor;
 /**
  * FunctionCall
  */
-public class FunctionCall extends SymbolicExpression{
-    private String functionName;
-    private LinkedList<Atom> arguments;
+public class FunctionCall extends SymbolicExpression {
+	private String functionName;
+	private LinkedList<Atom> arguments;
 
 	public FunctionCall(String functionName, LinkedList<Atom> arguments) {
 		super(functionName);
@@ -20,26 +20,28 @@ public class FunctionCall extends SymbolicExpression{
 		this.arguments = arguments;
 	}
 
-	public String getFunctionName(){
+	public String getFunctionName() {
 		return functionName;
 	}
 
-	public LinkedList<Atom> getArguments(){
+	public LinkedList<Atom> getArguments() {
 		return arguments;
 	}
 
 	@Override
 	public String toString() {
 		String result = "";
-        StringBuilder sb = new StringBuilder(result);
-        sb.append(this.functionName);
-        sb.append("(");
-        for (Atom arg : arguments) {
-            sb.append(arg + ", ");
-        }
-        sb.delete(sb.length()-2, sb.length());
-        sb.append(")");
-        return sb.toString();
+		StringBuilder sb = new StringBuilder(result);
+		sb.append(this.functionName);
+		sb.append("(");
+		for (Atom arg : arguments) {
+			sb.append(arg + ", ");
+		}
+		if (arguments.size() > 0) {
+			sb.delete(sb.length() - 2, sb.length());
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 
 	@Override
@@ -49,5 +51,4 @@ public class FunctionCall extends SymbolicExpression{
 		return v.visit(this);
 	}
 
-    
 }

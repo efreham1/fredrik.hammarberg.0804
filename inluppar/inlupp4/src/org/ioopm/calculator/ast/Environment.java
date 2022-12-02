@@ -9,12 +9,12 @@ import java.util.HashMap;
 public class Environment {
     private HashMap<Variable, SymbolicExpression> Variables;
     private HashMap<String, Function> Functions;
-    private boolean hasFunctions;
+    private boolean functionsAllowed;
 
-    public Environment(boolean hasFunctions) {
+    public Environment(boolean functionsAllowed) {
         Variables = new HashMap<>();
-        this.hasFunctions = hasFunctions;
-        if (this.hasFunctions) {
+        this.functionsAllowed = functionsAllowed;
+        if (this.functionsAllowed) {
             Functions = new HashMap<>();
         }
     }
@@ -30,12 +30,18 @@ public class Environment {
             sb.append(this.getVariable(v));
             sb.append("\n");
         }
-        if (hasFunctions) {
+        if (vars.size() == 0) {
+            sb.append("No variables stored!\n");
+        }
+        if (functionsAllowed) {
             sb.append("Functions: \n");
             TreeSet<String> funcs = new TreeSet<>(Functions.keySet());
             for (String f : funcs) {
                 sb.append(this.getFunction(f).getFDeclaration());
                 sb.append("\n");
+            }
+            if (funcs.size() == 0) {
+                sb.append("No functions stored!");
             }
             sb.deleteCharAt(sb.length() - 1);
         }
@@ -47,21 +53,21 @@ public class Environment {
     }
 
     public Function getFunction(String name) {
-        if (!hasFunctions){
+        if (!functionsAllowed) {
             throw new RuntimeException("getFunction called on a non-functional environment");
         }
         return Functions.get(name);
     }
 
     public SymbolicExpression putVariable(Variable v, SymbolicExpression se) {
-        if (hasFunctions && Functions.containsKey(v.toString())) {
+        if (functionsAllowed && Functions.containsKey(v.toString())) {
             Functions.remove(v.toString());
         }
         return Variables.put(v, se);
     }
 
     public SymbolicExpression putFunction(String name, Function f) {
-        if (!hasFunctions){
+        if (!functionsAllowed) {
             throw new RuntimeException("putFunction called on a non-functional environment");
         }
         if (Variables.containsKey(new Variable(name))) {
@@ -71,7 +77,7 @@ public class Environment {
     }
 
     public boolean contains(String name) {
-        if (hasFunctions){
+        if (functionsAllowed) {
             return false;
         }
         return Functions.containsKey(name) || Variables.containsKey(new Variable(name));
@@ -83,7 +89,7 @@ public class Environment {
 
     public int size() {
         int sum = Variables.size();
-        if (hasFunctions){
+        if (functionsAllowed) {
             sum += Functions.size();
         }
         return sum;
@@ -91,13 +97,13 @@ public class Environment {
 
     public void clear() {
         Variables.clear();
-        if (hasFunctions){
+        if (functionsAllowed) {
             Functions.clear();
         }
     }
 
     public void remove(String name) {
-        if (hasFunctions){
+        if (functionsAllowed) {
             Functions.remove(name);
         } else {
             throw new RuntimeException("Tried to remove function from non-functional environment");

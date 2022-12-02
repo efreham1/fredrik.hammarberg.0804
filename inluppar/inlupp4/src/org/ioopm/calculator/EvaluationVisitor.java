@@ -313,7 +313,7 @@ public class EvaluationVisitor implements Visitor {
         Sequence functionBody = env.getFunction(functionName).getFunctionBody();
         env.pushEnvironment();
         int i = 0;
-        SymbolicExpression result = null;
+        SymbolicExpression result = new Constant(0);
         for (Variable var : functionDeclaration.getArguments()){
             env.putVariable(var, n.getArguments().get(i++).accept(this));
         }

@@ -121,12 +121,15 @@ public class CalculatorParser {
         LinkedList<Variable> arguments = new LinkedList<>();
         do {
             this.st.nextToken();
-            if (this.st.ttype != StreamTokenizer.TT_WORD || this.unallowedVars.contains(this.st.sval)
+            if (this.st.ttype == ')') {
+
+            } else if (this.st.ttype != StreamTokenizer.TT_WORD || this.unallowedVars.contains(this.st.sval)
                     || Constants.namedConstants.containsKey(this.st.sval)) {
                 throw new SyntaxErrorException("Error: The function parameter " + this.st.sval + " isn't allowed!");
+            } else {
+                arguments.add(new Variable(this.st.sval));
+                this.st.nextToken();
             }
-            arguments.add(new Variable(this.st.sval));
-            this.st.nextToken();
         } while (this.st.ttype == ',');
         if (this.st.ttype != ')') {
             throw new SyntaxErrorException("Error: expected a ')' after parameters!");
@@ -212,12 +215,13 @@ public class CalculatorParser {
                 LinkedList<Atom> arguments = new LinkedList<>();
                 do {
                     this.st.nextToken();
-                    if ((this.st.ttype != StreamTokenizer.TT_WORD && this.st.ttype != StreamTokenizer.TT_NUMBER)
+                    if (this.st.ttype == ')'){
+                        this.st.pushBack();
+                    }else if ((this.st.ttype != StreamTokenizer.TT_WORD && this.st.ttype != StreamTokenizer.TT_NUMBER)
                             || this.unallowedVars.contains(this.st.sval)) {
                         throw new SyntaxErrorException(
                                 "Error: The function parameter " + this.st.sval + " isn't allowed!");
-                    }
-                    if (this.st.ttype == StreamTokenizer.TT_WORD) {
+                    } else if (this.st.ttype == StreamTokenizer.TT_WORD) {
                         if (Constants.namedConstants.containsKey(this.st.sval)) {
                             arguments.add(new NamedConstant(st.sval, Constants.namedConstants.get(st.sval)));
                         } else {
@@ -289,7 +293,8 @@ public class CalculatorParser {
             } else if (this.st.ttype == StreamTokenizer.TT_NUMBER) {
                 variable1 = new Constant(this.st.nval);
             } else {
-                throw new SyntaxErrorException("Error: Conditional identifier not a variable, named constant or number!");
+                throw new SyntaxErrorException(
+                        "Error: Conditional identifier not a variable, named constant or number!");
             }
             this.st.nextToken();
             String op = Character.toString(this.st.ttype);
@@ -309,7 +314,8 @@ public class CalculatorParser {
             } else if (this.st.ttype == StreamTokenizer.TT_NUMBER) {
                 variable2 = new Constant(this.st.nval);
             } else {
-                throw new SyntaxErrorException("Error: Conditional identifier not a variable, named constant or number!");
+                throw new SyntaxErrorException(
+                        "Error: Conditional identifier not a variable, named constant or number!");
             }
             this.st.nextToken();
             SymbolicExpression scope1 = null;

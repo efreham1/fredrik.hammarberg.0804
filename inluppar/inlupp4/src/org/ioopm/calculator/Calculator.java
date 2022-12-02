@@ -6,9 +6,9 @@ import java.io.IOException;
 import java.util.Scanner;
 
 /**
- * Command line calculator application
+ * Command line interpreted programming language application
  *
- * @author Johan Yrefors & Fredrik Hammarberg
+ * @author Johan Yrefors & Fredrik Hammarberg & Simon Eriksson
  */
 public class Calculator {
 
@@ -25,55 +25,76 @@ public class Calculator {
         int successes = 0; // number of expressions successfully evaluated during a single session
         boolean inFunction = false;
         String functionName = null;
+        int functionRow = 1;
         System.out.println("");
-        System.out.println("Welcome to the bestest calculator! GLHF");
+        System.out.println("Welcome to the omegalulz interpreter! GLHF");
 
         while (true) {
-            String input = sc.nextLine();
             try {
-                SymbolicExpression e = parser.parse(input, env);
                 if (inFunction) {
-                    if (e.isCommand() && e != End.instance()) {
-                        System.out.println("***Error: commands can not be used in function body!***");
-                    } else if (e.isCommand()) {
-                        inFunction = false;
-                        
+                    System.out.print("r" + functionRow + "f>");
+                    String input = sc.nextLine();
+                    SymbolicExpression e = parser.parse(input, env);
+                    if (parser.justParsedFunction()) {
+                        System.out.println(
+                                "***Error: function declaration inside of a function definition not allowed!***");
                     } else {
-                        env.getFunction(functionName).getFunctionBody().addStep(e);
-                    }
-                } else if (e.isCommand()) {
-                    count++;
-                    if (e == Quit.instance()) {
-                        break;
-                    } else if (e == Clear.instance()) {
-                        env.clear();
-                    } else if (e == Vars.instance()) {
-                        if (env.size() != 0) {
-                            System.out.println("" + env);
-                        } else {
-                            System.out.println("No variables stored");
-                        }
-                    } else if (e == End.instance()) {
-                        System.out.println("***Error: end used outside of a function definition!***");
-                    }
-                } else {
-                    count++;
-                    if (ncc.check(e) && rc.check(e) && cvc.check(e, env)) {
-                        if (parser.justParsedFunction()) {
-                            if (inFunction) {
-                                System.out.println("***Error: function decleared inside of a function definition!***");
+                        if (e.isCommand() && e != End.instance() && e != Quit.instance()) {
+                            System.out.println("***Error: commands can not be used in function body!***");
+                            functionRow--;
+                        } else if (e == End.instance()) {
+                            if (env.getFunction(functionName).getFunctionBody().isEmpty()) {
+                                System.out.println("***Error: an empty function body is not allowed!***");
+                                functionRow--;
                             } else {
+                                inFunction = false;
+                                functionRow = 0;
+                            }
+
+                        } else if (e == Quit.instance()) {
+                            inFunction = false;
+                            env.remove(functionName);
+                            functionRow = 0;
+                        } else {
+                            env.getFunction(functionName).getFunctionBody().addStep(e);
+                        }
+                        functionRow++;
+                    }
+
+                } else {
+                    System.out.print("?> ");
+                    String input = sc.nextLine();
+                    SymbolicExpression e = parser.parse(input, env);
+                    if (e.isCommand()) {
+                        count++;
+                        if (e == Quit.instance()) {
+                            break;
+                        } else if (e == Clear.instance()) {
+                            env.clear();
+                        } else if (e == Vars.instance()) {
+                            if (env.size() != 0) {
+                                System.out.println("" + env);
+                            } else {
+                                System.out.println("No variables or functions stored");
+                            }
+                        } else if (e == End.instance()) {
+                            System.out.println("***Error: end used outside of a function definition!***");
+                        }
+                    } else {
+                        count++;
+                        if (ncc.check(e) && rc.check(e) && cvc.check(e, env)) {
+                            if (parser.justParsedFunction()) {
                                 inFunction = true;
                                 functionName = e.getName();
                                 env.putFunction(e.getName(),
-                                new Function((FunctionDeclaration) e, new Sequence()));
-                            }
-                        } else {
-                            String result = ev.evaluate(e, env).toString();
-                            System.out.println(result);
-                            successes++;
-                            Constants.namedConstants.put("Answer", Double.parseDouble(result));
+                                        new Function((FunctionDeclaration) e, new Sequence()));
 
+                            } else {
+                                String result = ev.evaluate(e, env).toString();
+                                System.out.println(result);
+                                successes++;
+                                Constants.namedConstants.put("Answer", Double.parseDouble(result));
+                            }
                         }
                     }
                 }

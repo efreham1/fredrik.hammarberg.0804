@@ -61,6 +61,10 @@ public class EnvironmentStack extends Environment {
         return super.putFunction(name, f);
     }
 
+    public void removeFunction(String name){
+        super.remove(name);
+    }
+
     public void popEnvironment() throws RootEnvironmentException {
         if (stack.size() == 1) {
             throw new RootEnvironmentException("Error: Root environment removal not allowed!");

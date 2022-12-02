@@ -54,6 +54,10 @@ public class Sequence extends SymbolicExpression{
 		return true;
     }
 
+	public boolean isEmpty(){
+		return functionSteps.isEmpty();
+	}
+
 	@Override
 	public SymbolicExpression accept(Visitor v)
 			throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,

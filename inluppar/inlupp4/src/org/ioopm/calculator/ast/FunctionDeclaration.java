@@ -14,19 +14,19 @@ public class FunctionDeclaration extends SymbolicExpression {
     private LinkedList<Variable> arguments;
     private String name;
 
-	public FunctionDeclaration(String name, LinkedList<Variable> arguments) {
-		super(name);
+    public FunctionDeclaration(String name, LinkedList<Variable> arguments) {
+        super(name);
         this.name = name;
-		this.arguments = arguments;
-	}
+        this.arguments = arguments;
+    }
 
-    public LinkedList<Variable> getArguments(){
+    public LinkedList<Variable> getArguments() {
         return this.arguments;
     }
 
     @Override
     public boolean equals(Object other) {
-        if(other instanceof FunctionDeclaration) {
+        if (other instanceof FunctionDeclaration) {
             return equals((FunctionDeclaration) other);
         }
         return false;
@@ -36,7 +36,7 @@ public class FunctionDeclaration extends SymbolicExpression {
         if (this.name.equals(other.name)) {
             int i = 0;
             for (Variable arg : arguments) {
-                if(!(arg.equals(other.arguments.get(i++)))) {
+                if (!(arg.equals(other.arguments.get(i++)))) {
                     return false;
                 }
             }
@@ -55,22 +55,23 @@ public class FunctionDeclaration extends SymbolicExpression {
         for (Variable arg : arguments) {
             sb.append(arg + ", ");
         }
-        sb.delete(sb.length()-2, sb.length());
+        if (arguments.size() > 0) {
+            sb.delete(sb.length() - 2, sb.length());
+        }
         sb.append(")");
         return sb.toString();
     }
 
     @Override
-    public String getName(){
+    public String getName() {
         return this.name;
     }
-    
-	@Override
-	public SymbolicExpression accept(Visitor v)
-			throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
-			ReassignmentException, RootEnvironmentException, NonConstantVariableException {
-		return v.visit(this);
-	}
 
-    
+    @Override
+    public SymbolicExpression accept(Visitor v)
+            throws IllegalExpressionException, DivisionByZeroException, NamedConstantAssignmentException,
+            ReassignmentException, RootEnvironmentException, NonConstantVariableException {
+        return v.visit(this);
+    }
+
 }
