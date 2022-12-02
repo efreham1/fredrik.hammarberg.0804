@@ -1,5 +1,5 @@
 
-Welcome to the bestest calculator! GLHF
+Welcome to the omegalulz interpreter! GLHF
 ?> ***Error: Expected number***
 ?> ***Error: Numbers cannot be used as a variable name***
 ?> ***Error, assignment to constant: 3 = pi***
@@ -17,6 +17,7 @@ h = 9
 q = 0.1111111111111111 + c
 t = 0.1111111111111111
 Functions: 
+No functions stored
 ?> -1
 ?> 7.999999999999998
 ?> ***Error, the variable x is reassigned.***

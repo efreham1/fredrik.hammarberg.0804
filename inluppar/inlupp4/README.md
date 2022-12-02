@@ -24,12 +24,21 @@ Unary operator names and commands are case sensitive and begin with a capital le
 
 Syntax errors give the read-out "Expected Number".
 
-If a variable is created with the same name as a function the function get removed and vice versa.
+If a variable is created with the same name as a function the function get removed
+and vice versa.
 
 When in function parsing mode, typing "Quit" aborts the function parsing and
 removes the current function.
 
+A class named Function was added to the AST to simplify handling functions.
 
+Syntax of scopes is {expression} where anything entered inside the scope will be
+evaluated but variables set inside will not transfer to the global scope.
+
+Functions may not be declared inside a scope and are only allowed to be created
+in the root environment.
+
+However variables and functions set _outside_ of a scope are accesible from inside scopes.
 
 ---
 
